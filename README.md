@@ -123,9 +123,9 @@ To install prebuilt wheels from [torchpairwise](https://pypi.org/project/torchpa
 pip install torchpairwise
 ```
 
-Note that the Linux and Windows wheels in were compiled with **Cuda 11.8**.
-Since ``torch`` is moving towards **Cuda 12.x**, we only do a non-strict version checking and a warning will be
-raised if ``torch``'s and ``torchpairwise``'s Cuda versions do not match.
+Note that the Linux and Windows wheels in **PyPI** are compiled with ``torch==2.1.0`` and **Cuda 12.1**.
+We only do a non-strict version checking and a warning will be raised if ``torch``'s and ``torchpairwise``'s
+Cuda versions do not match.
 
 #### From Source:
 
