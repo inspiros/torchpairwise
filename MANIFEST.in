@@ -1,0 +1,5 @@
+recursive-include torchpairwise *.cpp
+recursive-include torchpairwise *.cu
+include README.md
+include LICENSE.txt
+include requirements*.txt
