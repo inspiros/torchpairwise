@@ -1,3 +1,5 @@
+#include "cpdist.h"
+
 #include <torch/library.h>
 
 #include "pairwise_metrics.h"
@@ -238,12 +240,10 @@ if (metric == #METRIC) {                                                        
 
         TORCH_LIBRARY_FRAGMENT(torchpairwise, m) {
             m.def("torchpairwise::cdist(Tensor x1, Tensor x2, str metric=\"minkowski\", *, "
-                  "Tensor? w=None, Tensor? V=None, Tensor? VI=None, float? p=None, float? base=None, "
-                  "bool? shuffle=None, Generator? generator=None) -> Tensor",
+                  TORCHPAIRWISE_CPDIST_EXTRA_ARGS_SCHEMA_STR ") -> Tensor",
                   TORCH_FN(cdist));
             m.def("torchpairwise::pdist(Tensor input, str metric=\"minkowski\", *, "
-                  "Tensor? w=None, Tensor? V=None, Tensor? VI=None, float? p=None, float? base=None, "
-                  "bool? shuffle=None, Generator? generator=None) -> Tensor",
+                  TORCHPAIRWISE_CPDIST_EXTRA_ARGS_SCHEMA_STR ") -> Tensor",
                   TORCH_FN(pdist));
         }
     }

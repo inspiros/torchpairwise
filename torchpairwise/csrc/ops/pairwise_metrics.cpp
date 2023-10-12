@@ -2,7 +2,7 @@
 
 #include "pairwise_metrics.h"
 
-#include <torch/autograd.h>
+#include <ATen/core/grad_mode.h>
 #include <torch/library.h>
 
 #include "additive_chi2_kernel.h"
@@ -258,11 +258,6 @@ namespace torchpairwise {
                 auto var_dims = x1_.ndimension() == 2 ? at::IntArrayRef{0} : at::IntArrayRef{0, 1};
                 V_ = x1_.var(var_dims);
             }
-//            AT_DISPATCH_FLOATING_TYPES_AND2(at::kHalf, at::kBFloat16,
-//                                            V_.scalar_type(), "seuclidean_distances", ([&] {
-//                auto constant_mask = V_ < 10 * c10::CPPTypeLimits<scalar_t>::epsilon();
-//                V_.masked_fill_(constant_mask, 1);
-//            }));
             return _wminkowski(x1_, x2_, prf_ldiv(V_, 1, "identity"), 2);
         }
 

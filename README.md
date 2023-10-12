@@ -129,7 +129,7 @@ raised if ``torch``'s and ``torchpairwise``'s Cuda versions do not match.
 
 #### From Source:
 
-Make sure your machine has a C++17 and a CUDA compiler installed, then clone the repo and run:
+Make sure your machine has a C++17 and a Cuda compiler installed, then clone the repo and run:
 
 ```console
 pip install .

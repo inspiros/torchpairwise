@@ -4,6 +4,8 @@
 
 #include "../macros.h"
 
+#define TORCHPAIRWISE_CPDIST_EXTRA_ARGS_SCHEMA_STR "Tensor? w=None, Tensor? V=None, Tensor? VI=None, float? p=None, float? base=None, bool? shuffle=None, Generator? generator=None"
+
 namespace torchpairwise {
     namespace ops {
         TORCHPAIRWISE_API at::Tensor cdist(
