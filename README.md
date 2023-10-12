@@ -137,17 +137,90 @@ pip install .
 
 ## Usage
 
-The basic usecase is very straight-forward if you are familiar with ``sklearn.metrics.pairwise``:
+The basic usecase is very straight-forward if you are familiar with
+``sklearn.metrics.pairwise`` and ``scipy.spatial.distance``:
+
+<table>
+<tr>
+<th>scikit-learn / SciPy</th>
+<th>TorchPairwise</th>
+</tr>
+
+<tr>
+<td>
+<sub>
 
 ```python
-import torch, torchpairwise
+import numpy as np
+import sklearn.metrics.pairwise as sklearn_pairwise
 
-x1 = torch.bernoulli(torch.full((10, 5), fill_value=0.6)).to(torch.bool)
-x2 = torch.bernoulli(torch.full((12, 5), fill_value=0.7)).to(torch.bool)
+x1 = np.random.rand(10, 5)
+x2 = np.random.rand(12, 5)
+
+output = sklearn_pairwise.cosine_similarity(x1, x2)
+print(output)
+```
+
+</sub>
+<td>
+<sub>
+
+```python
+import torch
+import torchpairwise
+
+x1 = torch.rand(10, 5, device='cuda')
+x2 = torch.rand(12, 5, device='cuda')
+
+output = torchpairwise.cosine_similarity(x1, x2)
+print(output)
+```
+
+</sub>
+</td>
+</tr>
+
+<tr>
+<td>
+<sub>
+
+```python
+import numpy as np
+import scipy.spatial.distance as distance
+
+x1 = np.random.binomial(
+    1, p=0.6, size=(10, 5)).astype(np.bool_)
+x2 = np.random.binomial(
+    1, p=0.7, size=(12, 5)).astype(np.bool_)
+
+output = distance.cdist(x1, x2, metric='jaccard')
+print(output)
+```
+
+</sub>
+<td>
+<sub>
+
+```python
+import torch
+import torchpairwise
+
+x1 = torch.bernoulli(
+    torch.full((10, 5), fill_value=0.6, device='cuda')).to(torch.bool)
+x2 = torch.bernoulli(
+    torch.full((12, 5), fill_value=0.7, device='cuda')).to(torch.bool)
 
 output = torchpairwise.jaccard_distances(x1, x2)
 print(output)
 ```
+
+</sub>
+</td>
+</tr>
+
+</table>
+
+Please check [tests](tests) folder where we will add more examples.
 
 ## License
 
