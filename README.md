@@ -220,7 +220,7 @@ print(output)
 
 </table>
 
-Please check [tests](tests) folder where we will add more examples.
+Please check the [tests](tests) folder where we will add more examples.
 
 ## License
 

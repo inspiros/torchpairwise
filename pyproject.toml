@@ -2,7 +2,7 @@
 requires = [
     "setuptools>=42",
     "wheel",
-#    "--find-links https://download.pytorch.org/whl/cu118; sys_platform == \"linux\" or sys_platform == \"win32\"",
+#    "--find-links https://download.pytorch.org/whl/cu121; sys_platform == \"linux\" or sys_platform == \"win32\"",
     "torch>=2.0.0",
 ]
 
