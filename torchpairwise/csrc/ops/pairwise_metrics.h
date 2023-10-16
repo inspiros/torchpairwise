@@ -377,6 +377,16 @@ namespace torchpairwise {
             static at::Tensor call(const at::Tensor &x1, const c10::optional<at::Tensor> &x2);
         };
 
+        // others
+        struct TORCHPAIRWISE_API snr_distances_functor {
+            using schema = at::Tensor (const at::Tensor &, const c10::optional<at::Tensor> &);
+            using ptr_schema = schema*;
+            STATIC_CONSTEXPR_STR_INL_EXCEPT_WIN_CUDA(name, "torchpairwise::snr_distances")
+            STATIC_CONSTEXPR_STR_INL_EXCEPT_WIN_CUDA(overload_name, "")
+            STATIC_CONSTEXPR_STR_INL_EXCEPT_WIN_CUDA(schema_str, "snr_distances(Tensor x1, Tensor? x2=None) -> Tensor")
+            static at::Tensor call(const at::Tensor &x1, const c10::optional<at::Tensor> &x2);
+        };
+
         // aliases
         struct TORCHPAIRWISE_API l1_distances_functor {
             using schema = at::Tensor (const at::Tensor &, const c10::optional<at::Tensor> &);
@@ -403,6 +413,15 @@ namespace torchpairwise {
             STATIC_CONSTEXPR_STR_INL_EXCEPT_WIN_CUDA(overload_name, "")
             STATIC_CONSTEXPR_STR_INL_EXCEPT_WIN_CUDA(schema_str, "lp_distances(Tensor x1, Tensor? x2=None, float p=2) -> Tensor")
             static at::Tensor call(const at::Tensor &x1, const c10::optional<at::Tensor> &x2, double p);
+        };
+
+        struct TORCHPAIRWISE_API linf_distances_functor {
+            using schema = at::Tensor (const at::Tensor &, const c10::optional<at::Tensor> &);
+            using ptr_schema = schema*;
+            STATIC_CONSTEXPR_STR_INL_EXCEPT_WIN_CUDA(name, "torchpairwise::linf_distances")
+            STATIC_CONSTEXPR_STR_INL_EXCEPT_WIN_CUDA(overload_name, "")
+            STATIC_CONSTEXPR_STR_INL_EXCEPT_WIN_CUDA(schema_str, "linf_distances(Tensor x1, Tensor? x2=None) -> Tensor")
+            static at::Tensor call(const at::Tensor &x1, const c10::optional<at::Tensor> &x2);
         };
 
         // ~~~~~ functions ~~~~~
@@ -628,6 +647,13 @@ namespace torchpairwise {
             return sokalsneath_distances_functor::call(x1, x2);
         }
 
+        // others
+        inline at::Tensor snr_distances(
+                const at::Tensor &x1,
+                const c10::optional<at::Tensor> &x2 = c10::nullopt) {
+            return snr_distances_functor::call(x1, x2);
+        }
+
         // aliases
         inline at::Tensor l1_distances(
                 const at::Tensor &x1,
@@ -646,6 +672,12 @@ namespace torchpairwise {
                 const c10::optional<at::Tensor> &x2 = c10::nullopt,
                 double p = 2) {
             return lp_distances_functor::call(x1, x2, p);
+        }
+
+        inline at::Tensor linf_distances(
+                const at::Tensor &x1,
+                const c10::optional<at::Tensor> &x2 = c10::nullopt) {
+            return linf_distances_functor::call(x1, x2);
         }
     }
 }

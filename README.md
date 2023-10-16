@@ -1,11 +1,14 @@
-TorchPairwise [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/inspiros/torchpairwise/build_wheels.yml)](https://github.com/inspiros/torchpairwise/actions) [![GitHub](https://img.shields.io/github/license/inspiros/torchpairwise)](LICENSE.txt)
+TorchPairwise [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/inspiros/torchpairwise/build_wheels.yml)](https://github.com/inspiros/torchpairwise/actions) [![PyPI - Version](https://img.shields.io/pypi/v/torchpairwise)](https://pypi.org/project/torchpairwise/) [![Downloads](https://static.pepy.tech/badge/torchpairwise)](https://pepy.tech/project/torchpairwise) [![GitHub - License](https://img.shields.io/github/license/inspiros/torchpairwise)](LICENSE.txt)
 ======
 
 This package provides highly-efficient pairwise metrics for **PyTorch**.
 
+## News
+- **v0.1.1:** Added **SNR** distance (``torchpairwise.snr_distances``) presented in https://arxiv.org/abs/1904.02616.
+
 ## Highlights
 
-``torchpairwise`` is a collection of **general purposes** pairwise metric functions that behave similar to
+``torchpairwise`` is a collection of **general purpose** pairwise metric functions that behave similar to
 ``torch.cdist`` (which only implements $L_p$ distance).
 Instead, we offer a lot more metrics ported from other packages such as
 ``scipy.spatial.distance`` and ``sklearn.metrics.pairwise``.
@@ -14,7 +17,8 @@ wrong place, please head to the [TorchMetrics](https://github.com/Lightning-AI/t
 
 Written in ``torch``'s C++ API, the main differences are that our metrics:
 
-- are all (_except some boolean distances_) **differentiable** with backward formulas manually derived and implemented.
+- are all (_except some boolean distances_) **differentiable** with backward formulas manually derived, implemented,
+  and verified with ``torch.autograd.gradcheck``.
 - are **batched** and can exploit GPU parallelization.
 - can be integrated seamlessly within **PyTorch**-based projects, all functions are ``torch.jit.script``-able.
 
@@ -29,6 +33,7 @@ Written in ``torch``'s C++ API, the main differences are that our metrics:
 | ``l1_distances``                 | _(Alias of ``manhattan_distances``)_                                                                                                                                         |       ✔️       |
 | ``l2_distances``                 | _(Alias of ``euclidean_distances``)_                                                                                                                                         |       ✔️       |
 | ``lp_distances``                 | _(Alias of ``minkowski_distances``)_                                                                                                                                         |       ✔️       |
+| ``linf_distances``               | _(Alias of ``chebyshev_distances``)_                                                                                                                                         |       ✔️       |
 | ``directed_hausdorff_distances`` | [``scipy.spatial.distance.directed_hausdorff``](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.directed_hausdorff.html) [^1]                    |       ✔️       |
 | ``minkowski_distances``          | [``scipy.spatial.distance.minkowski``](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.minkowski.html) [^1]                                      |       ✔️       |
 | ``wminkowski_distances``         | [``scipy.spatial.distance.wminkowski``](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.wminkowski.html) [^1]                                    |       ✔️       |
@@ -51,9 +56,10 @@ Written in ``torch``'s C++ API, the main differences are that our metrics:
 | ``russellrao_distances``         | [``scipy.spatial.distance.russellrao``](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.russellrao.html) [^1]                                    |     ❌[^2]      |
 | ``sokalmichener_distances``      | [``scipy.spatial.distance.sokalmichener``](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.sokalmichener.html) [^1]                              |     ❌[^2]      |
 | ``sokalsneath_distances``        | [``scipy.spatial.distance.sokalsneath``](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.sokalsneath.html) [^1]                                  |     ❌[^2]      |
+| ``snr_distances``                | [``pytorch_metric_learning.distances.SNRDistance``](https://kevinmusgrave.github.io/pytorch-metric-learning/distances/#snrdistance) [^1]                                     |       ✔️       |
 
-[^1]: ``scipy.spatial.distance`` metrics are not pairwise but a pairwise form can be computed by
-calling ``scipy.spatial.distance.cdist(x1, x2, metric="[metric_name]")``.
+[^1]: These metrics are not pairwise but a pairwise form can be computed by
+calling ``scipy.spatial.distance.cdist(x1, x2, metric="[metric_name_or_callable]")``.
 
 [^2]: These are boolean distances. ``hamming_distances`` can be applied for floating point inputs but involves
 comparison.
@@ -101,9 +107,7 @@ However, that requires a total overhaul of existing C++/Cuda kernels and won't b
 
 ## Future Improvements
 
-- Add more metrics:
-    - (_Uncertain_) ``snr_distances``
-      from [PyTorch Metric Learning](https://kevinmusgrave.github.io/pytorch-metric-learning/distances/#snrdistance).
+- Add more metrics (contact me or create a feature request issue).
 - Add memory-efficient ``argkmin`` for retrieving pairwise neighbors' distances and indices without storing the whole
   pairwise distance matrix.
 - Add an equivalence of ``torch.pdist`` with ``metric: str = "minkowski"`` argument.
@@ -111,7 +115,7 @@ However, that requires a total overhaul of existing C++/Cuda kernels and won't b
 
 ## Requirements
 
-- `torch>=2.0.0` (you may sucess with versions as old as `1.9.0` when compiling from source)
+- `torch>=2.1.0` (`torch>=1.9.0` if compiled from source)
 
 ## Installation
 

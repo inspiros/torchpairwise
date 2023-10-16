@@ -38,6 +38,9 @@ russellrao_distances = torch.ops.torchpairwise.russellrao_distances
 sokalmichener_distances = torch.ops.torchpairwise.sokalmichener_distances
 sokalsneath_distances = torch.ops.torchpairwise.sokalsneath_distances
 
+# others
+snr_distances = torch.ops.torchpairwise.snr_distances
+
 # aliases
 l1_distances = torch.ops.torchpairwise.l1_distances
 l2_distances = torch.ops.torchpairwise.l2_distances

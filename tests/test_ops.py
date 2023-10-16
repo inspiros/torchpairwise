@@ -136,6 +136,13 @@ def test_floating_kernels(dtype=torch.float64, device='cuda'):
                                metric='jensenshannon')
     print(output.detach().cpu() - py_output)
 
+    print('snr')
+    output = torchpairwise.snr_distances(x1, x2)
+    py_output = sci_dist.cdist(x1.detach().cpu(),
+                               x2.detach().cpu(),
+                               metric=lambda u, v: (v - u).var() / u.var())
+    print(output.detach().cpu() - py_output)
+
     print('directed_hausdorff')
     x1 = torch.rand(10, 9, 3)
     x2 = torch.rand(8, 7, 3)
@@ -148,7 +155,7 @@ def test_floating_kernels(dtype=torch.float64, device='cuda'):
     print(py_output)
     # print(output.detach().cpu() - py_output)
 
-    gen = torch.Generator()
+    gen = torch.Generator(device=device)
     gen.manual_seed(1)
     x1 = x1.to(dtype=torch.float64, device=device)
     x2 = x2.to(dtype=torch.float64, device=device)
@@ -170,5 +177,5 @@ def test_cdist(dtype=torch.float64, device='cuda'):
 
 if __name__ == '__main__':
     # test_boolean_kernels()
-    # test_floating_kernels()
-    test_cdist()
+    test_floating_kernels()
+    # test_cdist()

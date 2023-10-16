@@ -132,6 +132,9 @@ namespace torchpairwise {
             /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
             DEFINE_CPDIST_METRIC_SPEC(sokalsneath,
             /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
+            // others
+            DEFINE_CPDIST_METRIC_SPEC(snr,
+            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
             // aliases
             DEFINE_CPDIST_METRIC_SPEC(l1,
             /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
@@ -139,6 +142,8 @@ namespace torchpairwise {
             /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
             DEFINE_CPDIST_METRIC_SPEC(lp,
             /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ true, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
+            DEFINE_CPDIST_METRIC_SPEC(linf,
+            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
         }
 
         at::Tensor cdist(
@@ -173,8 +178,8 @@ if (metric == #METRIC) {                                                        
             constexpr std::array supported_metrics = {
                     "braycurtis", "canberra", "chebyshev", "cityblock", "correlation", "cosine",
                     "dice", "directed_hausdorff", "euclidean", "hamming", "haversine", "jaccard",
-                    "jensenshannon", "kulczynski1", "kulsinski", "l1", "l2", "lp", "mahalanobis",
-                    "manhattan", "minkowski", "rogerstanimoto", "russellrao", "seuclidean",
+                    "jensenshannon", "kulczynski1", "kulsinski", "l1", "l2", "lp", "linf", "mahalanobis",
+                    "manhattan", "minkowski", "rogerstanimoto", "russellrao", "seuclidean", "snr",
                     "sokalmichener", "sokalsneath", "sqeuclidean", "wminkowski", "yule"
             };
             CDIST_TRY_CALL(euclidean)
@@ -208,9 +213,11 @@ if (metric == #METRIC) {                                                        
             CDIST_TRY_CALL(russellrao)
             CDIST_TRY_CALL(sokalmichener)
             CDIST_TRY_CALL(sokalsneath)
+            CDIST_TRY_CALL(snr)
             CDIST_TRY_CALL(l1)
             CDIST_TRY_CALL(l2)
             CDIST_TRY_CALL_WITH(lp, p.value_or(2))
+            CDIST_TRY_CALL(linf)
             TORCH_CHECK(false,
                         "Got unkown distance metric: ",
                         metric,

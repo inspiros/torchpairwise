@@ -1,6 +1,7 @@
 from typing import Optional
 
 from torch import Tensor, Generator
+from torch.types import Number
 
 
 # ~~~~~ sklearn ~~~~~
@@ -192,6 +193,13 @@ def sokalmichener_distances(x1: Tensor,
 # noinspection PyPep8Naming
 def sokalsneath_distances(x1: Tensor,
                           x2: Optional[Tensor] = None) -> Tensor: ...
+
+
+# ~~~~~ others ~~~~~
+# noinspection PyPep8Naming
+def snr_distances(x1: Tensor,
+                  x2: Optional[Tensor] = None,
+                  correction: Number = 1) -> Tensor: ...
 
 
 # ~~~~~ aliases ~~~~~

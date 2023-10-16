@@ -13,6 +13,7 @@
 #include "pairwise_binary.h"
 #include "ppminkowski.h"
 #include "prf_div.h"
+#include "snr.h"
 #include "sqjensenshannon.h"
 #include "sqmahalanobis.h"
 #include "wminkowski.h"
@@ -397,6 +398,15 @@ namespace torchpairwise {
             return R / (pwand_sum(x1_, x2_) + R);
         }
 
+        at::Tensor snr_distances_functor::call(
+                const at::Tensor &x1,
+                const c10::optional<at::Tensor> &x2) {
+            C10_LOG_API_USAGE_ONCE("torchpairwise.csrc.ops.pairwise_metrics.snr_distances")
+            at::Tensor x1_, x2_;
+            std::tie(x1_, x2_) = utils::check_pairwise_inputs("snr_distances", x1, x2);
+            return 1 / _snr(x1_, x2_);
+        }
+
         // aliases
         at::Tensor l1_distances_functor::call(
                 const at::Tensor &x1,
@@ -418,6 +428,13 @@ namespace torchpairwise {
                 double p) {
             C10_LOG_API_USAGE_ONCE("torchpairwise.csrc.ops.pairwise_metrics.lp_distances")
             return minkowski_distances(x1, x2, p);
+        }
+
+        at::Tensor linf_distances_functor::call(
+                const at::Tensor &x1,
+                const c10::optional<at::Tensor> &x2) {
+            C10_LOG_API_USAGE_ONCE("torchpairwise.csrc.ops.pairwise_metrics.linf_distances")
+            return chebyshev_distances(x1, x2);
         }
 
         TORCH_LIBRARY_FRAGMENT(torchpairwise, m) {
@@ -459,10 +476,13 @@ namespace torchpairwise {
             REGISTER_FUNCTOR(russellrao_distances_functor);
             REGISTER_FUNCTOR(sokalmichener_distances_functor);
             REGISTER_FUNCTOR(sokalsneath_distances_functor);
+            // others
+            REGISTER_FUNCTOR(snr_distances_functor);
             // aliases
             REGISTER_FUNCTOR(l1_distances_functor);
             REGISTER_FUNCTOR(l2_distances_functor);
             REGISTER_FUNCTOR(lp_distances_functor);
+            REGISTER_FUNCTOR(linf_distances_functor);
         }
     }
 }
