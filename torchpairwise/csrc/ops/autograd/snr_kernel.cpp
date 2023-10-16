@@ -6,8 +6,8 @@
 namespace torchpairwise {
     namespace ops {
         namespace {
-            class SNRFunction
-                    : public torch::autograd::Function<SNRFunction> {
+            class SignalToNoiseRatioFunction
+                    : public torch::autograd::Function<SignalToNoiseRatioFunction> {
             public:
                 static torch::autograd::Variable forward(
                         torch::autograd::AutogradContext *ctx,
@@ -46,7 +46,7 @@ namespace torchpairwise {
             at::Tensor _snr_autograd(
                     const at::Tensor &x1,
                     const at::Tensor &x2) {
-                return SNRFunction::apply(x1, x2);
+                return SignalToNoiseRatioFunction::apply(x1, x2);
             }
         } // namespace
 
