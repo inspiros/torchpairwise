@@ -9,6 +9,9 @@ import sys
 from warnings import warn
 
 import torch
+from torch._ops import _OpNamespace
+
+extension_namespace = os.path.basename(os.path.dirname(__file__))
 
 
 def _get_extension_path(lib_name):
@@ -80,29 +83,31 @@ try:
 
 except (ImportError, OSError):
     pass
+finally:
+    _ops = _OpNamespace(extension_namespace)
 
 
 def _assert_has_ops():
     if not _has_ops():
         raise RuntimeError(
-            "Couldn\"t load custom C++ ops. Recompile C++ extension with:\n"
+            "Couldn\'t load custom C++ ops. Recompile C++ extension with:\n"
             "\tpython setup.py build_ext --inplace"
         )
 
 
-def _check_cuda_version(strict=True):
+def _check_cuda_version(minor=True):
     """
-    Make sure that CUDA versions match between the pytorch install and torchpairwise install
+    Make sure that CUDA versions match between the pytorch install and C++ extension install
 
     Args:
-        strict (bool): If ``False``, ignore minor version difference.
+        minor (bool): If ``False``, ignore minor version difference.
          Defaults to ``True``.
     """
     if not _HAS_OPS:
         return -1
     from torch.version import cuda as torch_version_cuda
 
-    _version = torch.ops.torchpairwise._cuda_version()
+    _version = _ops._cuda_version()
     if _version != -1 and torch_version_cuda is not None:
         ext_version = str(_version)
         if int(ext_version) < 10000:
@@ -114,15 +119,20 @@ def _check_cuda_version(strict=True):
         t_version = torch_version_cuda.split(".")
         t_major = int(t_version[0])
         t_minor = int(t_version[1])
-        if t_major != ext_major or t_minor != ext_minor:
-            msg = ("Detected that PyTorch and Extension were compiled with different CUDA versions. "
-                   f"PyTorch has CUDA Version={t_major}.{t_minor} and "
-                   f"Extension has CUDA Version={ext_major}.{ext_minor}. ")
-            if strict:
-                raise RuntimeError(msg + "Please reinstall the Extension that matches your PyTorch install.")
-            else:
-                warn(msg + "Please install the version that matches your PyTorch install or consider "
-                           "recompiling the Extension from source on your machine.", UserWarning)
+        if t_major != ext_major or (minor and t_minor != ext_minor):
+            raise RuntimeError(
+                "Detected that PyTorch and Extension were compiled with different CUDA versions. "
+                f"PyTorch has CUDA Version={t_major}.{t_minor} and "
+                f"Extension has CUDA Version={ext_major}.{ext_minor}. "
+                "Please reinstall the Extension that matches your PyTorch install."
+            )
+        elif t_minor != ext_minor:
+            warn(
+                "Detected that PyTorch and Extension have a minor version mismatch. "
+                f"PyTorch has CUDA Version={t_major}.{t_minor} and "
+                f"Extension has CUDA Version={ext_major}.{ext_minor}. "
+                "Most likely this shouldn\'t be a problem."
+            )
     return _version
 
 
@@ -163,7 +173,7 @@ def cuda_version():
     """
     if not _HAS_OPS:
         return -1
-    return torch.ops.torchpairwise._cuda_version()
+    return _ops._cuda_version()
 
 
 def with_cuda():
