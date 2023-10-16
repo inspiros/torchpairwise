@@ -20,12 +20,13 @@ jobs:
         with:
           path: dist/*.tar.gz
 
-  build_wheels_windows_macos:
-    name: Build wheels on ${{ matrix.os }}
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }} for ${{ matrix.python }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-latest, macos-latest ]
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        python: [ 'cp38-*', 'cp39-*', 'cp310-*', 'cp311-*' ]
     steps:
       - uses: actions/checkout@v3
 
@@ -34,45 +35,7 @@ jobs:
 
       - name: Build wheels
         env:
-          CIBW_BUILD: 'cp38-* cp39-* cp310-* cp311-*'
-        uses: pypa/cibuildwheel@v2.16.2
-
-      - name: Upload wheels
-        uses: actions/upload-artifact@v3
-        with:
-          path: ./wheelhouse/*.whl
-
-  build_wheels_ubuntu1:
-    name: Build wheels on ubuntu-latest cp38 cp39
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install ninja-build
-        uses: seanmiddleditch/gha-setup-ninja@master
-
-      - name: Build wheels
-        env:
-          CIBW_BUILD: 'cp38-* cp39-*'
-        uses: pypa/cibuildwheel@v2.16.2
-
-      - name: Upload wheels
-        uses: actions/upload-artifact@v3
-        with:
-          path: ./wheelhouse/*.whl
-
-  build_wheels_ubuntu2:
-    name: Build wheels on ubuntu-latest cp310 cp311
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install ninja-build
-        uses: seanmiddleditch/gha-setup-ninja@master
-
-      - name: Build wheels
-        env:
-          CIBW_BUILD: 'cp310-* cp311-*'
+          CIBW_BUILD: ${{ matrix.python }}
         uses: pypa/cibuildwheel@v2.16.2
 
       - name: Upload wheels
@@ -82,7 +45,7 @@ jobs:
 
   publish_on_pypi:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    needs: [ build_sdist, build_wheels_windows_macos, build_wheels_ubuntu1, build_wheels_ubuntu2 ]
+    needs: [ build_sdist, build_wheels ]
     runs-on: ubuntu-latest
     steps:
       - name: Download wheels
