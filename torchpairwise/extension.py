@@ -1,11 +1,11 @@
 """
 Modified from https://github.com/pytorch/vision/blob/main/torchvision/extension.py
 """
-
 import ctypes
 import importlib
 import os
 import sys
+from typing import List
 from warnings import warn
 
 import torch
@@ -160,15 +160,15 @@ _check_cuda_version(False)
 ###################
 # Exposed functions
 ###################
-def has_ops():
-    """
+def has_ops() -> bool:
+    r"""
     Check if C++ extension is successfully compiled.
     """
     return _HAS_OPS
 
 
-def cuda_version():
-    """
+def cuda_version() -> int:
+    r"""
     Get compiled Cuda version.
     """
     if not _HAS_OPS:
@@ -176,8 +176,17 @@ def cuda_version():
     return _ops._cuda_version()
 
 
-def with_cuda():
-    """
+def with_cuda() -> bool:
+    r"""
     Check if C++ extension is compiled with Cuda.
     """
     return cuda_version() != -1
+
+
+def cuda_arch_list() -> List[str]:
+    r"""
+    Returns list CUDA architectures this library was compiled for.
+    """
+    if not _HAS_OPS:
+        return []
+    return _ops._cuda_arch_flags().split()

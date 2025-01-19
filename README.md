@@ -3,9 +3,6 @@ TorchPairwise [![GitHub Workflow Status](https://img.shields.io/github/actions/w
 
 This package provides highly-efficient pairwise metrics for **PyTorch**.
 
-## News
-- **v0.1.1:** Added **SNR** distance (``torchpairwise.snr_distances``) presented in https://arxiv.org/abs/1904.02616.
-
 ## Highlights
 
 ``torchpairwise`` is a collection of **general purpose** pairwise metric functions that behave similar to
@@ -115,7 +112,8 @@ However, that requires a total overhaul of existing C++/Cuda kernels and won't b
 
 ## Requirements
 
-- `torch>=2.1.0` (`torch>=1.9.0` if compiled from source)
+- Python 3.9+
+- `torch>=2.5.0` (`torch>=1.9.0` if compiled from source)
 
 ## Installation
 
@@ -127,7 +125,7 @@ To install prebuilt wheels from [torchpairwise](https://pypi.org/project/torchpa
 pip install torchpairwise
 ```
 
-Note that the Linux and Windows wheels in **PyPI** are compiled with ``torch==2.1.0`` and **Cuda 12.1**.
+Note that the Linux and Windows wheels in **PyPI** are compiled with ``torch==2.5.1`` and **Cuda 12.4**.
 We only do a non-strict version checking and a warning will be raised if ``torch``'s and ``torchpairwise``'s
 Cuda versions do not match.
 

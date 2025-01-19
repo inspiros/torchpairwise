@@ -26,7 +26,7 @@ namespace torchpairwise {
                         "k must be non-negative. Got k=",
                         k)
             at::NoGradGuard no_grad_guard;
-            auto dists = torchpairwise::ops::cdist(x1_, x2_, metric, w, V, VI, p, base, shuffle, generator);
+            auto dists = ops::cdist(x1_, x2_, metric, w, V, VI, p, base, shuffle, generator);
             auto neighbors_inds = dists.argsort(1, false).slice(1, 0, k + 1);
             auto first_dim = at::arange(0, x1_.size(0), neighbors_inds.options()).view({-1, 1}).repeat({1, k + 1});
             auto output = at::zeros({x1.size(0), x2_.size(0)}, x1_.options().dtype(at::kBool));
@@ -53,7 +53,7 @@ namespace torchpairwise {
                         "epsilon must be non-negative. Got epsilon=",
                         epsilon)
             at::NoGradGuard no_grad_guard;
-            auto dists = torchpairwise::ops::cdist(x1_, x2_, metric, w, V, VI, p, base, shuffle, generator);
+            auto dists = ops::cdist(x1_, x2_, metric, w, V, VI, p, base, shuffle, generator);
             return dists.le(epsilon);
         }
 
