@@ -1,4 +1,4 @@
-TorchPairwise [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/inspiros/torchpairwise/build_wheels.yml)](https://github.com/inspiros/torchpairwise/actions) [![PyPI - Version](https://img.shields.io/pypi/v/torchpairwise)](https://pypi.org/project/torchpairwise/) [![Downloads](https://static.pepy.tech/badge/torchpairwise)](https://pepy.tech/project/torchpairwise) [![GitHub - License](https://img.shields.io/github/license/inspiros/torchpairwise)](LICENSE.txt)
+TorchPairwise [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/inspiros/torchpairwise/build_wheels.yml)](https://github.com/inspiros/torchpairwise/actions) [![PyPI - Version](https://img.shields.io/pypi/v/torchpairwise)](https://pypi.org/project/torchpairwise/) [![Downloads](https://static.pepy.tech/badge/torchpairwise)](https://pepy.tech/project/torchpairwise) [![GitHub - License](https://img.shields.io/github/license/inspiros/torchpairwise)](LICENSE.txt) [![DOI](https://zenodo.org/badge/703796377.svg)](https://doi.org/10.5281/zenodo.14699363)
 ======
 
 This package provides highly-efficient pairwise metrics for **PyTorch**.
@@ -121,7 +121,7 @@ However, that requires a total overhaul of existing C++/Cuda kernels and won't b
 
 To install prebuilt wheels from [torchpairwise](https://pypi.org/project/torchpairwise), simply run:
 
-```console
+```cmd
 pip install torchpairwise
 ```
 
@@ -133,7 +133,7 @@ Cuda versions do not match.
 
 Make sure your machine has a C++17 and a Cuda compiler installed, then clone the repo and run:
 
-```console
+```cmd
 pip install .
 ```
 
@@ -223,6 +223,27 @@ print(output)
 </table>
 
 Please check the [tests](tests) folder where we will add more examples.
+
+## Citation
+
+```bibtex
+@software{hoang_nhat_tran_2025_14699364,
+  author       = {Hoang-Nhat Tran},
+  title        = {inspiros/torchpairwise: v0.2.0},
+  month        = jan,
+  year         = 2025,
+  publisher    = {Zenodo},
+  version      = {v0.2.0},
+  doi          = {10.5281/zenodo.14699364},
+  url          = {https://doi.org/10.5281/zenodo.14699364},
+  swhid        = {swh:1:dir:14f42479843d299e136d10046bc7a12ea20da3ad
+                   ;origin=https://doi.org/10.5281/zenodo.14699363;vi
+                   sit=swh:1:snp:a3d823c1213301aca562bfd3d8c5a4a6d126
+                   9bca;anchor=swh:1:rel:075a27f09a969eb7a1d8235b2264
+                   1d8e347ab554;path=inspiros-torchpairwise-3af3663
+                  },
+}
+```
 
 ## License
 
