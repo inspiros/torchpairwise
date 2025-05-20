@@ -302,6 +302,7 @@ paket-files/
 __pycache__/
 *.pyc
 *.pyd
+*.so
 
 # Cake - Uncomment if you are using it
 # tools/**
