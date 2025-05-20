@@ -112,8 +112,14 @@ However, that requires a total overhaul of existing C++/Cuda kernels and won't b
 
 ## Requirements
 
-- Python 3.9+
-- `torch>=2.5.0` (`torch>=1.9.0` if compiled from source)
+- `torch>=2.7.0,<2.8.0` (`torch>=1.9.0` if compiled from source)
+
+#### Notes:
+
+Since `torch` extensions are not forward compatible, I have to fix a maximum version for the PyPI package and regularly
+update it on GitHub _(but I am not always available)_.
+If you use a different version of `torch` or your platform is not supported,
+please follow the [instructions to install from source](#from-source).
 
 ## Installation
 
@@ -125,7 +131,7 @@ To install prebuilt wheels from [torchpairwise](https://pypi.org/project/torchpa
 pip install torchpairwise
 ```
 
-Note that the Linux and Windows wheels in **PyPI** are compiled with ``torch==2.5.1`` and **Cuda 12.4**.
+Note that the Linux and Windows wheels in **PyPI** are compiled with ``torch==2.7.0`` and **Cuda 12.8**.
 We only do a non-strict version checking and a warning will be raised if ``torch``'s and ``torchpairwise``'s
 Cuda versions do not match.
 
