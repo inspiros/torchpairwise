@@ -233,20 +233,20 @@ Please check the [tests](tests) folder where we will add more examples.
 ## Citation
 
 ```bibtex
-@software{hoang_nhat_tran_2025_14699364,
+@software{hoang_nhat_tran_2025_15470239,
   author       = {Hoang-Nhat Tran},
-  title        = {inspiros/torchpairwise: v0.2.0},
-  month        = jan,
+  title        = {inspiros/torchpairwise: v0.3.0},
+  month        = may,
   year         = 2025,
   publisher    = {Zenodo},
-  version      = {v0.2.0},
-  doi          = {10.5281/zenodo.14699364},
-  url          = {https://doi.org/10.5281/zenodo.14699364},
-  swhid        = {swh:1:dir:14f42479843d299e136d10046bc7a12ea20da3ad
+  version      = {v0.3.0},
+  doi          = {10.5281/zenodo.15470239},
+  url          = {https://doi.org/10.5281/zenodo.15470239},
+  swhid        = {swh:1:dir:c4402d590533d1ec43616b8b90e369efbe2bbb76
                    ;origin=https://doi.org/10.5281/zenodo.14699363;vi
-                   sit=swh:1:snp:a3d823c1213301aca562bfd3d8c5a4a6d126
-                   9bca;anchor=swh:1:rel:075a27f09a969eb7a1d8235b2264
-                   1d8e347ab554;path=inspiros-torchpairwise-3af3663
+                   sit=swh:1:snp:a66a7b521e2ad19609f3f7671eb8cbe462bf
+                   076f;anchor=swh:1:rel:e528b96cf29f913b6f9648dfafd5
+                   145163f90263;path=inspiros-torchpairwise-0ff57b0
                   },
 }
 ```
