@@ -165,8 +165,11 @@ def get_extensions():
         # Operator registrations and dispatch templates exceed MSVC's default
         # section limit (C1128) in the larger translation units.
         extra_compile_args['cxx'].append('/bigobj')
+        # CUDA 13's CCCL headers reject MSVC's traditional preprocessor (C1189).
+        extra_compile_args['cxx'].append('/Zc:preprocessor')
         if 'nvcc' in extra_compile_args:
-            extra_compile_args['nvcc'] += ['-Xcompiler', '/bigobj']
+            extra_compile_args['nvcc'] += ['-Xcompiler', '/bigobj',
+                                           '-Xcompiler', '/Zc:preprocessor']
 
     if debug_mode:
         print('Compiling in debug mode')
