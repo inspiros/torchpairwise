@@ -15,9 +15,9 @@ instead of saving them.
 import torch
 import torchpairwise as tp
 
-scores = tp.lazy(Q, K, metric="linear") * Q.shape[-1] ** -0.5   # [N,M], not stored
-out = scores.softmax_matmul(V)                                  # [N,C]
-out.sum().backward()                                            # grads for Q, K, V
+scores = tp.lazy(Q, K, metric="linear") * Q.shape[-1] ** -0.5  # [N,M], not stored
+out = scores.softmax_matmul(V)                                 # [N,C]
+out.sum().backward()                                           # grads for Q, K, V
 ```
 
 Memory then scales with the inputs and outputs, `(N+M)*(D+C)`, plus a tile
@@ -63,7 +63,7 @@ biases and per-sample weights train through the same streamed backward.
 ```python
 D = tp.lazy(X, Y, metric="sqeuclidean")
 logits = (-0.5 / tau * D).add_rows(row_bias).add_columns(column_bias)
-loss = -logits.logsumexp(-1).mean()        # fused on float32 CUDA
+loss = -logits.logsumexp(-1).mean()  # fused on float32 CUDA
 ```
 
 Pair masks from `tp.masks` (`causal`, `band`, `same_group`) and other

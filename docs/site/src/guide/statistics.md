@@ -26,10 +26,10 @@ reducers and moments accept dimension lists/tuples for one joint reduction;
 <div class="code-label">Python</div>
 
 ```python
-A = tp.lazy(X, Y, metric="sqeuclidean")  # [N,M]
-mean = A.mean(dim=-1)                       # [N]
-spread = A.var(dim=(-2, -1), correction=0)  # scalar per batch
-cutoff = A.quantile(0.9, dim=-1)             # [N]
+A = tp.lazy(X, Y, metric="sqeuclidean")         # [N,M]
+mean = A.mean(dim=-1)                           # [N]
+spread = A.var(dim=(-2, -1), correction=0)      # scalar per batch
+cutoff = A.quantile(0.9, dim=-1)                # [N]
 weighted = A.weighted_mean(confidence, dim=-1)  # confidence:[M], result:[N]
 ```
 
@@ -39,7 +39,7 @@ weighted = A.weighted_mean(confidence, dim=-1)  # confidence:[M], result:[N]
 
 ```cpp
 auto A = tp::pairwise_expression(X, Y, "sqeuclidean");
-auto mean = A.reduce("mean", -1);                // [N]
+auto mean = A.reduce("mean", -1);  // [N]
 auto spread = A.statistics("var", at::IntArrayRef{-2, -1}, false, false, 0.);
 auto cutoff = A.quantile(0.9, -1);                // [N]
 auto weighted = A.weighted_mean(confidence, -1);  // confidence:[M] -> [N]
@@ -90,9 +90,9 @@ expression with the same axes, such as `D < radius`, and any dense Boolean
 D = tp.lazy(X, metric="sqeuclidean")
 positives = tp.masks.same_group(labels) & ~tp.masks.diagonal()
 negatives = tp.masks.different_group(labels)
-hardest_positive = D.amax(-1, mask=positives)           # [N]
-hardest_negative, nearest = D.min(-1, mask=negatives)   # values, indices [N]
-mean_positive = D.mean(-1, mask=positives)              # divided by eligible count
+hardest_positive = D.amax(-1, mask=positives)               # [N]
+hardest_negative, nearest = D.min(-1, mask=negatives)       # values, indices [N]
+mean_positive = D.mean(-1, mask=positives)                  # divided by eligible count
 attention = (-D).softmax_matmul(V, mask=tp.masks.causal())  # [N,C]
 ```
 
@@ -112,9 +112,9 @@ auto negatives = tp::different_group_mask(D, labels);
 auto hardest_positive = D.masked(positives, -inf).reduce("max", -1);  // [N]
 auto hardest_negative = D.masked(negatives, inf).reduce("min", -1);   // [N]
 auto mean_positive = D.masked(positives).reduce("sum", -1) /
-                     positives.reduce("sum", -1);                     // [N]
+                     positives.reduce("sum", -1);  // [N]
 auto attention = D.scale(-1.).masked(tp::causal_mask(D), -inf)
-                     .softmax_matmul(V);                              // [N,C]
+                     .softmax_matmul(V);  // [N,C]
 ```
 
 </div>

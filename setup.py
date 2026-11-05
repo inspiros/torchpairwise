@@ -177,6 +177,10 @@ def get_extensions():
             extra_compile_args['nvcc'] = [f for f in nvcc_flags if not ('-O' in f or '-g' in f)]
             extra_compile_args['nvcc'].append('-O0')
             extra_compile_args['nvcc'].append('-g')
+    elif sys.platform != 'win32':
+        # Many Python builds put -g in CFLAGS; host debug info makes _C over
+        # 500 MB (about 15 MB without), so release builds drop it.
+        extra_compile_args['cxx'].append('-g0')
 
     include_dirs = [os.path.abspath(extensions_dir)]
     ext_modules = [
@@ -197,6 +201,20 @@ def torch_requirement():
     return f'torch>={major}.{minor},<{major}.{minor + 1}'
 
 
+def get_long_description():
+    # PyPI renders the README without the repository, so relative links and
+    # images are pointed at GitHub. Code blocks are left untouched.
+    repository = 'https://github.com/inspiros/torchpairwise'
+    relative = r'(?!https?:|#|mailto:)([^)"\s]+)'
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'README.md'), encoding='utf-8') as f:
+        pieces = re.split(r'(```.*?```)', f.read(), flags=re.S)
+    for i in range(0, len(pieces), 2):
+        pieces[i] = re.sub(r'((?:src|srcset)=")' + relative,
+                           rf'\1{repository.replace("github.com", "raw.githubusercontent.com")}/master/\2', pieces[i])
+        pieces[i] = re.sub(r'(href="|\]\()' + relative, rf'\1{repository}/blob/master/\2', pieces[i])
+    return ''.join(pieces)
+
+
 def setup_package():
     options = {}
     if use_py_limited_api():
@@ -204,6 +222,7 @@ def setup_package():
     setup(
         options=options,
         version=get_version(),
+        long_description=get_long_description(),
         # Native wheels must stay within the torch minor they were built against.
         install_requires=[torch_requirement()],
         ext_modules=get_extensions(),

@@ -7,8 +7,8 @@ For source selection and shared axis rules, start with the [operator guide](oper
 
 ```python
 A = tp.as_lazy(scores, chunk_size=128)  # scores: [...,N,M]
-product = A.matmul(values)      # [...,N,C]
-form = A.bilinear(left, right)  # left.T @ scores @ right
+product = A.matmul(values)              # [...,N,C]
+form = A.bilinear(left, right)          # left.T @ scores @ right
 column_min = A.amin(-2)
 block = A.block(rows, columns)
 reverse = A.T.matmul(other_values)

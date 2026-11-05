@@ -9,9 +9,9 @@ import torchpairwise as tp
 
 # X:[N,D], Y:[M,D], V:[N,R]
 K = tp.lazy(X, Y, metric="rbf", gamma=0.2)
-A = K.centered()       # [N,M]
-B = A @ A.mT + 0.01 * tp.eye_like(A @ A.mT)      # [N,N]
-result = B.matmul(V)                      # [N,R]
+A = K.centered()                             # [N,M]
+B = A @ A.mT + 0.01 * tp.eye_like(A @ A.mT)  # [N,N]
+result = B.matmul(V)                         # [N,R]
 ```
 
 Use `tp.as_lazy` to wrap a caller-owned dense matrix. Event sources must
@@ -108,7 +108,7 @@ options.comparison.gamma = 0.2;
 auto K = s::kernel(X, Y, "rbf", options);
 auto A = s::aslinearoperator(K).centered();
 auto B = A.compose(A.transpose()).add_diagonal(0.01);
-auto result = B.matmul(V);                 // [...,N,R]
+auto result = B.matmul(V);  // [...,N,R]
 ```
 
 C++ uses `compose` for matrix composition and `scale` for scalar multiplication.
@@ -152,7 +152,7 @@ with torch.no_grad():
     fit = tp.linalg.cg(A, targets, rtol=1e-6, max_iter=300)
     if not fit.converged.all():
         raise RuntimeError(f"CG status: {fit.status.tolist()}")
-    predictions = K.matmul(fit.solution)        # [N,R]
+    predictions = K.matmul(fit.solution)  # [N,R]
 ```
 
 ```cpp
@@ -163,7 +163,7 @@ solve_options.rtol = 1e-6;
 solve_options.max_iter = 300;
 auto fit = s::linalg::cg(
     s::aslinearoperator(K).add_diagonal(0.1), targets, solve_options);
-auto predictions = K.matmul(fit.solution);     // [N,R]
+auto predictions = K.matmul(fit.solution);  // [N,R]
 // Inspect fit.converged / fit.status before using the approximate solution.
 ```
 
@@ -245,12 +245,12 @@ P=E\operatorname{diag}(n_c^{-1})E^\mathsf T,\qquad
 
 ```python
 # labels:[N], X:[N,D], V:[N,R]
-P = tp.group_projection(labels, like=X)    # logical [N,N]
+P = tp.group_projection(labels, like=X)  # logical [N,N]
 group_means = P.matmul(V)                # [N,R], means repeated per sample
 within_residuals = V - group_means       # [N,R]
 K = tp.lazy(X, metric="rbf", gamma=0.2)
-R = K - P @ K                    # (I-P)K
-Sw = R.mT @ R + 0.1 * tp.eye_like(R.mT @ R)    # K(I-P)K + 0.1 I for symmetric K
+R = K - P @ K                                # (I-P)K
+Sw = R.mT @ R + 0.1 * tp.eye_like(R.mT @ R)  # K(I-P)K + 0.1 I for symmetric K
 ```
 
 ```cpp

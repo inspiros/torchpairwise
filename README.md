@@ -59,10 +59,10 @@ X = torch.randn(20, 6)
 Y = torch.randn(30, 6)
 metric = "sqeuclidean"
 
-matrix = tp.compare(X, Y, metric=metric)                     # [20, 30]
-aligned = tp.compare(X, Y[:20], metric=metric, mode="paired") # [20]
-unordered = tp.compare(X, metric=metric, mode="condensed")   # [190]
-value = tp.compare(X[0], Y[0], metric=metric, mode="single")  # scalar
+matrix = tp.compare(X, Y, metric=metric)                       # [20, 30]
+aligned = tp.compare(X, Y[:20], metric=metric, mode="paired")  # [20]
+unordered = tp.compare(X, metric=metric, mode="condensed")     # [190]
+value = tp.compare(X[0], Y[0], metric=metric, mode="single")   # scalar
 ```
 
 **`single` is a mode of `compare`.** `single_comparison(x, y, metric=...)` is
@@ -90,12 +90,12 @@ N-by-M matrix. The same source can feed reductions, selections or products:
 V = torch.randn(30, 4)
 A = tp.lazy(X, Y, metric="sqeuclidean", chunk_size=16)
 
-nearest = A.topk(3, largest=False)               # values / indices: [20, 3]
-row_spread = A.std(dim=-1, correction=0)         # [20]
-smoothed = (-0.5 * A).softmax_matmul(V)          # [20, 4]
+nearest = A.topk(3, largest=False)        # values / indices: [20, 3]
+row_spread = A.std(dim=-1, correction=0)  # [20]
+smoothed = (-0.5 * A).softmax_matmul(V)   # [20, 4]
 
 K = tp.lazy(X, Y, metric="rbf", gamma=0.2)
-features = K.matmul(V)                          # [20, 4], streamed K @ V
+features = K.matmul(V)  # [20, 4], streamed K @ V
 ```
 
 Each consumer recomputes the source tiles; binding an operator does not cache
@@ -451,11 +451,11 @@ Entrywise lazy pairwise objects share **25 consumers**:
 Compose lazy maps directly (see [linear operators](docs/linear-operators.md)):
 
 ```python
-A = K.centered()                                # H_N K H_M
+A = K.centered()  # H_N K H_M
 B = A @ A.mT
-B = B + 0.01 * tp.eye_like(B)                   # logical [N,N]
+B = B + 0.01 * tp.eye_like(B)  # logical [N,N]
 values = torch.randn(A.shape[-2], 4, device=A.device, dtype=A.dtype)
-result = B.matmul(values)                         # [...,N,4]
+result = B.matmul(values)  # [...,N,4]
 ```
 
 Entrywise objects support all consumers. Products, `softmax`, `eye_like`,
@@ -542,9 +542,9 @@ Scalar algebra supports `+`, `-`, entrywise `*`, negation, `square()`, `exp()`,
 ```python
 K1 = tp.lazy(X, Y, metric="rbf", gamma=0.2)
 K2 = tp.lazy(X, Y, metric="laplacian", gamma=0.3)
-mixture = 0.7 * K1 + 0.3 * K2         # lazy [20,30]
-features = mixture.matmul(V)          # tensor [20,4]
-alignment = (K1 * K2).sum()           # scalar entrywise inner product
+mixture = 0.7 * K1 + 0.3 * K2  # lazy [20,30]
+features = mixture.matmul(V)   # tensor [20,4]
+alignment = (K1 * K2).sum()    # scalar entrywise inner product
 ```
 
 `K.frobenius_inner_product(L, center=True, normalize=True)` computes centered
@@ -567,19 +567,19 @@ or M returns an ordinary tensor. Residual and image event sources support
 
 ```python
 G = tp.residual_operator(X, Y, transform="abs")  # lazy [20,30,6]
-mae = G.mean(-1)                               # lazy [20,30]
+mae = G.mean(-1)                                 # lazy [20,30]
 nearest_mae = mae.topk(3, largest=False)
-largest_errors = G.topk(2)                     # values/feature IDs [20,30,2]
-joint_spread = G.var((-2,-1), correction=0)      # tensor [20], joint M/D
+largest_errors = G.topk(2)                   # values/feature IDs [20,30,2]
+joint_spread = G.var((-2,-1), correction=0)  # tensor [20], joint M/D
 
 images = torch.rand(4, 3, 12, 14)
 references = torch.rand(7, 3, 12, 14)
 G = tp.image_map_operator(images, references, comparison="absolute_error")
-H = G.mean((-2,-1))                            # lazy [4,7,3], spatial mean
-channels = H.topk(2)                          # values/channel IDs [4,7,2]
+H = G.mean((-2,-1))   # lazy [4,7,3], spatial mean
+channels = H.topk(2)  # values/channel IDs [4,7,2]
 nearest_images = H.max(-1).topk(2, largest=False)
-mean_channels = H.mean(-2)                     # tensor [4,3]; -2 is now M
-joint_variance = G.var((-4,-2,-1), correction=0) # tensor [4,3], joint M/H/W
+mean_channels = H.mean(-2)                        # tensor [4,3]; -2 is now M
+joint_variance = G.var((-4,-2,-1), correction=0)  # tensor [4,3], joint M/H/W
 ```
 
 Omitting `dim` contracts current event axes; explicit `None`/`[]` selects all
@@ -652,43 +652,59 @@ separates implemented APIs from these directions.
 
 ## Requirements
 
-The last published 0.3 wheels require `torch>=2.7.0,<2.8.0`.
-For this development checkout, see the [current build requirements](docs/building.md).
+- Python 3.10 or newer, within the range supported by your PyTorch build.
+- PyTorch 2.12 through 2.15. A prebuilt wheel works only with the PyTorch minor it
+  was built for (see below); a source build works with any of these.
+- For CUDA: a GPU and driver supported by your PyTorch build. Source builds also
+  need a matching CUDA toolkit.
 
-#### Notes:
-
-Since `torch` extensions are not forward compatible, I have to fix a maximum version for the PyPI package and regularly
-update it on GitHub _(but I am not always available)_.
-If you use a different version of `torch` or your platform is not supported,
-please follow the [instructions to install from source](#from-source).
+The last published release (0.3) requires `torch>=2.7.0,<2.8.0`.
 
 ## Installation
 
-#### From PyPI:
+PyTorch extensions are compiled against one PyTorch minor version and its CUDA
+version. PyPI hosts one set of wheels, built for the latest supported PyTorch:
 
-To install prebuilt wheels from [torchpairwise](https://pypi.org/project/torchpairwise), simply run:
+| Platform | PyPI wheel |
+| --- | --- |
+| Linux x86-64 | PyTorch 2.15, CUDA 13.2 |
+| Windows x86-64 | PyTorch 2.15, CPU only |
+| macOS arm64 | PyTorch 2.15, CPU only |
 
-```cmd
+Each wheel serves every Python version supported by that PyTorch build, except the
+free-threaded (`3.14t`) interpreters, which need a source build.
+
+#### Prebuilt wheel
+
+If your environment matches a row above, install from PyPI:
+
+```bash
 pip install torchpairwise
 ```
 
-Note that the Linux and Windows wheels in **PyPI** are compiled with ``torch==2.7.0`` and **Cuda 12.8**.
-We only do a non-strict version checking and a warning will be raised if ``torch``'s and ``torchpairwise``'s
-Cuda versions do not match.
+The wheel requires its own PyTorch minor. With a different PyTorch installed, pip
+upgrades or downgrades `torch` to match. To keep your PyTorch, build from source
+instead. A minor CUDA version difference between PyTorch and torchpairwise only
+raises a warning on import; a major difference is an error.
 
-#### From Source:
+#### From source
 
-Install PyTorch and a C++ compiler compatible with its headers first. CUDA builds
-also require a compatible CUDA toolkit and driver. The tested source builds use
-C++20, selected by PyTorch. From the checkout, run:
+Use a source build for any other PyTorch version, CUDA version or platform. Install
+PyTorch first, then a C++ compiler supported by its headers (C++20 is required). For
+CUDA, also install a toolkit matching `torch.version.cuda`:
 
 ```bash
 python -m pip install setuptools wheel ninja
-python -m pip install --no-build-isolation --no-deps .
+# from PyPI
+python -m pip install --no-build-isolation --no-deps --no-binary torchpairwise torchpairwise
+python -m pip install --no-build-isolation --no-deps .  # or from a checkout
 ```
 
-See [building from source](docs/building.md) for CPU-only builds, version coverage,
-CUDA architecture selection and validation.
+`--no-build-isolation` builds against the PyTorch already installed, not a fresh
+copy, and `--no-binary` skips the prebuilt wheel. CUDA builds compile many kernels; set
+`TORCH_CUDA_ARCH_LIST` to your GPU's architecture (for example `8.6`) and `MAX_JOBS`
+to limit memory use. See [building from source](docs/building.md) for CPU-only
+builds, architecture selection and validation.
 
 #### Standalone C++ / LibTorch:
 
@@ -780,9 +796,9 @@ dense = tp.rbf_kernel(X, Y, gamma=0.2) @ values
 
 # Streamed: carry the numerator and normalizer through one kernel product.
 K = tp.lazy(X, Y, metric="rbf", gamma=0.2, chunk_size=16)
-weighted = K @ values                                  # [N,C+1]
+weighted = K @ values  # [N,C+1]
 prediction = weighted[:, :-1] / weighted[:, -1:].clamp_min(
-    torch.finfo(weighted.dtype).tiny)                   # [N,C]
+    torch.finfo(weighted.dtype).tiny)  # [N,C]
 torch.testing.assert_close(weighted, dense)
 ```
 
@@ -855,10 +871,10 @@ def score(x, y, w):
     return (w * torch.log1p((x - y).square())).sum()
 
 metric = tp.make_pairwise(score, parameters=(weight,), symmetric=True)
-value = metric(X[0], Y[0], mode="single")       # scalar
-A = tp.lazy(X, Y, metric, chunk_size=16)        # logical [20,30]
-loss = A.mean()                               # scalar, no dense matrix
-loss.backward()                               # X, Y and weight receive gradients
+value = metric(X[0], Y[0], mode="single")  # scalar
+A = tp.lazy(X, Y, metric, chunk_size=16)   # logical [20,30]
+loss = A.mean()                            # scalar, no dense matrix
+loss.backward()                            # X, Y and weight receive gradients
 ```
 
 The same adapter supports all-pairs, paired and condensed results, optional
@@ -873,15 +889,15 @@ the features for several consumers:
 from functools import partial
 
 encoder = torch.nn.Sequential(torch.nn.Flatten(), torch.nn.Linear(3*8*8, 16))
-images = torch.rand(20, 3, 8, 8)               # [N,C,H,W]
-references = torch.rand(30, 3, 8, 8)           # [M,C,H,W]
+images = torch.rand(20, 3, 8, 8)      # [N,C,H,W]
+references = torch.rand(30, 3, 8, 8)  # [M,C,H,W]
 comparison = tp.make_feature_pairwise(
     encoder, partial(tp.compare, metric="sqeuclidean"), sample_ndim=3)
 
 prepared = comparison.prepare(images, references)
-A = tp.lazy(prepared, chunk_size=16)          # logical [20,30]
-nearest = A.topk(3, largest=False)            # values / indices: [20,3]
-row_mean = A.mean(-1)                         # [20], same encoded features
+A = tp.lazy(prepared, chunk_size=16)  # logical [20,30]
+nearest = A.topk(3, largest=False)    # values / indices: [20,3]
+row_mean = A.mean(-1)                 # [20], same encoded features
 ```
 
 Each consumer reevaluates comparison tiles. Encoder features and activations
@@ -902,8 +918,8 @@ auto metric = tp::make_pairwise(
     [scale](const at::Tensor& x, const at::Tensor& y) {
       return scale * (x - y).square().sum();
     });
-auto matrix = metric(X, Y);                   // [N,M]
-auto mean = metric.expression(X, Y).reduce("mean", -1); // [N]
+auto matrix = metric(X, Y);                              // [N,M]
+auto mean = metric.expression(X, Y).reduce("mean", -1);  // [N]
 ```
 
 Capture native configuration by value; pass shared trainable tensors through
@@ -951,6 +967,10 @@ and provides an optional backend. [GPyTorch](https://gpytorch.ai/),
 [FALKON](https://falkonml.github.io/falkon/) offer related ideas for matrix-free
 kernel methods and iterative solvers. These acknowledgements describe
 influences, rather than dependencies required by every API.
+
+Full disclosure: this package is both human slop and AI slop. Much of the 1.0
+code, tests and documentation was written by AI coding agents (Claude and Codex)
+under the maintainer's direction.
 
 ## License
 

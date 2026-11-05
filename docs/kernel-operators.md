@@ -7,14 +7,14 @@ aggregates without constructing the full Gram matrix:
 
 ```python
 K = tp.lazy(X, Y, metric="rbf", gamma=0.2)
-product = K @ V                    # [..., N, R]
-energy = K.bilinear(u, v)          # [...] for u:[N], v:[M]
-cross = K.bilinear(L, R)           # [..., P, Q]
-total = K.sum()                   # [...], both sample axes
-average = K.mean(dim=-1)          # [..., N], reference axis
-columns = K.sum(dim=-2)           # [..., M], query axis
-diagonal = K.diagonal()           # [..., min(N, M)]
-block = K.block(rows, columns_ids) # selected dense block
+product = K @ V                     # [..., N, R]
+energy = K.bilinear(u, v)           # [...] for u:[N], v:[M]
+cross = K.bilinear(L, R)            # [..., P, Q]
+total = K.sum()                     # [...], both sample axes
+average = K.mean(dim=-1)            # [..., N], reference axis
+columns = K.sum(dim=-2)             # [..., M], query axis
+diagonal = K.diagonal()             # [..., min(N, M)]
+block = K.block(rows, columns_ids)  # selected dense block
 reverse_product = K.T @ L
 
 self_kernel = tp.lazy(X, metric="polynomial", degree=3, gamma=.2)

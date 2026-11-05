@@ -28,7 +28,7 @@ images = torch.randn(3, 3, 8, 8)      # [N,C,H,W]
 references = torch.randn(5, 3, 8, 8)  # [M,C,H,W]
 comparison = tp.make_feature_pairwise(encoder,
     "sqeuclidean", sample_ndim=3)
-values = comparison(images, references)  # [3,5]
+values = comparison(images, references)                       # [3,5]
 single = comparison(images[0], references[0], mode="single")  # scalar
 ```
 
@@ -54,12 +54,12 @@ flattened into one vector.
 
 ```python
 prepared = comparison.prepare(images, references)
-A = tp.lazy(prepared, chunk_size=2)    # logical [3,5]
-row_mean = A.mean(-1)                 # [3]
-nearest = A.topk(2, largest=False)     # values/indices [3,2]
+A = tp.lazy(prepared, chunk_size=2)  # logical [3,5]
+row_mean = A.mean(-1)                # [3]
+nearest = A.topk(2, largest=False)   # values/indices [3,2]
 V = torch.randn(5, 4)
-product = A.matmul(V)                 # [3,4]
-dense = prepared()                    # [3,5], only when requested
+product = A.matmul(V)  # [3,4]
+dense = prepared()     # [3,5], only when requested
 ```
 
 Neither binding A nor its consumers reruns the encoder. Each consumer evaluates
@@ -70,7 +70,7 @@ preprocessing should change those features. Normal comparison calls encode anew.
 For several different heads, extract features directly:
 
 ```python
-features = comparison.encode(images)           # [3,16]
+features = comparison.encode(images)            # [3,16]
 other_features = comparison.encode(references)  # [5,16]
 cosine = tp.lazy(features, other_features, metric="cosine_distances")
 rbf = tp.lazy(features, other_features, metric="rbf", gamma=0.2)
@@ -147,10 +147,10 @@ merely because the head supports C++.
 
 ```python
 # The caller supplies a loaded encoder.
-features = encoder(images)                  # [N,F]
-other = encoder(references)                  # [M,F]
+features = encoder(images)   # [N,F]
+other = encoder(references)  # [M,F]
 A = tp.lazy(features, other, metric="sqeuclidean")
-mean = A.mean(-1)                            # [N]
+mean = A.mean(-1)  # [N]
 ```
 
 </div>
@@ -159,11 +159,11 @@ mean = A.mean(-1)                            # [N]
 
 ```cpp
 // encoder is the caller's loaded, typed LibTorch module.
-auto features = encoder->forward(images);     // [N,F]
-auto other = encoder->forward(references);    // [M,F]
+auto features = encoder->forward(images);   // [N,F]
+auto other = encoder->forward(references);  // [M,F]
 auto A = torchpairwise::ops::pairwise_expression(
     features, other, "sqeuclidean");
-auto mean = A.reduce("mean", -1);             // [N]
+auto mean = A.reduce("mean", -1);  // [N]
 ```
 
 </div>

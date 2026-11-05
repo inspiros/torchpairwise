@@ -135,10 +135,10 @@ reduction is lazy; scalar N/M reduction is terminal. The two user examples have
 precise meanings:
 
 ```python
-H = G.mean(dim=-1)                  # lazy [...,N,M], reduce D
-values = H.matmul(V)                # tensor [...,N,Q]
-row_max = H.amax(dim=-1)              # tensor [...,N]
-global_max = H.max()                # tensor [...], per batch
+H = G.mean(dim=-1)        # lazy [...,N,M], reduce D
+values = H.matmul(V)      # tensor [...,N,Q]
+row_max = H.amax(dim=-1)  # tensor [...,N]
+global_max = H.max()      # tensor [...], per batch
 ```
 
 \[

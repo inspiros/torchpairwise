@@ -27,8 +27,8 @@ with torch.no_grad():
                             equality=(labels, 0.), rtol=1e-6, max_iter=1500)
     if not fit.converged:
         raise RuntimeError(f"QP status: {fit.status.item()}")
-    alpha = fit.solution                     # [N]
-    raw_scores = K.matmul(alpha * labels)     # [N], before intercept
+    alpha = fit.solution                   # [N]
+    raw_scores = K.matmul(alpha * labels)  # [N], before intercept
 ```
 
 ```cpp

@@ -62,7 +62,7 @@ options = dict(n_fft=8)
 all_pairs = tp.compare(X, Y, metric=metric, **options)  # [2,3]
 paired_Y = Y[:2]
 paired = tp.compare(X, paired_Y, metric=metric, mode="paired", **options)  # [2]
-condensed = tp.compare(X, metric=metric, mode="condensed", **options)  # [1]
+condensed = tp.compare(X, metric=metric, mode="condensed", **options)      # [1]
 x, y = X[0], Y[0]
 single = tp.compare(x, y, metric=metric, mode="single", **options)  # scalar
 ```
@@ -84,7 +84,8 @@ options.n_fft = 8;
 auto all_pairs = tp::compare(X, Y, metric, "all_pairs", options);  // [2,3]
 auto paired_Y = Y.narrow(0, 0, 2);
 auto paired = tp::compare(X, paired_Y, metric, "paired", options);  // [2]
-auto condensed = tp::compare(X, c10::nullopt, metric, "condensed", options);  // [1]
+// [1]
+auto condensed = tp::compare(X, c10::nullopt, metric, "condensed", options);
 auto x = X[0], y = Y[0];
 auto single = tp::compare(x, y, metric, "single", options);  // scalar
 ```

@@ -127,9 +127,9 @@ s::PairwiseOptions options;
 options.chunk_size = 128;
 options.comparison.gamma = 0.2;
 auto K = s::kernel(X, Y, "rbf", options);
-auto product = K.matmul(V);                  // [...,N,C]
-auto spread = K.std(-1, 0.);                 // [...,N]
-auto neighbors = K.topk(3);                  // values and indices
+auto product = K.matmul(V);   // [...,N,C]
+auto spread = K.std(-1, 0.);  // [...,N]
+auto neighbors = K.topk(3);   // values and indices
 ```
 
 Short C++ scalar factories return the existing `ScalarExpression`, exposing its
@@ -670,7 +670,7 @@ Tensors. This distinction makes C++ return types static:
 ```cpp
 #include <ops/residual_operations.h>
 auto g = ops::residual_operator(x, y, "abs", 64, 128);
-auto mae = g.mean(-1);                    // ScalarExpression
+auto mae = g.mean(-1);  // ScalarExpression
 // Even a dimension list selecting only D is a terminal Tensor overload.
 auto row_spread = g.var(std::vector<int64_t>{-2,-1}, 0.);
 auto mean_features = g.mean(std::vector<int64_t>{-2});
@@ -699,17 +699,17 @@ image_options.data_range = 1.;
 image_options.window_size = 3;
 image_options.chunk_size = 2;
 auto maps = ops::image_map_operator(images, references, "ssim", image_options);
-auto pooled = maps.mean();                  // ScalarExpression
+auto pooled = maps.mean();  // ScalarExpression
 // Ordered spatial mean -> channel maximum -> common scalar consumer.
-auto channels = maps.events().mean({-2,-1}); // ImageMapExpression
-auto [channel_values, channel_ids] = channels.topk(2); // terminal [...,N,M,2]
+auto channels = maps.events().mean({-2,-1});            // ImageMapExpression
+auto [channel_values, channel_ids] = channels.topk(2);  // terminal [...,N,M,2]
 // Event-only keepdim is the second mean argument, or third var/std argument.
 auto kept = maps.events().mean({-2,-1}, true);
 auto strongest_channel = channels.max({-1}).scalar();
 auto [scores, indices] = strongest_channel.topk(2, -1, true);
 auto channel_mean = channels.reduce_samples("mean", {-2});  // Tensor [...,N,C]
 auto joint = maps.events().reduce_samples(
-    "var", {-4,-2,-1}, false, 0.);           // Tensor [...,N,C]
+    "var", {-4,-2,-1}, false, 0.);  // Tensor [...,N,C]
 ```
 
 `ImageMapOperator::topk` and `ImageMapExpression::topk` select one integer event

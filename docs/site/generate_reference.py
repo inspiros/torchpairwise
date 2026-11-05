@@ -76,11 +76,29 @@ def native_catalog():
     return [dict(zip(keys,row)) for row in rows]
 
 
+def align_comments(code, marker, limit):
+    # Trailing comments on consecutive lines share one column (longest code + 2);
+    # when that passes the line limit, the longest line's comment moves above it.
+    def place(run):
+        if not run:return []
+        column=max(len(c) for c,_ in run)+2
+        if any(column+len(t)>limit for _,t in run):
+            i=max(range(len(run)),key=lambda k:len(run[k][0]));c,t=run[i]
+            return place(run[:i])+[c[:len(c)-len(c.lstrip())]+t,c]+place(run[i+1:])
+        return [c.ljust(column)+t for c,t in run]
+    lines,run=[],[]
+    for line in code.rstrip().split('\n'):
+        match=re.fullmatch(r'(\s*[^\s'+re.escape(marker[0])+r'].*?\S)\s+('+re.escape(marker)+r' .*)',line)
+        if match:run.append(match.groups());continue
+        lines+=place(run)+[line];run=[]
+    return '\n'.join(lines+place(run))
+
+
 def code_pair(python, cpp):
     return '\n'.join(['<div class="code-pair">','<div class="code-panel" data-language="python">',
-        '<div class="code-label">Python</div>','', '```python',python.rstrip(),'```','', '</div>',
+        '<div class="code-label">Python</div>','', '```python',align_comments(python,'#',88),'```','', '</div>',
         '<div class="code-panel" data-language="cpp">','<div class="code-label">C++ / LibTorch</div>',
-        '', '```cpp',cpp.rstrip(),'```','', '</div>','</div>'])
+        '', '```cpp',align_comments(cpp,'//',80),'```','', '</div>','</div>'])
 
 
 def badges(c, small=False):

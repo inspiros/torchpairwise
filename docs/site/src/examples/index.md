@@ -244,7 +244,8 @@ solve.rtol = 1e-6;
 solve.atol = 1e-10;
 auto fit = s::linalg::eigh(A, solve);
 TORCH_CHECK(fit.converged.all().item<bool>(), "Eigensolve did not converge");
-auto coordinates = fit.eigenvectors * fit.eigenvalues.clamp_min(0).sqrt(); // [N,4]
+// [N,4]
+auto coordinates = fit.eigenvectors * fit.eigenvalues.clamp_min(0).sqrt();
 ```
 
 </div>
@@ -276,12 +277,12 @@ Z_{\rm new}=C_c U_k\Lambda_k^{-1/2}\in\mathbb R^{T\times k}
 ```python
 # Inside the no-grad scope above; X_new:[T,D]. Reuse the fitted eigensolve.
 K = tp.lazy(X, metric="rbf", gamma=0.2)
-reference_mean = K.reduce("mean", dim=-2)       # [N], fit once
+reference_mean = K.reduce("mean", dim=-2)  # [N], fit once
 cutoff = torch.finfo(X.dtype).eps * X.shape[0] * fit.eigenvalues.abs().max()
 positive = fit.eigenvalues > cutoff
 safe = torch.where(positive, fit.eigenvalues, torch.ones_like(fit.eigenvalues))
 inverse_root = torch.where(positive, safe.rsqrt(), torch.zeros_like(safe))
-weights = fit.eigenvectors * inverse_root     # [N,k]
+weights = fit.eigenvectors * inverse_root  # [N,k]
 C = tp.lazy(X_new, X, metric="rbf", gamma=0.2)
 held_out = C.centered(reference_mean).matmul(weights)  # [T,k]
 ```
@@ -293,7 +294,7 @@ held_out = C.centered(reference_mean).matmul(weights)  # [T,k]
 ```cpp
 // Inside the no-grad scope above; X_new:[T,D], same training references/options.
 auto K = s::kernel(X, c10::nullopt, "rbf", options);
-auto reference_mean = K.reduce("mean", -2);   // [N], fit once
+auto reference_mean = K.reduce("mean", -2);  // [N], fit once
 auto cutoff = std::numeric_limits<double>::epsilon() * X.size(0) *
               fit.eigenvalues.abs().max();  // X is float64 in this example
 auto positive = fit.eigenvalues > cutoff;
@@ -340,7 +341,7 @@ This regularizer differs from adding \(\alpha I\) in implicit feature space.
 with torch.no_grad():
     K = tp.lazy(X, metric="rbf", gamma=0.3)
     P = tp.group_projection(labels, like=X)
-    R = K - P @ K                  # (I-P)K
+    R = K - P @ K  # (I-P)K
     Sw = R.mT @ R
     Sw = Sw + 0.2 * tp.eye_like(Sw)  # logical [N,N]
     # For class block F:[N,C], solve Sw Z = F via tp.linalg.cg(Sw, F).

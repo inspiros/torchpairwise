@@ -41,12 +41,12 @@ with torch.no_grad():
     D = tp.diag_embed(d.sqrt())
     K = tp.lazy(X, metric="rbf", gamma=0.2)
     K = K + 2. * tp.eye_like(K)
-    A = D @ K @ D              # D(K+2I)D
-    M = tp.linalg.jacobi(3. * d)             # diagonal(A) = 3*d
+    A = D @ K @ D                 # D(K+2I)D
+    M = tp.linalg.jacobi(3. * d)  # diagonal(A) = 3*d
     fit = tp.linalg.cg(A, targets, preconditioner=M, rtol=1e-8)
     if not fit.converged.all():
         raise RuntimeError(f"PCG status: {fit.status.tolist()}")
-    weights = fit.solution                  # [N,R]
+    weights = fit.solution  # [N,R]
 ```
 
 ```cpp
@@ -63,7 +63,7 @@ solve.preconditioner = s::linalg::jacobi(3. * d);
 solve.rtol = 1e-8;
 auto fit = s::linalg::cg(A, targets, solve);
 TORCH_CHECK(fit.converged.all().item<bool>(), "PCG did not converge");
-auto weights = fit.solution;                // [N,R]
+auto weights = fit.solution;  // [N,R]
 ```
 
 ## Low-Rank Inverse Actions
@@ -139,7 +139,7 @@ preconditioner; a larger L increases setup and per-iteration cost.
 with torch.no_grad():
     K = tp.lazy(X, metric="rbf", gamma=0.2)
     rows = torch.arange(X.shape[-2], device=X.device)
-    C, W = K.block(rows, ids), K.block(ids, ids)   # stored [N,L], [L,L]
+    C, W = K.block(rows, ids), K.block(ids, ids)  # stored [N,L], [L,L]
     M = tp.linalg.nystrom_inverse(C, W, 0.03, jitter=1e-8)
     A = K + 0.03 * tp.eye_like(K)
     fit = tp.linalg.cg(A, targets, preconditioner=M, rtol=1e-8)

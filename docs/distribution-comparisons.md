@@ -190,8 +190,8 @@ estimate covariances from points. Three structured entry points keep the extra
 inputs clear:
 
 ```python
-means = torch.rand(3, 2)                        # [N,D]
-covariances = torch.eye(2).expand(3, 2, 2)       # [N,D,D]
+means = torch.rand(3, 2)                    # [N,D]
+covariances = torch.eye(2).expand(3, 2, 2)  # [N,D,D]
 matrix = tp.gaussian_wasserstein_distances(means, covariances)
 paired = tp.paired_gaussian_wasserstein_distances(
     means, covariances, means + 1, covariances * 2)

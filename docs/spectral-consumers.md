@@ -44,9 +44,9 @@ with torch.no_grad():
     exact = tp.linalg.trace(A, method="exact", block_size=16)
     estimate = tp.linalg.trace(A, method="hutchinson", num_probes=64,
                               seed=17, block_size=16)
-    value = estimate.estimate                # [...] float64
+    value = estimate.estimate                 # [...] float64
     sampling_error = estimate.standard_error  # [...] float64
-    samples = estimate.samples               # [...,64] float64
+    samples = estimate.samples                # [...,64] float64
 ```
 
 ```cpp
@@ -104,8 +104,8 @@ z^\mathsf T\log(A)z\approx\|z\|^2e_1^\mathsf T\log(T)e_1
 with torch.no_grad():
     result = tp.linalg.logdet(A, method="slq", num_probes=64,
                               seed=17, max_iter=32, block_size=8)
-    log_determinant = result.estimate        # [...] float64
-    probe_steps = result.iterations         # [...,64] int64
+    log_determinant = result.estimate  # [...] float64
+    probe_steps = result.iterations    # [...,64] int64
     # Small problems only: explicitly materializes A for a Cholesky reference.
     exact = tp.linalg.logdet(A, method="exact", block_size=16)
 ```
@@ -148,7 +148,7 @@ means \(f(\lambda)=\exp(\mathrm{scale}\,\lambda)\); for whitening,
 # L:[N,N] symmetric graph Laplacian as a lazy pairwise object; V:[N,R]
 with torch.no_grad():
     diffusion = tp.linalg.expm_multiply(L, V, scale=-.5, max_iter=32)
-    diffused = diffusion.action              # [N,R], same dtype as V
+    diffused = diffusion.action  # [N,R], same dtype as V
     whitened = tp.linalg.inv_sqrt_multiply(A, V, max_iter=32).action
 ```
 

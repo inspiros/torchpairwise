@@ -8,8 +8,8 @@ requires a compatible CUDA build and NVIDIA driver.
 
 ## Python Source Installation
 
-These examples target the current source API. Published 0.3 wheels have an older
-interface. Install PyTorch for your platform first, then build this checkout:
+These examples target TorchPairwise 1.0. Install PyTorch for your platform first,
+then build this checkout against that installation:
 
 ```sh
 git clone https://github.com/inspiros/torchpairwise.git

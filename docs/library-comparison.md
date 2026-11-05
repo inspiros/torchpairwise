@@ -2,7 +2,7 @@
 
 External libraries reviewed against official documentation and source on
 2026-10-29; local operator coverage updated on 2026-10-31. This compares
-the current torchpairwise development tree, not the published 0.3 wheel. It is a
+the API included in TorchPairwise 1.0. It is a
 capability comparison, not a runtime ranking. Features describe the listed APIs;
 users can compose additional operations in each framework.
 

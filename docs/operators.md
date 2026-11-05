@@ -20,9 +20,9 @@ V = torch.randn(30, 4)
 
 A = tp.lazy(X, Y, metric="sqeuclidean", chunk_size=16)
 nearest = A.topk(3, largest=False)       # values/indices: [20,3]
-row_mean = A.mean(dim=-1)               # tensor [20]
-threshold = A.quantile(0.9, dim=-1)     # exact row thresholds, tensor [20]
-smoothed = (-0.5 * A).softmax_matmul(V) # tensor [20,4]
+row_mean = A.mean(dim=-1)                # tensor [20]
+threshold = A.quantile(0.9, dim=-1)      # exact row thresholds, tensor [20]
+smoothed = (-0.5 * A).softmax_matmul(V)  # tensor [20,4]
 ```
 
 The binding stores references and options. It creates no comparison matrix or
@@ -118,9 +118,9 @@ axes. Dimensioned min/max return values and indices; `amin`/`amax` return values
 ```python
 K = tp.lazy(X, Y, metric="rbf", gamma=0.2)
 U = torch.randn(20, 2)
-product = K.matmul(V)                  # [20,4]
-form = K.bilinear(U, V)               # [2,4]
-column_spread = K.std(-2, correction=0) # [30]
+product = K.matmul(V)                    # [20,4]
+form = K.bilinear(U, V)                  # [2,4]
+column_spread = K.std(-2, correction=0)  # [30]
 confidence = torch.ones(30)
 weighted = A.weighted_var(confidence, dim=-1, correction=0)  # [20]
 ```
@@ -143,9 +143,9 @@ Supported scalar entry operations are `+`, `-`, entrywise `*`, unary negation,
 ```python
 K1 = tp.lazy(X, Y, metric="rbf", gamma=0.2)
 K2 = tp.lazy(X, Y, metric="laplacian", gamma=0.3)
-mixture = 0.7 * K1 + 0.3 * K2          # lazy [...,N,M]
-features = mixture.matmul(V)           # tensor [...,N,4]
-alignment = (K1 * K2).sum()            # tensor [...], uncentered entry inner product
+mixture = 0.7 * K1 + 0.3 * K2  # lazy [...,N,M]
+features = mixture.matmul(V)   # tensor [...,N,4]
+alignment = (K1 * K2).sum()    # tensor [...], uncentered entry inner product
 ```
 
 Tensor scalar factors must have zero dimensions. Row/column weights have shapes
@@ -183,11 +183,12 @@ complete rows in budgeted blocks; see [exact selection](operator-statistics.md#e
 
 ```python
 G = tp.residual_operator(X, Y, transform="abs", feature_chunk_size=32)
-mae = G.mean(-1)                  # lazy [20,30], contracts D
+mae = G.mean(-1)  # lazy [20,30], contracts D
 nearest_mae = mae.topk(3, largest=False)
 largest_coordinates = G.topk(2)  # tensors [20,30,2], selects D within each pair
-mean_by_feature = G.mean(-2)      # tensor [20,6], contracts M
-joint_spread = G.var((-2,-1), correction=0)  # tensor [20], joint M/D
+mean_by_feature = G.mean(-2)     # tensor [20,6], contracts M
+# tensor [20], joint M/D
+joint_spread = G.var((-2,-1), correction=0)
 ```
 
 Images retain several event axes, so partial event chains are useful:
@@ -197,12 +198,12 @@ images = torch.rand(4, 3, 12, 14)
 references = torch.rand(7, 3, 12, 14)
 G = tp.image_map_operator(images, references, comparison="absolute_error",
                           chunk_size=2)
-H = G.mean((-2,-1))               # lazy [4,7,3], spatial mean
-A = H.max(-1)                    # lazy [4,7], maximum channel error
+H = G.mean((-2,-1))  # lazy [4,7,3], spatial mean
+A = H.max(-1)        # lazy [4,7], maximum channel error
 nearest_images = A.topk(2, largest=False)
-mean_per_channel = H.mean(-2)     # tensor [4,3]; -2 now means M
+mean_per_channel = H.mean(-2)                     # tensor [4,3]; -2 now means M
 joint_variance = G.var((-4,-2,-1), correction=0)  # tensor [4,3]
-kept = G.mean((-2,-1), keepdim=True)  # lazy [4,7,3,1,1]
+kept = G.mean((-2,-1), keepdim=True)              # lazy [4,7,3,1,1]
 ```
 
 `joint_variance` reduces M/H/W once for each N/C. In contrast,

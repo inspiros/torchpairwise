@@ -22,8 +22,8 @@ D = tp.euclidean_distances(X, Y)  # [10,8]
 For Hausdorff or Chamfer, one sample is a whole collection of vectors:
 
 ```python
-X = torch.rand(10, 1000, 3)  # Ten clouds, 1000 XYZ points per cloud.
-Y = torch.rand(8, 700, 3)    # Eight clouds, 700 XYZ points per cloud.
+X = torch.rand(10, 1000, 3)     # Ten clouds, 1000 XYZ points per cloud.
+Y = torch.rand(8, 700, 3)       # Eight clouds, 700 XYZ points per cloud.
 D = tp.chamfer_distances(X, Y)  # [10,8], one distance per cloud pair.
 ```
 

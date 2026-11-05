@@ -162,10 +162,10 @@ compare = tp.make_feature_pairwise(
     encoder, "sqeuclidean", sample_ndim=3)
 features_x = compare.encode(images_x)  # [...,N,*feature]
 prepared = compare.prepare(images_x, images_y)
-A = tp.lazy(prepared, chunk_size=16)   # logical [...,N,M]
+A = tp.lazy(prepared, chunk_size=16)  # logical [...,N,M]
 mean = A.mean(-1)
 nearest = A.topk(3, largest=False)
-dense = prepared()                     # only materializes when requested
+dense = prepared()  # only materializes when requested
 ```
 
 `encode` returns an ordinary feature tree for arbitrary other heads. `prepare`

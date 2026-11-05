@@ -1,6 +1,6 @@
 # Multidimensional Point-Set Transport
 
-The development API provides three distinct point-set comparisons:
+The point-set API provides three distinct comparisons:
 `wasserstein_distances`, `sliced_wasserstein_distances` and `sinkhorn_divergences`.
 The [shared-grid 1D histogram Wasserstein](missing-and-ordered-data.md) API retains
 its separate histogram-mass interpretation. No new runtime dependency is needed.

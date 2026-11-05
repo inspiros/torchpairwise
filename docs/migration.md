@@ -21,15 +21,15 @@ exported alongside `paired_distances` and `condensed_distances`; `cdist` and
 `pdist` retain their existing signatures/defaults. See [API naming](api-design.md).
 
 Existing named vector functions retain their all-pairs meaning: `[N,D]` and
-`[M,D]` produce `[N,M]`. The development API also exposes corresponding-row
+`[M,D]` produce `[N,M]`. Version 1.0 also exposes corresponding-row
 paired results and condensed self comparisons:
 
 ```python
 import torchpairwise as tp
 
-matrix = tp.cdist(X, Y, metric="canberra")        # [N,M]
+matrix = tp.cdist(X, Y, metric="canberra")             # [N,M]
 paired = tp.paired_distances(X, Y, metric="canberra")  # [N], same N required
-condensed = tp.pdist(X, metric="canberra")        # [N*(N-1)//2]
+condensed = tp.pdist(X, metric="canberra")             # [N*(N-1)//2]
 ```
 
 Use `pairwise_kernels`, `paired_kernels` and `condensed_kernels` for similarities.
@@ -60,7 +60,7 @@ evaluate a comparison only when a terminal consumer needs tiles:
 ```python
 A = tp.lazy(X, Y, metric="euclidean")
 nearest = A.topk(8, largest=False)  # values/indices, no dense N*M matrix
-average = A.mean(-1)              # tensor [...,N], reduce M
+average = A.mean(-1)                # tensor [...,N], reduce M
 ```
 
 Kernel metrics also provide vector geometry methods. Use `tp.as_lazy` to apply
@@ -80,7 +80,7 @@ values and indices; use `amin(dim)` and `amax(dim)` for values alone.
 
 ## Review Behavior Affected by Correctness Fixes
 
-| Area | Development behavior |
+| Area | Version 1.0 Behavior |
 | --- | --- |
 | Default kernel gamma | Polynomial, sigmoid, RBF and Laplacian use `1/D`, including batched inputs. |
 | Inferred statistics | Self standardized Euclidean and Mahalanobis infer detached statistics independently within each batch. Cross-input and paired calls require explicit `V`/`VI`. |

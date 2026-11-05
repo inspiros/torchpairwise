@@ -11,17 +11,17 @@ pairwise map until a consumer runs. Inputs are `[...,N,C,H,W]` and
 G = tp.image_map_operator(X, Y, comparison="absolute_error", chunk_size=4)
 worst_pixel = G.max(dim=(-3, -2, -1))  # lazy [...,N,M]
 nearest = worst_pixel.topk(8, largest=False)
-channels = G.mean(dim=(-2, -1))      # lazy [...,N,M,C]
-channel_worst = channels.max(-1)    # lazy [...,N,M]
+channels = G.mean(dim=(-2, -1))   # lazy [...,N,M,C]
+channel_worst = channels.max(-1)  # lazy [...,N,M]
 nearest_channel_worst = channel_worst.topk(8, largest=False)
-reference_average = channels.mean(-2)  # tensor [...,N,C]; -2 is now M
+reference_average = channels.mean(-2)                   # tensor [...,N,C]; -2 is now M
 joint_variance = G.var(dim=(-4, -2, -1), correction=0)  # tensor [...,N,C]
 
 S = tp.image_map_operator(
     X, Y, comparison="ssim", data_range=1., window_size=11, chunk_size=4,
 )
 local_variation = S.var(correction=0)  # lazy [...,N,M]
-pooled = S.mean()                    # lazy [...,N,M]
+pooled = S.mean()                      # lazy [...,N,M]
 smoothed = (gamma * pooled).softmax_matmul(V)
 ```
 
@@ -84,9 +84,9 @@ with k. Batch, N/M and other event axes persist:
 
 ```python
 G = tp.image_map_operator(X, Y, comparison="absolute_error", chunk_size=4)
-columns = G.topk(2, dim=-1)       # [...,N,M,C,H,2], two columns per row/channel
-channels = G.mean((-2,-1))       # lazy [...,N,M,C]
-strongest = channels.topk(2)     # [...,N,M,2], two channels per pair
+columns = G.topk(2, dim=-1)   # [...,N,M,C,H,2], two columns per row/channel
+channels = G.mean((-2,-1))    # lazy [...,N,M,C]
+strongest = channels.topk(2)  # [...,N,M,2], two channels per pair
 ```
 
 Indices refer only to the selected axis, after any preceding reductions. The

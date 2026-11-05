@@ -52,9 +52,9 @@ with torch.no_grad():
     exact = tp.linalg.trace(A, method="exact", block_size=16)
     estimate = tp.linalg.trace(A, method="hutchinson", num_probes=64,
                               seed=17, block_size=16)
-    value = estimate.estimate                # [...] float64
+    value = estimate.estimate                 # [...] float64
     sampling_error = estimate.standard_error  # [...] float64
-    samples = estimate.samples               # [...,64] float64
+    samples = estimate.samples                # [...,64] float64
 ```
 
 </div>
@@ -123,8 +123,8 @@ z^\mathsf T\log(A)z\approx\|z\|^2e_1^\mathsf T\log(T)e_1
 with torch.no_grad():
     result = tp.linalg.logdet(A, method="slq", num_probes=64,
                               seed=17, max_iter=32, block_size=8)
-    log_determinant = result.estimate        # [...] float64
-    probe_steps = result.iterations         # [...,64] int64
+    log_determinant = result.estimate  # [...] float64
+    probe_steps = result.iterations    # [...,64] int64
     # Small problems only: explicitly materializes A for a Cholesky reference.
     exact = tp.linalg.logdet(A, method="exact", block_size=16)
 ```
@@ -178,7 +178,7 @@ means \(f(\lambda)=\exp(\mathrm{scale}\,\lambda)\); for whitening,
 # L:[N,N] symmetric graph Laplacian as a lazy pairwise object; V:[N,R]
 with torch.no_grad():
     diffusion = tp.linalg.expm_multiply(L, V, scale=-.5, max_iter=32)
-    diffused = diffusion.action              # [N,R], same dtype as V
+    diffused = diffusion.action  # [N,R], same dtype as V
     whitened = tp.linalg.inv_sqrt_multiply(A, V, max_iter=32).action
 ```
 
@@ -329,7 +329,7 @@ with torch.no_grad():
     A = K + noise * tp.eye_like(K)
     cache = tp.linalg.love_cache(A, rank=32, initial=targets)  # root:[N,32]
     cross = tp.lazy(test, X, metric="rbf", gamma=.2)
-    prior = tp.lazy(test, metric="rbf", gamma=.2).diagonal()   # [T]
+    prior = tp.lazy(test, metric="rbf", gamma=.2).diagonal()       # [T]
     variance = tp.linalg.predictive_variance(cache, cross, prior)  # [T]
 ```
 
@@ -345,7 +345,7 @@ tp::PairwiseOperationOptions source;
 source.comparison.gamma = .2;
 auto K = tp::pairwise_expression(X, c10::nullopt, "rbf", true, source);
 auto A = tp::aslinearoperator(K).add_diagonal(noise);
-auto cache = tp::love_cache(A, 32, targets);                   // root:[N,32]
+auto cache = tp::love_cache(A, 32, targets);  // root:[N,32]
 auto cross = tp::aslinearoperator(
     tp::pairwise_expression(test, X, "rbf", true, source));
 auto prior = tp::pairwise_expression(test, c10::nullopt, "rbf", true, source)
@@ -387,7 +387,7 @@ with torch.no_grad():
     seeds = tp.neighbors.kmeans_plusplus(D2, 16, generator=generator)  # [16]
     pivoted = tp.linalg.pivoted_cholesky(
         tp.lazy(X, metric="rbf", gamma=.2), rank=16, rtol=1e-6)
-    factor = pivoted.factor                   # [N,16], padded with zero columns
+    factor = pivoted.factor  # [N,16], padded with zero columns
 ```
 
 </div>
@@ -403,7 +403,7 @@ auto D = tp::aslinearoperator(
 auto [indices, insertion] = tp::farthest_point_sampling(D, 16);  // [16], [16]
 auto D2 = tp::aslinearoperator(
     tp::pairwise_expression(X, c10::nullopt, "sqeuclidean"));
-auto seeds = tp::kmeans_plusplus(D2, 16);                        // [16]
+auto seeds = tp::kmeans_plusplus(D2, 16);  // [16]
 tp::PairwiseOperationOptions source;
 source.comparison.gamma = .2;
 auto K = tp::aslinearoperator(

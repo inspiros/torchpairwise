@@ -130,8 +130,8 @@ class ImageNeighborhood(torch.nn.Module):
     def forward(self, images, references, values):
         errors = tp.image_map_operator(
             images, references, comparison="absolute_error", chunk_size=2)
-        channels = errors.mean((-2,-1))    # lazy [...,N,M,C]
-        scores = -channels.max(-1)        # lazy scalar [...,N,M]
+        channels = errors.mean((-2,-1))  # lazy [...,N,M,C]
+        scores = -channels.max(-1)       # lazy scalar [...,N,M]
         return (scores.softmax_matmul(values),
                 errors.var((-4,-2,-1), correction=0))
 

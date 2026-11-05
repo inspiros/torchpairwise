@@ -3,15 +3,17 @@
 ```python
 import torchpairwise as tp
 
-D = tp.lazy(X, metric="sqeuclidean")                        # X:[N,D], labels:[N]
+D = tp.lazy(X, metric="sqeuclidean")  # X:[N,D], labels:[N]
 positives = tp.masks.same_group(labels) & ~tp.masks.diagonal()
 negatives = tp.masks.different_group(labels)
 
-hardest_positive = D.amax(-1, mask=positives)               # [N]
-hardest_negative = D.min(-1, mask=negatives)                # values, indices [N]
-mean_positive = D.mean(-1, mask=positives)                  # normalized by eligible count
-attention = (-D).softmax_matmul(V, mask=tp.masks.causal())  # V:[N,C]
-graph = tp.lazy(X, metric="rbf", gamma=.5).masked(D < radius ** 2)  # lazy masked kernel
+hardest_positive = D.amax(-1, mask=positives)  # [N]
+hardest_negative = D.min(-1, mask=negatives)   # values, indices [N]
+mean_positive = D.mean(-1, mask=positives)     # normalized by eligible count
+# V:[N,C]
+attention = (-D).softmax_matmul(V, mask=tp.masks.causal())
+# lazy masked kernel
+graph = tp.lazy(X, metric="rbf", gamma=.5).masked(D < radius ** 2)
 ```
 
 A mask selects the eligible `(i, j)` entries of a logical `[...,N,M]` matrix

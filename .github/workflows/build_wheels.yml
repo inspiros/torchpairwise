@@ -27,6 +27,38 @@ jobs:
           name: artifacts-sdist
           path: dist/*.tar.gz
 
+  build_linux:
+    name: Wheel on manylinux_2_28 (${{ matrix.variant }})
+    runs-on: ubuntu-22.04
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        # Built in a manylinux_2_28 container, the glibc baseline of PyTorch's
+        # own Linux wheels, so the wheel installs wherever torch does.
+        # The artifact keeps the runner name that test_wheels downloads.
+        torch-version: [ 2.15.0 ]
+        variant: [ cu132 ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+
+      - name: Build and repair wheel
+        run: |
+          docker run --rm -v "$PWD:/io" -w /io \
+            -e TORCH_VERSION=${{ matrix.torch-version }} -e TORCH_VARIANT=${{ matrix.variant }} \
+            -e MAX_JOBS=2 -e TORCHPAIRWISE_PY_LIMITED_API=1 \
+            quay.io/pypa/manylinux_2_28_x86_64:2026.11.01-2 \
+            bash .github/workflows/cuda/manylinux.sh
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-bdist-ubuntu-22.04-${{ matrix.variant }}
+          path: ./wheelhouse/*.whl
+
   build_wheels:
     name: Wheel on ${{ matrix.target.os }} (${{ matrix.target.variant }})
     runs-on: ${{ matrix.target.os }}
@@ -35,8 +67,8 @@ jobs:
       fail-fast: false
       matrix:
         # Wheels pin the torch minor they are built against (see setup.py).
-        # PyPI wheels follow the latest torch's PyPI defaults: CUDA on Linux,
-        # CPU on macOS and Windows. The Windows CUDA wheel matches torch's
+        # PyPI wheels follow the latest torch's PyPI defaults: CUDA on Linux
+        # (build_linux), CPU on macOS and Windows. The Windows CUDA wheel matches torch's
         # cu132 index; it carries a +cu132 local version, which PyPI rejects,
         # so its artifact is named extra-* and publish.yml skips it.
         # Each wheel targets the CPython stable ABI, so one build per platform
@@ -44,7 +76,6 @@ jobs:
         python-version: [ '3.11' ]
         torch-version: [ 2.15.0 ]
         target:
-          - { os: ubuntu-22.04, variant: cu132, artifact: artifacts, local: '' }
           - { os: macos-14, variant: cpu, artifact: artifacts, local: '' }
           - { os: windows-2022, variant: cpu, artifact: artifacts, local: '' }
           - { os: windows-2022, variant: cu132, artifact: extra, local: cu132 }
@@ -55,10 +86,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Free Disk Space (Ubuntu)
-        if: ${{ runner.os == 'Linux' }}
-        uses: jlumbroso/free-disk-space@main
 
       - name: Install ninja-build
         uses: seanmiddleditch/gha-setup-ninja@master
@@ -92,15 +119,6 @@ jobs:
           TORCHPAIRWISE_PY_LIMITED_API: '1'
           TORCHPAIRWISE_LOCAL_VERSION: ${{ matrix.target.local }}
 
-      - name: Repair wheel (Ubuntu)
-        if: ${{ runner.os == 'Linux' }}
-        run: |
-          mkdir dist
-          mv wheelhouse/*.whl dist/
-          pip install auditwheel patchelf
-          python tools/packaging/audit_torch_extension.py repair --plat manylinux_2_34_x86_64 -w wheelhouse dist/*.whl
-          rm -r dist
-
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
@@ -109,7 +127,7 @@ jobs:
 
   test_wheels:
     name: Test ${{ matrix.target.os }} (${{ matrix.target.variant }}) wheel on cp-${{ matrix.python-version }}
-    needs: build_wheels
+    needs: [ build_linux, build_wheels ]
     runs-on: ${{ matrix.target.os }}
     strategy:
       fail-fast: false

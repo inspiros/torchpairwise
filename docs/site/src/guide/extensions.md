@@ -56,7 +56,7 @@ import mypkg          # loads the extension above
 # Prints the schema the C++ signature must match.
 print(torch.ops.torchpairwise.rbf_kernel.default._schema)
 y = torch.ops.mypkg.rbf_predict(x, centers, coefficients, 0.5)
-y.sum().backward()    # gradients flow through torchpairwise
+y.sum().backward()  # gradients flow through torchpairwise
 ```
 
 </div>

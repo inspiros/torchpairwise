@@ -13,13 +13,13 @@ features = A.matmul(values)
 closest = A.amin(-1)
 
 E = tp.lazy(tokens, other_tokens, metric="levenshtein")
-edit_counts = E.sum(-1)             # int64
-mean_count = E.mean()              # float64
+edit_counts = E.sum(-1)              # int64
+mean_count = E.mean()                # float64
 weighted_counts = E.matmul(weights)  # weights' float32/float64 dtype
 
 S = tp.lazy(clouds, other_clouds, metric="mmd_statistic", metric="polynomial", degree=3, gamma=0.1,
                          estimator="unbiased")
-statistic_sum = S.sum()            # signed; negative values remain negative
+statistic_sum = S.sum()  # signed; negative values remain negative
 ```
 
 Sequence layouts remain `[...,N,T,D]` with prefix lengths `[...,N]`; token

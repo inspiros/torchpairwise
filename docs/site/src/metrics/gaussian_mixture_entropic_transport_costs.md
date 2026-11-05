@@ -62,7 +62,7 @@ metric = "gaussian_mixture_entropic_transport_costs"
 all_pairs = tp.compare(X, Y, metric=metric)  # [2,3]
 paired_Y = tuple(t[:2] for t in Y)
 paired = tp.compare(X, paired_Y, metric=metric, mode="paired")  # [2]
-condensed = tp.compare(X, metric=metric, mode="condensed")  # [1]
+condensed = tp.compare(X, metric=metric, mode="condensed")      # [1]
 x, y = tuple(t[0] for t in X), tuple(t[0] for t in Y)
 single = tp.compare(x, y, metric=metric, mode="single")  # scalar
 ```
@@ -85,7 +85,8 @@ tp::ComparisonOptions options;
 auto all_pairs = tp::compare(X, Y, metric, "all_pairs", options);  // [2,3]
 tp::ComparisonCollection paired_Y{Y[0].narrow(0, 0, 2), Y[1].narrow(0, 0, 2), Y[2].narrow(0, 0, 2)};
 auto paired = tp::compare(X, paired_Y, metric, "paired", options);  // [2]
-auto condensed = tp::compare(X, c10::nullopt, metric, "condensed", options);  // [1]
+// [1]
+auto condensed = tp::compare(X, c10::nullopt, metric, "condensed", options);
 tp::ComparisonCollection x{X[0][0], X[1][0], X[2][0]};
 tp::ComparisonCollection y{Y[0][0], Y[1][0], Y[2][0]};
 auto single = tp::compare(x, y, metric, "single", options);  // scalar

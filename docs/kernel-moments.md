@@ -5,7 +5,7 @@ outer products or building a target feature bank of shape `[M,D,D]`:
 
 ```python
 K = tp.lazy(X, Y, metric="rbf", gamma=.2, chunk_size=64)
-second = K.residual_outer_product()                         # [...,N,D,D]
+second = K.residual_outer_product()  # [...,N,D,D]
 mean_second = K.residual_outer_product(normalize=True)
 local_covariance = K.residual_outer_product(normalize=True, center=True)
 # Functional form:

@@ -17,9 +17,9 @@ also be passed to `tp.lazy`.
 ```python
 # X: [N,D], Y: [M,D], V: [M,C]
 A = tp.lazy(X, Y, metric="sqeuclidean")
-row_sum = A.sum(dim=-1)                  # [N]
+row_sum = A.sum(dim=-1)                     # [N]
 values, indices = A.topk(8, largest=False)  # [N,8] each
-product = A.matmul(V)                   # [N,C]
+product = A.matmul(V)                       # [N,C]
 ```
 
 </div>
@@ -32,9 +32,9 @@ namespace s = torchpairwise::streaming;
 s::PairwiseOptions options;
 options.chunk_size = 128;
 auto A = s::pairwise(X, Y, "sqeuclidean", options);
-auto row_sum = A.reduce("sum", -1);        // [N]
-auto [values, indices] = A.topk(8, -1, false); // [N,8] each
-auto product = A.matmul(V);                // [N,C]
+auto row_sum = A.reduce("sum", -1);             // [N]
+auto [values, indices] = A.topk(8, -1, false);  // [N,8] each
+auto product = A.matmul(V);                     // [N,C]
 ```
 
 </div>
@@ -108,7 +108,7 @@ and export. Two accelerations are layered on top of it:
 ```python
 with tp.backend("keops"):
     K = tp.lazy(X, Y, metric="rbf", gamma=0.5)
-    result = K.matmul(V)                        # one KeOps reduction
+    result = K.matmul(V)  # one KeOps reduction
 
 K = tp.lazy(X, Y, metric="rbf", gamma=0.5, backend="native")  # leaf override
 ```

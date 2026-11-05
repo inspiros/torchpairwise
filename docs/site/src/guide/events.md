@@ -24,9 +24,9 @@ to their selected comparison. They do not align, resize or register images.
 # X:[N,D], Y:[M,D]
 G = tp.residual_operator(X, Y, transform="abs",
                          chunk_size=64, feature_chunk_size=32)  # [N,M,D]
-A = G.mean(dim=-1)                   # lazy [N,M]
+A = G.mean(dim=-1)                          # lazy [N,M]
 values, indices = A.topk(3, largest=False)  # [N,3]
-joint = G.mean(dim=(-2, -1))         # Tensor [N], joint over M,D
+joint = G.mean(dim=(-2, -1))                # Tensor [N], joint over M,D
 ```
 
 </div>
@@ -35,10 +35,10 @@ joint = G.mean(dim=(-2, -1))         # Tensor [N], joint over M,D
 
 ```cpp
 // X:[N,D], Y:[M,D]
-tp::ResidualOperator G(X, Y, "abs", 64, 32);  // [N,M,D]
-auto A = G.mean(-1);                         // lazy [N,M]
-auto [values, indices] = A.topk(3, -1, false); // [N,3]
-auto joint = G.mean(at::IntArrayRef{-2, -1});  // Tensor [N]
+tp::ResidualOperator G(X, Y, "abs", 64, 32);    // [N,M,D]
+auto A = G.mean(-1);                            // lazy [N,M]
+auto [values, indices] = A.topk(3, -1, false);  // [N,3]
+auto joint = G.mean(at::IntArrayRef{-2, -1});   // Tensor [N]
 ```
 
 </div>

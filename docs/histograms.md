@@ -25,9 +25,9 @@ import torchpairwise as tp
 
 X = torch.tensor([[1., 3., 0.], [0., 0., 2.]])
 Y = torch.tensor([[2., 6., 0.], [1., 0., 0.]])
-matrix = tp.hellinger_distances(X, Y)  # [2,2]
+matrix = tp.hellinger_distances(X, Y)                   # [2,2]
 paired = tp.paired_distances(X, Y, metric="hellinger")  # [2]
-condensed = tp.pdist(X, metric="hellinger")  # [1]
+condensed = tp.pdist(X, metric="hellinger")             # [1]
 ```
 
 The string name is `hellinger`, including in `cdist`, `pdist` and neighbor masks.

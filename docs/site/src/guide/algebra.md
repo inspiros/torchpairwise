@@ -24,9 +24,9 @@ eligibility-based consumers.
 K1 = tp.lazy(X, Y, metric="rbf", gamma=0.2)
 K2 = tp.lazy(X, Y, metric="laplacian", gamma=0.3)
 K = 0.7 * K1 + 0.3 * K2
-features = K.matmul(V)                  # [N,C]
-energy = K.bilinear(left, right)        # scalar for left[N], right[M]
-soft_features = K.softmax_matmul(V)     # [N,C]
+features = K.matmul(V)               # [N,C]
+energy = K.bilinear(left, right)     # scalar for left[N], right[M]
+soft_features = K.softmax_matmul(V)  # [N,C]
 ```
 
 </div>
@@ -41,9 +41,9 @@ second.comparison.gamma = 0.3;
 auto K1 = tp::pairwise_expression(X, Y, "rbf", true, first);
 auto K2 = tp::pairwise_expression(X, Y, "laplacian", true, second);
 auto K = K1.scale(0.7) + K2.scale(0.3);
-auto features = K.matmul(V);              // [N,C]
-auto energy = K.bilinear(left, right);    // left[N], right[M] -> scalar
-auto soft_features = K.softmax_matmul(V); // [N,C]
+auto features = K.matmul(V);               // [N,C]
+auto energy = K.bilinear(left, right);     // left[N], right[M] -> scalar
+auto soft_features = K.softmax_matmul(V);  // [N,C]
 ```
 
 </div>
@@ -72,10 +72,10 @@ centered, and square maps can receive a diagonal shift.
 import torchpairwise as tp
 # X:[N,D], Y:[M,D], V:[N,R]
 K = tp.lazy(X, Y, metric="rbf", gamma=0.2)
-A = K.centered()       # H_N K H_M, [N,M]
+A = K.centered()  # H_N K H_M, [N,M]
 B = A @ A.mT
-B = B + 0.01 * tp.eye_like(B)      # [N,N]
-result = B.matmul(V)                      # [N,R]
+B = B + 0.01 * tp.eye_like(B)  # [N,N]
+result = B.matmul(V)           # [N,R]
 ```
 
 </div>
@@ -89,7 +89,7 @@ options.comparison.gamma = 0.2;
 auto K = s::kernel(X, Y, "rbf", options);
 auto A = s::aslinearoperator(K).centered();
 auto B = A.compose(A.transpose()).add_diagonal(0.01);
-auto result = B.matmul(V);                // [N,R]
+auto result = B.matmul(V);  // [N,R]
 ```
 
 </div>
@@ -169,12 +169,12 @@ with torch.no_grad():
     fit = tp.linalg.solve(A, targets, method="cg", rtol=1e-6)
     if not fit.converged.all():
         raise RuntimeError(f"CG status: {fit.status.tolist()}")
-    coefficients = fit.solution               # [N,R]
+    coefficients = fit.solution  # [N,R]
     rectangular = tp.lazy(X, landmarks, metric="rbf", gamma=0.3)
     least = tp.linalg.lstsq(rectangular, targets, damp=0.2, rtol=1e-6)
     if not least.converged.all():
         raise RuntimeError(f"LSQR status: {least.status.tolist()}")
-    landmark_coefficients = least.solution     # [L,R]
+    landmark_coefficients = least.solution  # [L,R]
 ```
 
 </div>
@@ -193,14 +193,14 @@ options.method = "cg";
 options.rtol = 1e-6;
 auto fit = s::linalg::solve(A, targets, options);
 TORCH_CHECK(fit.converged.all().item<bool>(), "CG did not converge");
-auto coefficients = fit.solution;              // [N,R]
+auto coefficients = fit.solution;  // [N,R]
 auto rectangular = s::aslinearoperator(s::kernel(X, landmarks, "rbf", source));
-s::linalg::LstsqOptions least_options;          // method defaults to "lsqr".
+s::linalg::LstsqOptions least_options;  // method defaults to "lsqr".
 least_options.damp = 0.2;
 least_options.rtol = 1e-6;
 auto least = s::linalg::lstsq(rectangular, targets, least_options);
 TORCH_CHECK(least.converged.all().item<bool>(), "LSQR did not converge");
-auto landmark_coefficients = least.solution;   // [L,R]
+auto landmark_coefficients = least.solution;  // [L,R]
 ```
 
 </div>
@@ -258,7 +258,7 @@ with torch.no_grad():
     fit = tp.linalg.cg(A, targets, rtol=1e-6, max_iter=300)
     if not fit.converged.all():
         raise RuntimeError(f"CG status: {fit.status.tolist()}")
-    predictions = K.matmul(fit.solution)     # [N,R]
+    predictions = K.matmul(fit.solution)  # [N,R]
 ```
 
 </div>
@@ -328,7 +328,7 @@ with torch.no_grad():
     D = tp.diag_embed(d.sqrt())
     K = tp.lazy(X, metric="rbf", gamma=0.2)
     K = K + 2. * tp.eye_like(K)
-    A = D @ K @ D       # D(K+2I)D, diagonal = 3*d
+    A = D @ K @ D  # D(K+2I)D, diagonal = 3*d
     fit = tp.linalg.cg(A, targets, preconditioner=tp.linalg.jacobi(3. * d), rtol=1e-8)
     if not fit.converged.all():
         raise RuntimeError(f"PCG status: {fit.status.tolist()}")
@@ -661,12 +661,12 @@ P^\mathsf T=P,\quad P^2=P
 
 ```python
 # labels:[N], X:[N,D], V:[N,R]
-P = tp.group_projection(labels, like=X)     # logical [N,N]
-means = P.matmul(V)                       # [N,R], repeated group means
+P = tp.group_projection(labels, like=X)  # logical [N,N]
+means = P.matmul(V)                      # [N,R], repeated group means
 K = tp.lazy(X, metric="rbf", gamma=0.2)
-R = K - P @ K                      # (I-P)K
+R = K - P @ K  # (I-P)K
 Sw = R.mT @ R
-Sw = Sw + 0.1 * tp.eye_like(Sw)      # K(I-P)K + 0.1 I
+Sw = Sw + 0.1 * tp.eye_like(Sw)  # K(I-P)K + 0.1 I
 ```
 
 </div>

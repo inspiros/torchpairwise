@@ -8,11 +8,11 @@ tiles when an operation needs them:
 
 ```python
 A = tp.lazy(X, Y, metric="kl_divergences", chunk_size=64)
-features = A @ V               # [...,N,C] for V:[...,M,C]
-reverse = A.T @ U              # [...,M,C] for U:[...,N,C]
-form = A.bilinear(L, R)        # L.T @ A @ R; no A @ R intermediate retained
-row_min = A.amin(dim=-1)        # [...,N]
-column_mean = A.mean(dim=-2)   # [...,M]
+features = A @ V              # [...,N,C] for V:[...,M,C]
+reverse = A.T @ U             # [...,M,C] for U:[...,N,C]
+form = A.bilinear(L, R)       # L.T @ A @ R; no A @ R intermediate retained
+row_min = A.amin(dim=-1)      # [...,N]
+column_mean = A.mean(dim=-2)  # [...,M]
 total = A.sum()               # one scalar per broadcast batch
 ```
 

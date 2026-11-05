@@ -8,9 +8,9 @@ tiles without retaining the full scalar matrix.
 
 ```python
 D = tp.lazy(X, Y, metric="sqeuclidean")
-spread = D.std(-1, correction=0)  # spread of each query's distances
+spread = D.std(-1, correction=0)          # spread of each query's distances
 log_density = (-gamma * D).logsumexp(-1)  # log of summed affinities
-nonzero_pairs = D.count_nonzero()  # one int64 count per batch
+nonzero_pairs = D.count_nonzero()         # one int64 count per batch
 ```
 
 These are useful for neighborhood diagnostics, distance-based losses and stable
@@ -218,8 +218,8 @@ usual M/N meanings regardless of added batch axes.
 
 ```python
 D = tp.lazy(X, Y, metric="sqeuclidean", chunk_size=64)
-robust_loss = D.median(dim=-1).mean()          # lower middle per query
-thresholds = D.quantile(0.9, dim=-1)           # per-query distance threshold
+robust_loss = D.median(dim=-1).mean()  # lower middle per query
+thresholds = D.quantile(0.9, dim=-1)   # per-query distance threshold
 column_medians = D.median(dim=-2, keepdim=True)
 # Also works after scalar algebra or complete event contraction:
 robust_error = tp.residual_operator(X, Y, transform="abs").mean(-1).quantile(0.5)

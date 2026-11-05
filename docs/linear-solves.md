@@ -54,7 +54,7 @@ with torch.no_grad():
     fit = tp.linalg.solve(A, targets, method="cg", rtol=1e-6)
     if not fit.converged.all():
         raise RuntimeError(f"CG status: {fit.status.tolist()}")
-    coefficients = fit.solution                         # [N,R]
+    coefficients = fit.solution  # [N,R]
 ```
 
 ```cpp
@@ -70,7 +70,7 @@ options.method = "cg";  // Required; an empty/unknown method raises.
 options.rtol = 1e-6;
 auto fit = s::linalg::solve(A, targets, options);
 TORCH_CHECK(fit.converged.all().item<bool>(), "CG did not converge");
-auto coefficients = fit.solution;                        // [N,R]
+auto coefficients = fit.solution;  // [N,R]
 ```
 
 `SolveResult` has `solution`, float64 `residual_norm`, int64 `iterations` and
@@ -180,7 +180,7 @@ with torch.no_grad():
     fit = tp.linalg.lstsq(A, targets, damp=0.2, rtol=1e-6)
     if not fit.converged.all():
         raise RuntimeError(f"LSQR status: {fit.status.tolist()}")
-    coefficients = fit.solution                         # [L,R]
+    coefficients = fit.solution  # [L,R]
 ```
 
 ```cpp
@@ -193,7 +193,7 @@ options.damp = 0.2;
 options.rtol = 1e-6;
 auto fit = s::linalg::lstsq(A, targets, options);
 TORCH_CHECK(fit.converged.all().item<bool>(), "LSQR did not converge");
-auto coefficients = fit.solution;                       // [L,R]
+auto coefficients = fit.solution;  // [L,R]
 ```
 
 The returned `LSQRResult` retains both `residual_norm` (data residual) and

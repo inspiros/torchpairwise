@@ -70,8 +70,8 @@ Streamed sources also support [pair masks](guide/statistics.md#pair-masks),
 [user-defined metrics](metrics/custom-metrics.md), [encoded features](metrics/encoded-features.md)
 with one or two encoders, and optional [execution backends](guide/streaming.md#execution-backends).
 
-> This guide describes the source-tree API. Published 0.3 wheels expose an older
-> interface. Build this checkout for the API documented here; see [installation](guide/install.md).
+> This guide documents TorchPairwise 1.0. See [installation](guide/install.md)
+> for matching your PyTorch build and [migration](https://github.com/inspiros/torchpairwise/blob/master/docs/migration.md) when upgrading.
 
 Python and native callers share built-in forward and first-backward algorithms.
 Metric-specific domains, autocast, compilation and boundary derivatives are

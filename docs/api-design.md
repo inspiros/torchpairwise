@@ -92,18 +92,18 @@ Factories bind an unevaluated source; ordinary methods consume it:
 ```python
 K = tp.lazy(X, Y, metric="rbf_kernel", gamma=0.2)
 product = K.matmul(V)
-total = K.sum()                         # both N/M, preserving batches
+total = K.sum()  # both N/M, preserving batches
 mean_for_each_query = K.mean(dim=-1)
 energy = K.bilinear(left, right)
 
 G = tp.residual_operator(X, Y, transform="abs", feature_chunk_size=32)
-mae = G.mean(dim=-1)                    # lazy scalar source [...,N,M]
+mae = G.mean(dim=-1)  # lazy scalar source [...,N,M]
 robust_neighbors = mae.topk(4, largest=False)
 
 maps = tp.image_map_operator(images, references, comparison="squared_error")
-channels = maps.mean(dim=(-2,-1))        # lazy [...,N,M,C]
-scores = channels.mean(dim=-1)          # lazy [...,N,M]
-threshold = scores.quantile(0.9, dim=-1) # terminal [...,N]
+channels = maps.mean(dim=(-2,-1))         # lazy [...,N,M,C]
+scores = channels.mean(dim=-1)            # lazy [...,N,M]
+threshold = scores.quantile(0.9, dim=-1)  # terminal [...,N]
 ```
 
 Kernel metrics share the common interface and add coordinate geometry.

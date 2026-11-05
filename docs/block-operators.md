@@ -37,7 +37,7 @@ import torchpairwise as tp
 A = (lambda K: K + 0.3 * tp.eye_like(K))(tp.lazy(X, metric="rbf", gamma=0.3))
 C = tp.as_lazy(constraints)  # [P,N]
 D = X.new_zeros(constraints.shape[-2], constraints.shape[-2])
-KKT = tp.block([[A, C.T], [C, D]])    # logical [N+P,N+P]
+KKT = tp.block([[A, C.T], [C, D]])  # logical [N+P,N+P]
 result = KKT.matmul(values)         # values:[N+P,R]
 ```
 

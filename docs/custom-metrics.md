@@ -15,7 +15,7 @@ def squared_distance(a, b):
 compare = make_pairwise(squared_distance, compile=True)
 x = torch.randn(20, 8)
 y = torch.randn(30, 8)
-distances = compare(x, y)  # [20, 30]
+distances = compare(x, y)    # [20, 30]
 self_distances = compare(x)  # [20, 20]
 ```
 
@@ -65,7 +65,7 @@ functions and do not use the symmetry flag to skip work.
 ```python
 paired = make_pairwise(squared_distance, mode="paired")
 condensed = make_pairwise(squared_distance, mode="condensed", symmetric=True)
-paired_values = paired(x, x)  # [20]
+paired_values = paired(x, x)     # [20]
 unordered_values = condensed(x)  # [190]
 ```
 
@@ -356,9 +356,9 @@ example:
 
 ```python
 A = tp.lazy(x, y, custom, chunk_size=16)
-row_mean = A.mean(dim=-1)                 # [...,N]
+row_mean = A.mean(dim=-1)  # [...,N]
 V = torch.randn(30, 4, device=x.device, dtype=x.dtype)
-product = A.matmul(V)                    # [...,N,4]
+product = A.matmul(V)                                       # [...,N,4]
 nearest_values, nearest_indices = A.topk(3, largest=False)  # [...,N,3]
 ```
 
@@ -401,10 +401,10 @@ auto metric = tp::make_pairwise(
     [](const at::Tensor& x, const at::Tensor& y) {
       return (x - y).square().sum();
     });
-auto values = metric(X, Y);                 // [N,M]
-auto single = metric(X[0], Y[0], "single"); // scalar
+auto values = metric(X, Y);                  // [N,M]
+auto single = metric(X[0], Y[0], "single");  // scalar
 auto A = metric.expression(X, Y);
-auto mean = A.reduce("mean", -1);            // [N]
+auto mean = A.reduce("mean", -1);  // [N]
 ```
 
 Normal ATen autograd and callbacks using `torch::autograd::Function::apply` work

@@ -18,9 +18,9 @@ X = torch.tensor([[0., 0.], [3., 4.]])  # [N=2,D=2]
 Y = torch.tensor([[0., 4.], [3., 0.]])  # [M=2,D=2]
 metric = "sqeuclidean"
 
-matrix = tp.compare(X, Y, metric=metric)                    # [2,2]
-paired = tp.compare(X, Y, metric=metric, mode="paired")     # [2]
-condensed = tp.compare(X, metric=metric, mode="condensed") # [1]
+matrix = tp.compare(X, Y, metric=metric)                       # [2,2]
+paired = tp.compare(X, Y, metric=metric, mode="paired")        # [2]
+condensed = tp.compare(X, metric=metric, mode="condensed")     # [1]
 single = tp.compare(X[0], Y[0], metric=metric, mode="single")  # scalar
 ```
 
@@ -36,10 +36,10 @@ auto X = at::tensor({0.f, 0.f, 3.f, 4.f}).reshape({2, 2});
 auto Y = at::tensor({0.f, 4.f, 3.f, 0.f}).reshape({2, 2});
 const std::string metric = "sqeuclidean";
 
-auto matrix = tp::compare(X, Y, metric);                          // [2,2]
-auto paired = tp::compare(X, Y, metric, "paired");               // [2]
-auto condensed = tp::compare(X, c10::nullopt, metric, "condensed"); // [1]
-auto single = tp::compare(X[0], Y[0], metric, "single");         // scalar
+auto matrix = tp::compare(X, Y, metric);                             // [2,2]
+auto paired = tp::compare(X, Y, metric, "paired");                   // [2]
+auto condensed = tp::compare(X, c10::nullopt, metric, "condensed");  // [1]
+auto single = tp::compare(X[0], Y[0], metric, "single");             // scalar
 ```
 
 </div>
@@ -68,8 +68,8 @@ the consumer returns `[2]`.
 
 ```python
 A = tp.lazy(X, Y, metric="sqeuclidean", chunk_size=1)
-row_sums = A.sum(dim=-1)                # [2], values [25,25]
-neighbors = A.topk(1, largest=False)    # values/indices [2,1]
+row_sums = A.sum(dim=-1)              # [2], values [25,25]
+neighbors = A.topk(1, largest=False)  # values/indices [2,1]
 ```
 
 </div>
@@ -80,7 +80,7 @@ neighbors = A.topk(1, largest=False)    # values/indices [2,1]
 tp::PairwiseOperationOptions options;
 options.chunk_size = 1;
 auto A = tp::pairwise_expression(X, Y, "sqeuclidean", false, options);
-auto row_sums = A.reduce("sum", -1);     // [2], values [25,25]
+auto row_sums = A.reduce("sum", -1);            // [2], values [25,25]
 auto [values, indices] = A.topk(1, -1, false);  // [2,1] each
 ```
 

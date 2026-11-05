@@ -28,10 +28,10 @@ def forward(x, y, w):
 metric = tp.make_pairwise(forward, parameters=(weight,), symmetric=True)
 X = torch.randn(3, 4)
 Y = torch.randn(5, 4)
-matrix = metric(X, Y)                         # [3,5]
-paired = metric(X, Y[:3], mode="paired")      # [3]
-condensed = metric(X, mode="condensed")       # [3]
-value = metric(X[0], Y[0], mode="single")     # scalar
+matrix = metric(X, Y)                      # [3,5]
+paired = metric(X, Y[:3], mode="paired")   # [3]
+condensed = metric(X, mode="condensed")    # [3]
+value = metric(X[0], Y[0], mode="single")  # scalar
 ```
 
 </div>
@@ -52,10 +52,10 @@ auto metric = tp::make_pairwise(
     }, options);
 auto X = at::randn({3, 4});
 auto Y = at::randn({5, 4});
-auto matrix = metric(X, Y);                         // [3,5]
-auto paired = metric(X, Y.slice(0, 0, 3), "paired"); // [3]
-auto condensed = metric(X, c10::nullopt, "condensed"); // [3]
-auto value = metric(X[0], Y[0], "single");           // scalar
+auto matrix = metric(X, Y);                             // [3,5]
+auto paired = metric(X, Y.slice(0, 0, 3), "paired");    // [3]
+auto condensed = metric(X, c10::nullopt, "condensed");  // [3]
+auto value = metric(X[0], Y[0], "single");              // scalar
 ```
 
 </div>
@@ -134,9 +134,9 @@ class SquaredDistance(torch.autograd.Function):
 custom = tp.make_pairwise(SquaredDistance.apply, symmetric=True, compile=True)
 X = torch.randn(3, 4, requires_grad=True)
 Y = torch.randn(5, 4, requires_grad=True)
-values = custom(X, Y)                          # [3,5]
+values = custom(X, Y)                              # [3,5]
 loss = tp.lazy(X, Y, custom, chunk_size=2).mean()  # scalar
-loss.backward()                               # populates X.grad and Y.grad
+loss.backward()                                    # populates X.grad and Y.grad
 ```
 
 </div>
@@ -169,9 +169,9 @@ auto custom = torchpairwise::ops::make_pairwise(
     });
 auto X = at::randn({3, 4}).set_requires_grad(true);
 auto Y = at::randn({5, 4}).set_requires_grad(true);
-auto values = custom(X, Y);                      // [3,5]
-auto loss = custom.expression(X, Y).reduce("mean"); // scalar
-loss.backward();                                // fills X.grad(), Y.grad()
+auto values = custom(X, Y);                          // [3,5]
+auto loss = custom.expression(X, Y).reduce("mean");  // scalar
+loss.backward();                                     // fills X.grad(), Y.grad()
 ```
 
 </div>
@@ -202,8 +202,8 @@ with exactly the shapes it was passed.
 ```python
 cubic = tp.make_pairwise(
     lambda x, y: (x - y).abs().pow(3).sum(-1), form="broadcast")
-values = cubic(X, Y)                       # [N,M]
-row_sum = tp.lazy(X, Y, cubic).sum(-1)     # [N]
+values = cubic(X, Y)                    # [N,M]
+row_sum = tp.lazy(X, Y, cubic).sum(-1)  # [N]
 ```
 
 </div>
@@ -218,8 +218,8 @@ auto cubic = tp::make_pairwise(
     [](const at::Tensor& x, const at::Tensor& y, at::TensorList) {
       return (x - y).abs().pow(3).sum(-1);  // [n,1,D] vs [1,m,D] -> [n,m]
     }, options);
-auto values = cubic(X, Y);                              // [N,M]
-auto row_sum = cubic.expression(X, Y).reduce("sum", -1); // [N]
+auto values = cubic(X, Y);                                // [N,M]
+auto row_sum = cubic.expression(X, Y).reduce("sum", -1);  // [N]
 ```
 
 </div>
@@ -239,7 +239,7 @@ weighted_rbf = tp.make_pairwise(
     lambda x, y, w: (-((x - y) * (x - y) * w).sum(-1)).exp(),
     form="broadcast", parameters=(w,), keops=True)
 with tp.backend("keops"):
-    out = tp.lazy(X, Y, weighted_rbf) @ V     # [N,C]; gradients reach X, Y and w
+    out = tp.lazy(X, Y, weighted_rbf) @ V  # [N,C]; gradients reach X, Y and w
 ```
 
 Broadcast callbacks never use the fused CUDA reducers. See the
@@ -250,13 +250,13 @@ for the shape contract, `nn.Module` metrics and KeOps limits.
 
 ```python
 A = tp.lazy(X, Y, metric, chunk_size=2)     # logical [3,5]
-row_mean = A.mean(dim=-1)                  # [3]
-values, indices = A.topk(2, largest=False) # [3,2] each
+row_mean = A.mean(dim=-1)                   # [3]
+values, indices = A.topk(2, largest=False)  # [3,2] each
 V = torch.randn(5, 2)
-product = A.matmul(V)                     # [3,2]
+product = A.matmul(V)  # [3,2]
 
 B = tp.lazy(X, Y, metric="sqeuclidean")
-combined = (A + 0.2 * B).sum()             # scalar
+combined = (A + 0.2 * B).sum()  # scalar
 ```
 
 The custom source participates in scalar algebra and the
@@ -290,10 +290,10 @@ auto metric = tp::make_pairwise(
     [](const at::Tensor& x, const at::Tensor& y) {
       return (x - y).square().sum();
     });
-auto values = metric(X, Y);                    // [N,M]
-auto A = metric.expression(X, Y);              // logical [N,M]
-auto mean = A.reduce("mean", -1);              // [N]
-auto product = A.matmul(V);                    // [N,K], V:[M,K]
+auto values = metric(X, Y);        // [N,M]
+auto A = metric.expression(X, Y);  // logical [N,M]
+auto mean = A.reduce("mean", -1);  // [N]
+auto product = A.matmul(V);        // [N,K], V:[M,K]
 ```
 
 ATen operations keep their ordinary autograd behavior. A callback can also call
@@ -405,8 +405,8 @@ they are not built into TorchPairwise.
 metric = tp.make_pairwise("torchpairwise_example::weighted_pairs",
     backward="torchpairwise_example::weighted_pairs_vjp",
     parameters=(weight,), symmetric=True)
-result = metric(X, Y)                     # [N,M]
-mean = tp.lazy(X, Y, metric).mean(-1)      # [N]
+result = metric(X, Y)                  # [N,M]
+mean = tp.lazy(X, Y, metric).mean(-1)  # [N]
 ```
 
 </div>
@@ -422,7 +422,7 @@ auto result = tp::custom_compare(X, Y, {weight},
 auto A = tp::custom_expression(X, Y,
     "torchpairwise_example::weighted_pairs",
     "torchpairwise_example::weighted_pairs_vjp", {weight});
-auto mean = A.reduce("mean", -1);                // [N]
+auto mean = A.reduce("mean", -1);  // [N]
 ```
 
 </div>

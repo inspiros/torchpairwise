@@ -18,9 +18,9 @@ Use the usual `dim=` spelling rather than a separate `reduce_features` method:
 
 ```python
 G = tp.residual_operator(X, Y, chunk_size=64, feature_chunk_size=128)
-H = G.var(dim=-1, correction=0)  # lazy [..., N, M], variance over D
-best_spread = H.amin(dim=-1)      # tensor [..., N], minimum over M
-global_spread = H.mean()        # tensor [...], mean over N and M per batch
+H = G.var(dim=-1, correction=0)            # lazy [..., N, M], variance over D
+best_spread = H.amin(dim=-1)               # tensor [..., N], minimum over M
+global_spread = H.mean()                   # tensor [...], mean over N and M per batch
 smoothed = (-gamma * H).softmax_matmul(V)  # tensor [..., N, C]
 ```
 
@@ -40,12 +40,12 @@ of an arbitrary Tensor.
 
 ```python
 G = tp.residual_operator(X, Y, chunk_size=64, feature_chunk_size=128)
-H = G.var(dim=[-1], correction=0)          # lazy [..., N, M]
+H = G.var(dim=[-1], correction=0)               # lazy [..., N, M]
 row_spread = G.var(dim=[-2, -1], correction=0)  # tensor [..., N]
-feature_mean = G.mean(dim=(-3, -2))        # tensor [..., D]
-all_spread = G.std(dim=None, correction=0) # tensor [...], all N/M/D
-row_mean = G.mean(dim=-2, keepdim=True)    # tensor [..., N, 1, D]
-scalar_spread = H.var(dim=[-2, -1])        # tensor [...], over N/M
+feature_mean = G.mean(dim=(-3, -2))             # tensor [..., D]
+all_spread = G.std(dim=None, correction=0)      # tensor [...], all N/M/D
+row_mean = G.mean(dim=-2, keepdim=True)         # tensor [..., N, 1, D]
+scalar_spread = H.var(dim=[-2, -1])             # tensor [...], over N/M
 ```
 
 **Feature-only reduction remains lazy; any sample-axis reduction is terminal.**
@@ -111,8 +111,8 @@ than another lazy source:
 ```python
 G = tp.residual_operator(X, Y, transform="abs", chunk_size=32,
                          feature_chunk_size=64)
-errors = G.topk(4, dim=-1)        # values and int64 indices: [...,N,M,4]
-loss = errors.values.mean()      # mean of the four largest errors per pair
+errors = G.topk(4, dim=-1)   # values and int64 indices: [...,N,M,4]
+loss = errors.values.mean()  # mean of the four largest errors per pair
 ```
 
 This is useful for sparse feature mismatches, hard-coordinate losses, and
