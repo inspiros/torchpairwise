@@ -62,9 +62,13 @@ class TORCHPAIRWISE_API LinearOperator {
   LinearOperator operator-() const;
 
  private:
-  friend LinearOperator group_projection(const at::Tensor&, const at::Tensor&);
-  friend LinearOperator diagonal(const at::Tensor&);
-  friend LinearOperator lowrank_inverse_operator(at::TensorList);
+  // MSVC rejects a later dllexport/dllimport redeclaration (C2375) unless the
+  // first declaration, here, carries the same linkage.
+  friend TORCHPAIRWISE_API LinearOperator group_projection(const at::Tensor&,
+                                                           const at::Tensor&);
+  friend TORCHPAIRWISE_API LinearOperator diagonal(const at::Tensor&);
+  friend TORCHPAIRWISE_API LinearOperator lowrank_inverse_operator(
+      at::TensorList);
   std::shared_ptr<const LinearOperatorNode> node_;
   explicit LinearOperator(std::shared_ptr<const LinearOperatorNode> node);
   LinearOperator unary(int64_t kind) const;
