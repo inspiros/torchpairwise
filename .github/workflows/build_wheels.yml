@@ -187,8 +187,9 @@ jobs:
         run: |
           pip install torch==${{ matrix.torch-version }} --index-url https://download.pytorch.org/whl/${{ matrix.target.variant }}
           pip install pytest pytest-xdist scipy scikit-learn
-          pip install --no-deps "$(ls ${{ github.workspace }}/wheelhouse/*.whl | head -n 1)"
+          # Quoted env var: an unquoted Windows workspace path loses its backslashes.
+          pip install --no-deps --no-index --find-links "$GITHUB_WORKSPACE/wheelhouse" torchpairwise
           python -c "import torchpairwise as tp; print('CUDA targets:', tp.extension.cuda_arch_list()); assert tp.with_cuda() == ('${{ matrix.target.variant }}' != 'cpu')"
-          python -m pytest "${{ github.workspace }}/tests" --device cpu -n 2 -q
+          python -m pytest "$GITHUB_WORKSPACE/tests" --device cpu -n 2 -q
         env:
           TORCHINDUCTOR_COMPILE_THREADS: '1'
