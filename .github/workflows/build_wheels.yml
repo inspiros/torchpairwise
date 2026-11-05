@@ -7,6 +7,13 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      only:
+        # A narrowed run is for debugging one job; publish only from 'all'.
+        description: Build and test only this target
+        type: choice
+        options: [ all, windows-cu132 ]
+        default: all
 
 permissions:
   contents: read
@@ -14,6 +21,7 @@ permissions:
 jobs:
   build_sdist:
     name: Source distribution
+    if: ${{ inputs.only == '' || inputs.only == 'all' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,6 +37,7 @@ jobs:
 
   build_linux:
     name: Wheel on manylinux_2_28 (${{ matrix.variant }})
+    if: ${{ inputs.only == '' || inputs.only == 'all' }}
     runs-on: ubuntu-22.04
     timeout-minutes: 360
     strategy:
@@ -79,6 +88,11 @@ jobs:
           - { os: macos-14, variant: cpu, artifact: artifacts, local: '' }
           - { os: windows-2022, variant: cpu, artifact: artifacts, local: '' }
           - { os: windows-2022, variant: cu132, artifact: extra, local: cu132 }
+        only:
+          - ${{ inputs.only || 'all' }}
+        exclude:
+          - { only: windows-cu132, target: { os: macos-14, variant: cpu, artifact: artifacts, local: '' } }
+          - { only: windows-cu132, target: { os: windows-2022, variant: cpu, artifact: artifacts, local: '' } }
     steps:
       - uses: actions/checkout@v4
 
@@ -128,6 +142,8 @@ jobs:
   test_wheels:
     name: Test ${{ matrix.target.os }} (${{ matrix.target.variant }}) wheel on cp-${{ matrix.python-version }}
     needs: [ build_linux, build_wheels ]
+    # Run when build_linux was skipped by a narrowed dispatch, not on failure.
+    if: ${{ !failure() && !cancelled() }}
     runs-on: ${{ matrix.target.os }}
     strategy:
       fail-fast: false
@@ -141,6 +157,16 @@ jobs:
           - { os: macos-14, variant: cpu, artifact: artifacts }
           - { os: windows-2022, variant: cpu, artifact: artifacts }
           - { os: windows-2022, variant: cu132, artifact: extra }
+        only:
+          - ${{ inputs.only || 'all' }}
+        exclude:
+          - { only: windows-cu132, target: { os: ubuntu-22.04, variant: cu132, artifact: artifacts } }
+          - { only: windows-cu132, target: { os: macos-14, variant: cpu, artifact: artifacts } }
+          - { only: windows-cu132, target: { os: windows-2022, variant: cpu, artifact: artifacts } }
+          - { only: windows-cu132, python-version: '3.12' }
+          - { only: windows-cu132, python-version: '3.13' }
+          - { only: windows-cu132, python-version: '3.14' }
+          - { only: windows-cu132, python-version: '3.15' }
     steps:
       - uses: actions/checkout@v4
 

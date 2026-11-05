@@ -65,6 +65,8 @@ __global__ void pairwise_binary_reduction_forward_kernel_impl(
 }
 }  // namespace impl
 
+// Member-template calls in these function templates spell out `.template`:
+// nvcc's MSVC front end otherwise parses `x.f<` as a comparison.
 template <BinaryOp op>
 at::Tensor pairwise_binary_forward_kernel(const at::Tensor& x1,
                                           const at::Tensor& x2) {
@@ -115,28 +117,26 @@ at::Tensor pairwise_binary_forward_kernel(const at::Tensor& x1,
         auto index_type = get_index_type(n_kernels);
         if (index_type == at::ScalarType::Long) {
           using index_t = int64_t;
-          auto output_accessor =
-              output.generic_packed_accessor<bool, 4, at::RestrictPtrTraits,
-                                             index_t>();
+          auto output_accessor = output.template generic_packed_accessor<
+              bool, 4, at::RestrictPtrTraits, index_t>();
           impl::pairwise_binary_forward_kernel_impl<op, scalar_t, bool, index_t>
               <<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(
                   n_kernels,
-                  x1_c.generic_packed_accessor<
+                  x1_c.template generic_packed_accessor<
                       scalar_t, 3, at::RestrictPtrTraits, index_t>(),
-                  x2_c.generic_packed_accessor<
+                  x2_c.template generic_packed_accessor<
                       scalar_t, 3, at::RestrictPtrTraits, index_t>(),
                   output_accessor);
         } else if (index_type == at::ScalarType::Int) {
           using index_t = int;
-          auto output_accessor =
-              output.generic_packed_accessor<bool, 4, at::RestrictPtrTraits,
-                                             index_t>();
+          auto output_accessor = output.template generic_packed_accessor<
+              bool, 4, at::RestrictPtrTraits, index_t>();
           impl::pairwise_binary_forward_kernel_impl<op, scalar_t, bool, index_t>
               <<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(
                   n_kernels,
-                  x1_c.generic_packed_accessor<
+                  x1_c.template generic_packed_accessor<
                       scalar_t, 3, at::RestrictPtrTraits, index_t>(),
-                  x2_c.generic_packed_accessor<
+                  x2_c.template generic_packed_accessor<
                       scalar_t, 3, at::RestrictPtrTraits, index_t>(),
                   output_accessor);
         }
@@ -208,30 +208,28 @@ at::Tensor pairwise_binary_reduction_forward_kernel(const at::Tensor& x1,
         auto index_type = get_index_type(n_kernels);
         if (index_type == at::ScalarType::Long) {
           using index_t = int64_t;
-          auto output_accessor =
-              output.generic_packed_accessor<output_t, 3, at::RestrictPtrTraits,
-                                             index_t>();
+          auto output_accessor = output.template generic_packed_accessor<
+              output_t, 3, at::RestrictPtrTraits, index_t>();
           impl::pairwise_binary_reduction_forward_kernel_impl<
               binary_op, reduction_op, output_t, scalar_t, index_t>
               <<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(
                   n_kernels,
-                  x1_c.generic_packed_accessor<
+                  x1_c.template generic_packed_accessor<
                       scalar_t, 3, at::RestrictPtrTraits, index_t>(),
-                  x2_c.generic_packed_accessor<
+                  x2_c.template generic_packed_accessor<
                       scalar_t, 3, at::RestrictPtrTraits, index_t>(),
                   output_accessor);
         } else if (index_type == at::ScalarType::Int) {
           using index_t = int;
-          auto output_accessor =
-              output.generic_packed_accessor<output_t, 3, at::RestrictPtrTraits,
-                                             index_t>();
+          auto output_accessor = output.template generic_packed_accessor<
+              output_t, 3, at::RestrictPtrTraits, index_t>();
           impl::pairwise_binary_reduction_forward_kernel_impl<
               binary_op, reduction_op, output_t, scalar_t, index_t>
               <<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(
                   n_kernels,
-                  x1_c.generic_packed_accessor<
+                  x1_c.template generic_packed_accessor<
                       scalar_t, 3, at::RestrictPtrTraits, index_t>(),
-                  x2_c.generic_packed_accessor<
+                  x2_c.template generic_packed_accessor<
                       scalar_t, 3, at::RestrictPtrTraits, index_t>(),
                   output_accessor);
         }

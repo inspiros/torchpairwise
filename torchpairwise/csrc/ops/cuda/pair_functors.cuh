@@ -22,6 +22,16 @@
 #endif
 
 namespace torchpairwise::pairs {
+// MSVC's std::isnan is host-only; nvcc provides __host__ __device__ ::isnan
+// overloads (as at::_isnan uses).
+template <typename T>
+TP_PAIR_INLINE bool is_nan(T value) {
+#if defined(__CUDACC__) || defined(__HIPCC__)
+  return ::isnan(value);
+#else
+  return std::isnan(value);
+#endif
+}
 enum class Feature : int { Square, Abs, Power, Max, Product };
 enum class Outer : int {
   Identity,
@@ -225,7 +235,7 @@ TP_PAIR_INLINE void step(T& s, T x, T y, T p, bool first) {
   else {
     T value = std::fabs(delta);
     // _ppminkowski's infinite branch: every feature propagates NaN.
-    if (first || std::isnan(value) || value > s)
+    if (first || is_nan(value) || value > s)
       s = value;
   }
 }

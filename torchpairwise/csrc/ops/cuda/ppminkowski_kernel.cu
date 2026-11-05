@@ -169,15 +169,16 @@ at::Tensor ppminkowski_kernel(const at::Tensor& x1, const at::Tensor& x2,
                             static_cast<scalar_t>(p), output_accessor);
                       }));
                 } else {
+                  // Generic lambda: `.template` for nvcc on MSVC.
                   auto run = [&](auto power) {
                     impl::_ppminkowski_kernel_impl<
                         decltype(power)::value, false, false, scalar_t, index_t>
                         <<<blocks, threads, 0,
                            at::cuda::getCurrentCUDAStream()>>>(
                             n_tiles,
-                            x1_c.generic_packed_accessor<
+                            x1_c.template generic_packed_accessor<
                                 scalar_t, 3, at::RestrictPtrTraits, index_t>(),
-                            x2_c.generic_packed_accessor<
+                            x2_c.template generic_packed_accessor<
                                 scalar_t, 3, at::RestrictPtrTraits, index_t>(),
                             static_cast<scalar_t>(p), output_accessor);
                   };

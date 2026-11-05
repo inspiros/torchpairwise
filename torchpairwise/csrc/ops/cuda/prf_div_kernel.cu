@@ -72,6 +72,8 @@ __launch_bounds__(1024) __global__ void prf_div_forward_kernel_impl(
 }
 }  // namespace impl
 
+// Member-template calls in these function templates spell out `.template`:
+// nvcc's MSVC front end otherwise parses `x.f<` as a comparison.
 template <bool left = false>
 at::Tensor prf_div_forward_kernel(const at::Tensor& self,
                                   const at::Tensor& other,
@@ -116,17 +118,19 @@ at::Tensor prf_div_forward_kernel(const at::Tensor& self,
                           impl::OutOfPlace, prf_div_mode, scalar_t, index_t>
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
-                              n_kernels, other_flatten.data_ptr<scalar_t>(),
-                              self_flatten.data_ptr<scalar_t>(),
-                              output_flatten.data_ptr<scalar_t>());
+                              n_kernels,
+                              other_flatten.template data_ptr<scalar_t>(),
+                              self_flatten.template data_ptr<scalar_t>(),
+                              output_flatten.template data_ptr<scalar_t>());
                     } else {
                       impl::prf_div_forward_kernel_impl<
                           impl::OutOfPlace, prf_div_mode, scalar_t, index_t>
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
-                              n_kernels, self_flatten.data_ptr<scalar_t>(),
-                              other_flatten.data_ptr<scalar_t>(),
-                              output_flatten.data_ptr<scalar_t>());
+                              n_kernels,
+                              self_flatten.template data_ptr<scalar_t>(),
+                              other_flatten.template data_ptr<scalar_t>(),
+                              output_flatten.template data_ptr<scalar_t>());
                     }
                   }));
             }));
@@ -165,17 +169,18 @@ at::Tensor prf_div_scalar_forward_kernel(const at::Tensor& self,
                           impl::OutOfPlace, prf_div_mode, scalar_t, index_t>
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
-                              n_kernels, other.to<scalar_t>(),
-                              self_flatten.data_ptr<scalar_t>(),
-                              output_flatten.data_ptr<scalar_t>());
+                              n_kernels, other.template to<scalar_t>(),
+                              self_flatten.template data_ptr<scalar_t>(),
+                              output_flatten.template data_ptr<scalar_t>());
                     } else {
                       impl::prf_div_forward_kernel_impl<
                           impl::OutOfPlace, prf_div_mode, scalar_t, index_t>
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
-                              n_kernels, self_flatten.data_ptr<scalar_t>(),
-                              other.to<scalar_t>(),
-                              output_flatten.data_ptr<scalar_t>());
+                              n_kernels,
+                              self_flatten.template data_ptr<scalar_t>(),
+                              other.template to<scalar_t>(),
+                              output_flatten.template data_ptr<scalar_t>());
                     }
                   }));
             }));
@@ -239,17 +244,19 @@ at::Tensor prf_div_inplace_forward_kernel(at::Tensor& self,
                           impl::LeftInplace, prf_div_mode, scalar_t, index_t>
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
-                              n_kernels, other_flatten.data_ptr<scalar_t>(),
-                              self_flatten.data_ptr<scalar_t>(),
-                              output.data_ptr<scalar_t>());
+                              n_kernels,
+                              other_flatten.template data_ptr<scalar_t>(),
+                              self_flatten.template data_ptr<scalar_t>(),
+                              output.template data_ptr<scalar_t>());
                     } else {
                       impl::prf_div_forward_kernel_impl<
                           impl::Inplace, prf_div_mode, scalar_t, index_t>
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
-                              n_kernels, self_flatten.data_ptr<scalar_t>(),
-                              other_flatten.data_ptr<scalar_t>(),
-                              output.data_ptr<scalar_t>());
+                              n_kernels,
+                              self_flatten.template data_ptr<scalar_t>(),
+                              other_flatten.template data_ptr<scalar_t>(),
+                              output.template data_ptr<scalar_t>());
                     }
                   }));
             }));
@@ -295,17 +302,18 @@ at::Tensor prf_div_inplace_scalar_forward_kernel(at::Tensor& self,
                           impl::LeftInplace, prf_div_mode, scalar_t, index_t>
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
-                              n_kernels, other.to<scalar_t>(),
-                              self_flatten.data_ptr<scalar_t>(),
-                              output.data_ptr<scalar_t>());
+                              n_kernels, other.template to<scalar_t>(),
+                              self_flatten.template data_ptr<scalar_t>(),
+                              output.template data_ptr<scalar_t>());
                     } else {
                       impl::prf_div_forward_kernel_impl<
                           impl::Inplace, prf_div_mode, scalar_t, index_t>
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
-                              n_kernels, self_flatten.data_ptr<scalar_t>(),
-                              other.to<scalar_t>(),
-                              output.data_ptr<scalar_t>());
+                              n_kernels,
+                              self_flatten.template data_ptr<scalar_t>(),
+                              other.template to<scalar_t>(),
+                              output.template data_ptr<scalar_t>());
                     }
                   }));
             }));
@@ -409,22 +417,22 @@ std::tuple<at::Tensor, at::Tensor> prf_div_backward_kernel(
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
                               n_kernels,
-                              grad_output_flatten.data_ptr<scalar_t>(),
-                              other_flatten.data_ptr<scalar_t>(),
-                              self_flatten.data_ptr<scalar_t>(),
-                              grad_other_flatten.data_ptr<scalar_t>(),
-                              grad_self_flatten.data_ptr<scalar_t>());
+                              grad_output_flatten.template data_ptr<scalar_t>(),
+                              other_flatten.template data_ptr<scalar_t>(),
+                              self_flatten.template data_ptr<scalar_t>(),
+                              grad_other_flatten.template data_ptr<scalar_t>(),
+                              grad_self_flatten.template data_ptr<scalar_t>());
                     } else {
                       impl::prf_div_backward_kernel_impl<prf_div_mode, scalar_t,
                                                          index_t>
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
                               n_kernels,
-                              grad_output_flatten.data_ptr<scalar_t>(),
-                              self_flatten.data_ptr<scalar_t>(),
-                              other_flatten.data_ptr<scalar_t>(),
-                              grad_self_flatten.data_ptr<scalar_t>(),
-                              grad_other_flatten.data_ptr<scalar_t>());
+                              grad_output_flatten.template data_ptr<scalar_t>(),
+                              self_flatten.template data_ptr<scalar_t>(),
+                              other_flatten.template data_ptr<scalar_t>(),
+                              grad_self_flatten.template data_ptr<scalar_t>(),
+                              grad_other_flatten.template data_ptr<scalar_t>());
                     }
                   }));
             }));
@@ -466,19 +474,19 @@ at::Tensor prf_div_backward_scalar_kernel(const at::Tensor& grad_output,
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
                               n_kernels,
-                              grad_output_flatten.data_ptr<scalar_t>(),
-                              other.to<scalar_t>(),
-                              self_flatten.data_ptr<scalar_t>(),
-                              grad_self_flatten.data_ptr<scalar_t>());
+                              grad_output_flatten.template data_ptr<scalar_t>(),
+                              other.template to<scalar_t>(),
+                              self_flatten.template data_ptr<scalar_t>(),
+                              grad_self_flatten.template data_ptr<scalar_t>());
                     } else {
                       impl::prf_div_backward_kernel_impl<prf_div_mode, scalar_t,
                                                          index_t>
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
                               n_kernels,
-                              grad_output_flatten.data_ptr<scalar_t>(),
-                              other.to<scalar_t>(),
-                              grad_self_flatten.data_ptr<scalar_t>());
+                              grad_output_flatten.template data_ptr<scalar_t>(),
+                              other.template to<scalar_t>(),
+                              grad_self_flatten.template data_ptr<scalar_t>());
                     }
                   }));
             }));
@@ -519,19 +527,19 @@ at::Tensor prf_div_backward_rscalar_kernel(const at::Tensor& grad_output,
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
                               n_kernels,
-                              grad_output_flatten.data_ptr<scalar_t>(),
-                              self.to<scalar_t>(),
-                              grad_other_flatten.data_ptr<scalar_t>());
+                              grad_output_flatten.template data_ptr<scalar_t>(),
+                              self.template to<scalar_t>(),
+                              grad_other_flatten.template data_ptr<scalar_t>());
                     } else {
                       impl::prf_div_backward_kernel_impl<prf_div_mode, scalar_t,
                                                          index_t>
                           <<<blocks, threads, 0,
                              at::cuda::getCurrentCUDAStream()>>>(
                               n_kernels,
-                              grad_output_flatten.data_ptr<scalar_t>(),
-                              self.to<scalar_t>(),
-                              other_flatten.data_ptr<scalar_t>(),
-                              grad_other_flatten.data_ptr<scalar_t>());
+                              grad_output_flatten.template data_ptr<scalar_t>(),
+                              self.template to<scalar_t>(),
+                              other_flatten.template data_ptr<scalar_t>(),
+                              grad_other_flatten.template data_ptr<scalar_t>());
                     }
                   }));
             }));
