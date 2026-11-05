@@ -1,4 +1,5 @@
 #include <ATen/ATen.h>
+#include <ATen/NumericUtils.h>
 #include <torch/library.h>
 
 #include "../utils/dispatch.h"
@@ -75,7 +76,8 @@ __global__ void _ppminkowski_kernel_impl(
               // Every feature propagates NaNs, independent of its position.
               if (start == 0 && k == 0)
                 val = tmp;
-              else if (isnan(tmp) || (neg ? tmp < val : tmp > val))
+              // at::_isnan: MSVC's isnan template for Half is host-only.
+              else if (at::_isnan(tmp) || (neg ? tmp < val : tmp > val))
                 val = tmp;
             } else if constexpr (power == 2)
               val += delta * delta;
@@ -249,7 +251,7 @@ __global__ void extremum_pair_stats_kernel(
       // Match the forward subtraction in the input dtype.
       scalar_t delta = x1[b][i][k] - x2[b][j][k];
       const acc_t magnitude = ::fabs(acc_t(delta));
-      if (k == 0 || isnan(magnitude) ||
+      if (k == 0 || at::_isnan(magnitude) ||
           (neg ? magnitude < distance : magnitude > distance)) {
         distance = magnitude;
         count = 1;

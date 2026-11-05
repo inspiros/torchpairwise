@@ -1,18 +1,16 @@
 #pragma once
 
+#include <ATen/NumericUtils.h>
 #include <c10/util/BFloat16-inl.h>
 #include <c10/util/Half-inl.h>
 
 #include "../utils/scalar_type_utils.h"
 
 namespace torchpairwise::ops {
+// Any NaN payload or sign, not only the canonical quiet NaN.
 template <typename T>
 __forceinline__ __device__ bool m_isnan(const T& _X) throw() {
-  if constexpr (std::is_same_v<T, c10::Half> ||
-                std::is_same_v<T, c10::BFloat16>)
-    return _X.x == std::numeric_limits<T>::quiet_NaN().x;
-  else
-    return isnan(_X);
+  return at::_isnan(_X);
 }
 
 template <typename T>
