@@ -154,9 +154,13 @@ def get_extensions():
         nvcc_flags += _get_cuda_arch_flags(nvcc_flags)
         extra_compile_args['nvcc'] = nvcc_flags
         targets = ' '.join(cuda_arch_targets(nvcc_flags))
-        prefix = '/D' if sys.platform == 'win32' else '-D'
-        extra_compile_args['cxx'].append(
-            f'{prefix}TORCHPAIRWISE_CUDA_ARCH_FLAGS="{targets}"')
+        if sys.platform == 'win32':
+            # torch wraps arguments with blanks in unescaped double quotes, so
+            # the inner quotes must be escaped for the Windows command line.
+            define = f'/DTORCHPAIRWISE_CUDA_ARCH_FLAGS=\\"{targets}\\"'
+        else:
+            define = f'-DTORCHPAIRWISE_CUDA_ARCH_FLAGS="{targets}"'
+        extra_compile_args['cxx'].append(define)
 
     if sys.platform == 'win32':
         define_macros += [(f'{PACKAGE_ROOT}_EXPORTS', None)]
