@@ -12,7 +12,7 @@ def test_shared_manifest_covers_every_native_translation_unit():
     root = Path(__file__).resolve().parents[1] / 'torchpairwise' / 'csrc'
     groups = json.loads((root / 'sources.json').read_text())
     listed = [name for names in groups.values() for name in names]
-    actual = {str(path.relative_to(root)) for path in root.rglob('*')
+    actual = {path.relative_to(root).as_posix() for path in root.rglob('*')
               if path.suffix in ('.cpp', '.cu')}
     assert set(groups) == {'common', 'cpu', 'cuda'}
     assert len(listed) == len(set(listed))
