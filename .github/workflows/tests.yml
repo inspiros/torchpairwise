@@ -1,7 +1,9 @@
 name: Tests
+# Runs on release tags and on demand only, to stay within free-tier CI limits.
 on:
   push:
-  pull_request:
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 permissions:
