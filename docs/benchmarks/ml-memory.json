@@ -1,0 +1,1167 @@
+{
+  "description": "Complete kernel-fit extra CUDA tensor allocation and synchronized time; matched native tiled iterative baselines and separately labeled direct ridge fit",
+  "source_base_revision": "d4ef44f1205f16512c68efa87ceddf6fdca9197a",
+  "source_dirty": true,
+  "matched_workloads": [
+    {
+      "schema_version": 1,
+      "configuration": {
+        "case": "ridge",
+        "device": "cuda",
+        "dtype": "float64",
+        "n": 2048,
+        "m": 256,
+        "queries": 128,
+        "d": 8,
+        "channels": 2,
+        "rank": 2,
+        "subspace_size": 10,
+        "classes": 4,
+        "chunk_size": 128,
+        "max_iter": 300,
+        "warmup": 1,
+        "repeats": 3,
+        "threads": 1,
+        "rtol": 1e-07,
+        "atol": 1e-09,
+        "regularization": 0.5,
+        "backward": false,
+        "dense_direct": false,
+        "seed": 1729
+      },
+      "environment": {
+        "python": "3.10.12",
+        "torch": "2.12.1+cu126",
+        "torchpairwise": "0.3.0",
+        "platform": "Linux",
+        "cuda_runtime": "12.6",
+        "device": "cuda",
+        "threads": 1,
+        "matmul_precision": "highest",
+        "extension_sha256": "c02da442f1752ac83fb52b685c8dc8ebb7ce09234df1b579e68c8d2a224243e6",
+        "extension_bytes": 428446920,
+        "revision": {
+          "commit": null,
+          "dirty": null
+        },
+        "gpu": "Quadro RTX 6000",
+        "compute_capability": [
+          7,
+          5
+        ]
+      },
+      "results": {
+        "dense-iterative": {
+          "status": "ok",
+          "first_call_ms": 11782.661190256476,
+          "validation": {
+            "coefficients_relative_l2": 0.0,
+            "coefficients_max_abs": 0.0,
+            "prediction_relative_l2": 0.0,
+            "prediction_max_abs": 0.0
+          },
+          "diagnostics": {
+            "iterations": [
+              64,
+              63
+            ],
+            "residual_norm": [
+              3.547378349909057e-06,
+              3.6237468727257665e-06
+            ]
+          },
+          "samples_ms": [
+            10832.947304472327,
+            10461.395244114101,
+            10425.719854421914
+          ],
+          "extra_peak_bytes_samples": [
+            35860992,
+            35860992,
+            35860992
+          ],
+          "live_baseline_bytes_samples": [
+            8691712,
+            8691712,
+            8691712
+          ],
+          "median_ms": 10461.395244114101,
+          "extra_peak_bytes": 35860992
+        },
+        "streamed": {
+          "status": "ok",
+          "first_call_ms": 7791.781633161008,
+          "validation": {
+            "coefficients_relative_l2": 0.0,
+            "coefficients_max_abs": 0.0,
+            "prediction_relative_l2": 0.0,
+            "prediction_max_abs": 0.0
+          },
+          "diagnostics": {
+            "iterations": [
+              64,
+              63
+            ],
+            "residual_norm": [
+              3.547378349909057e-06,
+              3.6237468727257665e-06
+            ]
+          },
+          "samples_ms": [
+            11567.27251689881,
+            10390.46231098473,
+            9639.052208513021
+          ],
+          "extra_peak_bytes_samples": [
+            475648,
+            475648,
+            475648
+          ],
+          "live_baseline_bytes_samples": [
+            8691712,
+            8691712,
+            8691712
+          ],
+          "median_ms": 10390.46231098473,
+          "extra_peak_bytes": 475648
+        }
+      },
+      "recorded_utc": "2026-11-02T13:48:12.670570+00:00",
+      "harness_sha256": "21c9495065fc98644019bbc7043f669feeb8c7cd8a8e86f77439ac7fec728a76",
+      "logical_fit_matrix_bytes": 33554432,
+      "input_bytes": 172032,
+      "common_auxiliary_bytes": 0,
+      "methodology": {
+        "scope": "source construction, fitting, and held-out prediction except SVD; optional backward included",
+        "baseline": "dense-iterative uses the same native solver/start/options as streamed; dense-direct is optional and uses direct solve/full decomposition",
+        "gpu_memory": "extra peak allocated CUDA bytes above live inputs after garbage collection before each sample; reserved cache and driver/external-library allocations excluded",
+        "cpu_memory": "not measured; null",
+        "timing": "synchronized wall time after warmup; shuffled method order",
+        "accuracy": "shared inputs and spectral start; convergence plus value/VJP or sign/rotation-invariant subspace checks before timing"
+      }
+    },
+    {
+      "schema_version": 1,
+      "configuration": {
+        "case": "landmark",
+        "device": "cuda",
+        "dtype": "float64",
+        "n": 2048,
+        "m": 256,
+        "queries": 128,
+        "d": 8,
+        "channels": 2,
+        "rank": 2,
+        "subspace_size": 10,
+        "classes": 4,
+        "chunk_size": 128,
+        "max_iter": 300,
+        "warmup": 1,
+        "repeats": 3,
+        "threads": 1,
+        "rtol": 1e-07,
+        "atol": 1e-09,
+        "regularization": 0.5,
+        "backward": false,
+        "dense_direct": false,
+        "seed": 1729
+      },
+      "environment": {
+        "python": "3.10.12",
+        "torch": "2.12.1+cu126",
+        "torchpairwise": "0.3.0",
+        "platform": "Linux",
+        "cuda_runtime": "12.6",
+        "device": "cuda",
+        "threads": 1,
+        "matmul_precision": "highest",
+        "extension_sha256": "c02da442f1752ac83fb52b685c8dc8ebb7ce09234df1b579e68c8d2a224243e6",
+        "extension_bytes": 428446920,
+        "revision": {
+          "commit": null,
+          "dirty": null
+        },
+        "gpu": "Quadro RTX 6000",
+        "compute_capability": [
+          7,
+          5
+        ]
+      },
+      "results": {
+        "dense-iterative": {
+          "status": "ok",
+          "first_call_ms": 5370.5985974520445,
+          "validation": {
+            "coefficients_relative_l2": 0.0,
+            "coefficients_max_abs": 0.0,
+            "prediction_relative_l2": 0.0,
+            "prediction_max_abs": 0.0
+          },
+          "diagnostics": {
+            "iterations": [
+              122,
+              123
+            ],
+            "residual_norm": [
+              43.13323721118875,
+              43.9367080886153
+            ]
+          },
+          "samples_ms": [
+            4510.065216571093,
+            3950.79792663455,
+            4361.356767825782
+          ],
+          "extra_peak_bytes_samples": [
+            4791808,
+            4791808,
+            4791808
+          ],
+          "live_baseline_bytes_samples": [
+            8708096,
+            8708096,
+            8708096
+          ],
+          "median_ms": 4361.356767825782,
+          "extra_peak_bytes": 4791808
+        },
+        "streamed": {
+          "status": "ok",
+          "first_call_ms": 4677.542527206242,
+          "validation": {
+            "coefficients_relative_l2": 0.0,
+            "coefficients_max_abs": 0.0,
+            "prediction_relative_l2": 0.0,
+            "prediction_max_abs": 0.0
+          },
+          "diagnostics": {
+            "iterations": [
+              122,
+              123
+            ],
+            "residual_norm": [
+              43.13323721118875,
+              43.9367080886153
+            ]
+          },
+          "samples_ms": [
+            3751.6313064843416,
+            3946.5661458671093,
+            4156.073655001819
+          ],
+          "extra_peak_bytes_samples": [
+            368128,
+            368128,
+            368128
+          ],
+          "live_baseline_bytes_samples": [
+            8708096,
+            8708096,
+            8708096
+          ],
+          "median_ms": 3946.5661458671093,
+          "extra_peak_bytes": 368128
+        }
+      },
+      "recorded_utc": "2026-11-02T13:50:18.034824+00:00",
+      "harness_sha256": "21c9495065fc98644019bbc7043f669feeb8c7cd8a8e86f77439ac7fec728a76",
+      "logical_fit_matrix_bytes": 4194304,
+      "input_bytes": 188416,
+      "common_auxiliary_bytes": 0,
+      "methodology": {
+        "scope": "source construction, fitting, and held-out prediction except SVD; optional backward included",
+        "baseline": "dense-iterative uses the same native solver/start/options as streamed; dense-direct is optional and uses direct solve/full decomposition",
+        "gpu_memory": "extra peak allocated CUDA bytes above live inputs after garbage collection before each sample; reserved cache and driver/external-library allocations excluded",
+        "cpu_memory": "not measured; null",
+        "timing": "synchronized wall time after warmup; shuffled method order",
+        "accuracy": "shared inputs and spectral start; convergence plus value/VJP or sign/rotation-invariant subspace checks before timing"
+      }
+    },
+    {
+      "schema_version": 1,
+      "configuration": {
+        "case": "pca",
+        "device": "cuda",
+        "dtype": "float64",
+        "n": 2048,
+        "m": 256,
+        "queries": 128,
+        "d": 8,
+        "channels": 2,
+        "rank": 2,
+        "subspace_size": 10,
+        "classes": 4,
+        "chunk_size": 128,
+        "max_iter": 300,
+        "warmup": 1,
+        "repeats": 3,
+        "threads": 1,
+        "rtol": 1e-07,
+        "atol": 1e-09,
+        "regularization": 0.5,
+        "backward": false,
+        "dense_direct": false,
+        "seed": 1729
+      },
+      "environment": {
+        "python": "3.10.12",
+        "torch": "2.12.1+cu126",
+        "torchpairwise": "0.3.0",
+        "platform": "Linux",
+        "cuda_runtime": "12.6",
+        "device": "cuda",
+        "threads": 1,
+        "matmul_precision": "highest",
+        "extension_sha256": "c02da442f1752ac83fb52b685c8dc8ebb7ce09234df1b579e68c8d2a224243e6",
+        "extension_bytes": 428446920,
+        "revision": {
+          "commit": null,
+          "dirty": null
+        },
+        "gpu": "Quadro RTX 6000",
+        "compute_capability": [
+          7,
+          5
+        ]
+      },
+      "results": {
+        "dense-iterative": {
+          "status": "ok",
+          "first_call_ms": 4025.6899083033204,
+          "validation": {
+            "values_relative_l2": 0.0,
+            "values_max_abs": 0.0,
+            "basis_subspace_error": 1.8250120749944284e-08,
+            "prediction_aligned_relative_l2": 1.6483236988780976e-16
+          },
+          "diagnostics": {
+            "iterations": [
+              11,
+              11
+            ],
+            "residual_norm": [
+              2.076686020632673e-06,
+              6.773257166880611e-07
+            ]
+          },
+          "samples_ms": [
+            4112.759084440768,
+            3941.6270330548286,
+            2690.0713816285133
+          ],
+          "extra_peak_bytes_samples": [
+            35963904,
+            35963904,
+            35963904
+          ],
+          "live_baseline_bytes_samples": [
+            8822784,
+            8822784,
+            8822784
+          ],
+          "median_ms": 3941.6270330548286,
+          "extra_peak_bytes": 35963904
+        },
+        "streamed": {
+          "status": "ok",
+          "first_call_ms": 4014.5503375679255,
+          "validation": {
+            "values_relative_l2": 0.0,
+            "values_max_abs": 0.0,
+            "basis_subspace_error": 1.8250120749944284e-08,
+            "prediction_aligned_relative_l2": 1.6483236988780976e-16
+          },
+          "diagnostics": {
+            "iterations": [
+              11,
+              11
+            ],
+            "residual_norm": [
+              2.076686020632673e-06,
+              6.773257166880611e-07
+            ]
+          },
+          "samples_ms": [
+            4399.945147335529,
+            2861.983180977404,
+            2939.3140198662877
+          ],
+          "extra_peak_bytes_samples": [
+            2393088,
+            2393088,
+            2393088
+          ],
+          "live_baseline_bytes_samples": [
+            8822784,
+            8822784,
+            8822784
+          ],
+          "median_ms": 2939.3140198662877,
+          "extra_peak_bytes": 2393088
+        }
+      },
+      "recorded_utc": "2026-11-02T13:51:19.154505+00:00",
+      "harness_sha256": "21c9495065fc98644019bbc7043f669feeb8c7cd8a8e86f77439ac7fec728a76",
+      "logical_fit_matrix_bytes": 33554432,
+      "input_bytes": 139264,
+      "common_auxiliary_bytes": 163840,
+      "methodology": {
+        "scope": "source construction, fitting, and held-out prediction except SVD; optional backward included",
+        "baseline": "dense-iterative uses the same native solver/start/options as streamed; dense-direct is optional and uses direct solve/full decomposition",
+        "gpu_memory": "extra peak allocated CUDA bytes above live inputs after garbage collection before each sample; reserved cache and driver/external-library allocations excluded",
+        "cpu_memory": "not measured; null",
+        "timing": "synchronized wall time after warmup; shuffled method order",
+        "accuracy": "shared inputs and spectral start; convergence plus value/VJP or sign/rotation-invariant subspace checks before timing"
+      }
+    },
+    {
+      "schema_version": 1,
+      "configuration": {
+        "case": "lda",
+        "device": "cuda",
+        "dtype": "float64",
+        "n": 1024,
+        "m": 256,
+        "queries": 128,
+        "d": 8,
+        "channels": 2,
+        "rank": 2,
+        "subspace_size": 10,
+        "classes": 4,
+        "chunk_size": 128,
+        "max_iter": 300,
+        "warmup": 1,
+        "repeats": 3,
+        "threads": 1,
+        "rtol": 1e-07,
+        "atol": 1e-09,
+        "regularization": 0.5,
+        "backward": false,
+        "dense_direct": false,
+        "seed": 1729
+      },
+      "environment": {
+        "python": "3.10.12",
+        "torch": "2.12.1+cu126",
+        "torchpairwise": "0.3.0",
+        "platform": "Linux",
+        "cuda_runtime": "12.6",
+        "device": "cuda",
+        "threads": 1,
+        "matmul_precision": "highest",
+        "extension_sha256": "c02da442f1752ac83fb52b685c8dc8ebb7ce09234df1b579e68c8d2a224243e6",
+        "extension_bytes": 428446920,
+        "revision": {
+          "commit": null,
+          "dirty": null
+        },
+        "gpu": "Quadro RTX 6000",
+        "compute_capability": [
+          7,
+          5
+        ]
+      },
+      "results": {
+        "dense-iterative": {
+          "status": "ok",
+          "first_call_ms": 16806.043995544314,
+          "validation": {
+            "values_relative_l2": 5.273517157512594e-09,
+            "values_max_abs": 1.2275491201307887e-07,
+            "basis_subspace_error": 1.1685779051004442e-07,
+            "prediction_aligned_relative_l2": 9.045908230848515e-08
+          },
+          "diagnostics": {
+            "iterations": [
+              127,
+              130,
+              128,
+              127
+            ],
+            "residual_norm": [
+              3.899615296194644e-06,
+              3.6381627131275305e-06,
+              2.7909435109702605e-06,
+              3.976468041136756e-06
+            ]
+          },
+          "samples_ms": [
+            16015.861014835536,
+            16105.223638005555,
+            15979.267251677811
+          ],
+          "extra_peak_bytes_samples": [
+            9705472,
+            9705472,
+            9705472
+          ],
+          "live_baseline_bytes_samples": [
+            8634368,
+            8634368,
+            8634368
+          ],
+          "median_ms": 16015.861014835536,
+          "extra_peak_bytes": 9705472
+        },
+        "streamed": {
+          "status": "ok",
+          "first_call_ms": 14719.25366576761,
+          "validation": {
+            "values_relative_l2": 2.5216140748839656e-09,
+            "values_max_abs": 5.780933776122765e-08,
+            "basis_subspace_error": 3.942476676500724e-08,
+            "prediction_aligned_relative_l2": 3.303177070574874e-08
+          },
+          "diagnostics": {
+            "iterations": [
+              128,
+              128,
+              128,
+              127
+            ],
+            "residual_norm": [
+              3.654125245672339e-06,
+              3.0942860696439974e-06,
+              2.9467053910895905e-06,
+              4.06472550545991e-06
+            ]
+          },
+          "samples_ms": [
+            16365.30879419297,
+            16587.86377403885,
+            15932.742054574192
+          ],
+          "extra_peak_bytes_samples": [
+            629248,
+            629248,
+            629248
+          ],
+          "live_baseline_bytes_samples": [
+            8634368,
+            8634368,
+            8634368
+          ],
+          "median_ms": 16365.30879419297,
+          "extra_peak_bytes": 629248
+        }
+      },
+      "recorded_utc": "2026-11-02T13:52:10.867969+00:00",
+      "harness_sha256": "21c9495065fc98644019bbc7043f669feeb8c7cd8a8e86f77439ac7fec728a76",
+      "logical_fit_matrix_bytes": 8388608,
+      "input_bytes": 73728,
+      "common_auxiliary_bytes": 40960,
+      "methodology": {
+        "scope": "source construction, fitting, and held-out prediction except SVD; optional backward included",
+        "baseline": "dense-iterative uses the same native solver/start/options as streamed; dense-direct is optional and uses direct solve/full decomposition",
+        "gpu_memory": "extra peak allocated CUDA bytes above live inputs after garbage collection before each sample; reserved cache and driver/external-library allocations excluded",
+        "cpu_memory": "not measured; null",
+        "timing": "synchronized wall time after warmup; shuffled method order",
+        "accuracy": "shared inputs and spectral start; convergence plus value/VJP or sign/rotation-invariant subspace checks before timing"
+      }
+    },
+    {
+      "schema_version": 1,
+      "configuration": {
+        "case": "svd",
+        "device": "cuda",
+        "dtype": "float64",
+        "n": 2048,
+        "m": 1024,
+        "queries": 128,
+        "d": 8,
+        "channels": 2,
+        "rank": 2,
+        "subspace_size": 10,
+        "classes": 4,
+        "chunk_size": 128,
+        "max_iter": 300,
+        "warmup": 1,
+        "repeats": 3,
+        "threads": 1,
+        "rtol": 1e-07,
+        "atol": 1e-09,
+        "regularization": 0.5,
+        "backward": false,
+        "dense_direct": false,
+        "seed": 1729
+      },
+      "environment": {
+        "python": "3.10.12",
+        "torch": "2.12.1+cu126",
+        "torchpairwise": "0.3.0",
+        "platform": "Linux",
+        "cuda_runtime": "12.6",
+        "device": "cuda",
+        "threads": 1,
+        "matmul_precision": "highest",
+        "extension_sha256": "c02da442f1752ac83fb52b685c8dc8ebb7ce09234df1b579e68c8d2a224243e6",
+        "extension_bytes": 428446920,
+        "revision": {
+          "commit": null,
+          "dirty": null
+        },
+        "gpu": "Quadro RTX 6000",
+        "compute_capability": [
+          7,
+          5
+        ]
+      },
+      "results": {
+        "dense-iterative": {
+          "status": "ok",
+          "first_call_ms": 2808.5953295230865,
+          "validation": {
+            "values_relative_l2": 0.0,
+            "values_max_abs": 0.0,
+            "basis_subspace_error": 2.5809568279517847e-08,
+            "right_basis_subspace_error": 1.8250120749944284e-08
+          },
+          "diagnostics": {
+            "iterations": [
+              5,
+              5
+            ],
+            "residual_norm": [
+              8.368695905905617e-14,
+              1.060544857567911e-06
+            ]
+          },
+          "samples_ms": [
+            1894.2611552774906,
+            2639.7004136815667,
+            2275.7286075502634
+          ],
+          "extra_peak_bytes_samples": [
+            19179520,
+            19179520,
+            19179520
+          ],
+          "live_baseline_bytes_samples": [
+            8798208,
+            8798208,
+            8798208
+          ],
+          "median_ms": 2275.7286075502634,
+          "extra_peak_bytes": 19179520
+        },
+        "streamed": {
+          "status": "ok",
+          "first_call_ms": 2191.925703547895,
+          "validation": {
+            "values_relative_l2": 0.0,
+            "values_max_abs": 0.0,
+            "basis_subspace_error": 2.5809568279517847e-08,
+            "right_basis_subspace_error": 1.8250120749944284e-08
+          },
+          "diagnostics": {
+            "iterations": [
+              5,
+              5
+            ],
+            "residual_norm": [
+              8.368695905905617e-14,
+              1.060544857567911e-06
+            ]
+          },
+          "samples_ms": [
+            1390.3362480923533,
+            2338.5618813335896,
+            1828.0226672068238
+          ],
+          "extra_peak_bytes_samples": [
+            2394112,
+            2394112,
+            2394112
+          ],
+          "live_baseline_bytes_samples": [
+            8798208,
+            8798208,
+            8798208
+          ],
+          "median_ms": 1828.0226672068238,
+          "extra_peak_bytes": 2394112
+        }
+      },
+      "recorded_utc": "2026-11-02T13:55:21.224677+00:00",
+      "harness_sha256": "21c9495065fc98644019bbc7043f669feeb8c7cd8a8e86f77439ac7fec728a76",
+      "logical_fit_matrix_bytes": 16777216,
+      "input_bytes": 196608,
+      "common_auxiliary_bytes": 81920,
+      "methodology": {
+        "scope": "source construction, fitting, and held-out prediction except SVD; optional backward included",
+        "baseline": "dense-iterative uses the same native solver/start/options as streamed; dense-direct is optional and uses direct solve/full decomposition",
+        "gpu_memory": "extra peak allocated CUDA bytes above live inputs after garbage collection before each sample; reserved cache and driver/external-library allocations excluded",
+        "cpu_memory": "not measured; null",
+        "timing": "synchronized wall time after warmup; shuffled method order",
+        "accuracy": "shared inputs and spectral start; convergence plus value/VJP or sign/rotation-invariant subspace checks before timing"
+      }
+    },
+    {
+      "schema_version": 1,
+      "configuration": {
+        "case": "ridge",
+        "device": "cuda",
+        "dtype": "float64",
+        "n": 1024,
+        "m": 256,
+        "queries": 128,
+        "d": 8,
+        "channels": 2,
+        "rank": 2,
+        "subspace_size": 10,
+        "classes": 4,
+        "chunk_size": 128,
+        "max_iter": 300,
+        "warmup": 1,
+        "repeats": 3,
+        "threads": 1,
+        "rtol": 1e-07,
+        "atol": 1e-09,
+        "regularization": 0.5,
+        "backward": true,
+        "dense_direct": false,
+        "seed": 1729
+      },
+      "environment": {
+        "python": "3.10.12",
+        "torch": "2.12.1+cu126",
+        "torchpairwise": "0.3.0",
+        "platform": "Linux",
+        "cuda_runtime": "12.6",
+        "device": "cuda",
+        "threads": 1,
+        "matmul_precision": "highest",
+        "extension_sha256": "c02da442f1752ac83fb52b685c8dc8ebb7ce09234df1b579e68c8d2a224243e6",
+        "extension_bytes": 428446920,
+        "revision": {
+          "commit": null,
+          "dirty": null
+        },
+        "gpu": "Quadro RTX 6000",
+        "compute_capability": [
+          7,
+          5
+        ]
+      },
+      "results": {
+        "dense-iterative": {
+          "status": "ok",
+          "first_call_ms": 5147.785981185734,
+          "validation": {
+            "coefficients_relative_l2": 0.0,
+            "coefficients_max_abs": 0.0,
+            "prediction_relative_l2": 0.0,
+            "prediction_max_abs": 0.0,
+            "input_gradient_0_relative_l2": 0.0,
+            "input_gradient_0_max_abs": 0.0,
+            "input_gradient_1_relative_l2": 0.0,
+            "input_gradient_1_max_abs": 0.0,
+            "input_gradient_2_relative_l2": 0.0,
+            "input_gradient_2_max_abs": 0.0
+          },
+          "diagnostics": {
+            "iterations": [
+              52,
+              52
+            ],
+            "residual_norm": [
+              2.7129923303959896e-06,
+              2.6760483445898482e-06
+            ]
+          },
+          "samples_ms": [
+            5056.286997161806,
+            5225.714161992073,
+            4349.088589660823
+          ],
+          "extra_peak_bytes_samples": [
+            42186240,
+            42186240,
+            42186240
+          ],
+          "live_baseline_bytes_samples": [
+            17129472,
+            17129472,
+            17129472
+          ],
+          "median_ms": 5056.286997161806,
+          "extra_peak_bytes": 42186240
+        },
+        "streamed": {
+          "status": "ok",
+          "first_call_ms": 5349.83748011291,
+          "validation": {
+            "coefficients_relative_l2": 0.0,
+            "coefficients_max_abs": 0.0,
+            "prediction_relative_l2": 0.0,
+            "prediction_max_abs": 0.0,
+            "input_gradient_0_relative_l2": 2.0572763681064877e-15,
+            "input_gradient_0_max_abs": 1.441988889405721e-17,
+            "input_gradient_1_relative_l2": 1.4005180266123347e-15,
+            "input_gradient_1_max_abs": 6.938893903907228e-18,
+            "input_gradient_2_relative_l2": 0.0,
+            "input_gradient_2_max_abs": 0.0
+          },
+          "diagnostics": {
+            "iterations": [
+              52,
+              52
+            ],
+            "residual_norm": [
+              2.7129923303959896e-06,
+              2.6760483445898482e-06
+            ]
+          },
+          "samples_ms": [
+            5340.5078407377005,
+            5352.769971825182,
+            5003.836292773485
+          ],
+          "extra_peak_bytes_samples": [
+            1034240,
+            1034240,
+            1034240
+          ],
+          "live_baseline_bytes_samples": [
+            17129472,
+            17129472,
+            17129472
+          ],
+          "median_ms": 5340.5078407377005,
+          "extra_peak_bytes": 1034240
+        }
+      },
+      "recorded_utc": "2026-11-02T13:55:56.577447+00:00",
+      "harness_sha256": "21c9495065fc98644019bbc7043f669feeb8c7cd8a8e86f77439ac7fec728a76",
+      "logical_fit_matrix_bytes": 8388608,
+      "input_bytes": 90112,
+      "common_auxiliary_bytes": 0,
+      "methodology": {
+        "scope": "source construction, fitting, and held-out prediction except SVD; optional backward included",
+        "baseline": "dense-iterative uses the same native solver/start/options as streamed; dense-direct is optional and uses direct solve/full decomposition",
+        "gpu_memory": "extra peak allocated CUDA bytes above live inputs after garbage collection before each sample; reserved cache and driver/external-library allocations excluded",
+        "cpu_memory": "not measured; null",
+        "timing": "synchronized wall time after warmup; shuffled method order",
+        "accuracy": "shared inputs and spectral start; convergence plus value/VJP or sign/rotation-invariant subspace checks before timing"
+      }
+    },
+    {
+      "schema_version": 1,
+      "configuration": {
+        "case": "landmark",
+        "device": "cuda",
+        "dtype": "float64",
+        "n": 1024,
+        "m": 128,
+        "queries": 128,
+        "d": 8,
+        "channels": 2,
+        "rank": 2,
+        "subspace_size": 10,
+        "classes": 4,
+        "chunk_size": 128,
+        "max_iter": 300,
+        "warmup": 1,
+        "repeats": 3,
+        "threads": 1,
+        "rtol": 1e-07,
+        "atol": 1e-09,
+        "regularization": 0.5,
+        "backward": true,
+        "dense_direct": false,
+        "seed": 1729
+      },
+      "environment": {
+        "python": "3.10.12",
+        "torch": "2.12.1+cu126",
+        "torchpairwise": "0.3.0",
+        "platform": "Linux",
+        "cuda_runtime": "12.6",
+        "device": "cuda",
+        "threads": 1,
+        "matmul_precision": "highest",
+        "extension_sha256": "c02da442f1752ac83fb52b685c8dc8ebb7ce09234df1b579e68c8d2a224243e6",
+        "extension_bytes": 428446920,
+        "revision": {
+          "commit": null,
+          "dirty": null
+        },
+        "gpu": "Quadro RTX 6000",
+        "compute_capability": [
+          7,
+          5
+        ]
+      },
+      "results": {
+        "dense-iterative": {
+          "status": "ok",
+          "first_call_ms": 2340.5154002830386,
+          "validation": {
+            "coefficients_relative_l2": 0.0,
+            "coefficients_max_abs": 0.0,
+            "prediction_relative_l2": 0.0,
+            "prediction_max_abs": 0.0,
+            "input_gradient_0_relative_l2": 0.0,
+            "input_gradient_0_max_abs": 0.0,
+            "input_gradient_1_relative_l2": 0.0,
+            "input_gradient_1_max_abs": 0.0,
+            "input_gradient_2_relative_l2": 0.0,
+            "input_gradient_2_max_abs": 0.0,
+            "input_gradient_3_relative_l2": 0.0,
+            "input_gradient_3_max_abs": 0.0
+          },
+          "diagnostics": {
+            "iterations": [
+              87,
+              86
+            ],
+            "residual_norm": [
+              30.35720158403981,
+              31.13529450642873
+            ]
+          },
+          "samples_ms": [
+            2386.552542448044,
+            2585.6230845674872,
+            2460.5292435735464
+          ],
+          "extra_peak_bytes_samples": [
+            5357056,
+            5357056,
+            5357056
+          ],
+          "live_baseline_bytes_samples": [
+            17137664,
+            17137664,
+            17137664
+          ],
+          "median_ms": 2460.5292435735464,
+          "extra_peak_bytes": 5357056
+        },
+        "streamed": {
+          "status": "ok",
+          "first_call_ms": 2705.7791920378804,
+          "validation": {
+            "coefficients_relative_l2": 0.0,
+            "coefficients_max_abs": 0.0,
+            "prediction_relative_l2": 0.0,
+            "prediction_max_abs": 0.0,
+            "input_gradient_0_relative_l2": 1.0048123432680068e-15,
+            "input_gradient_0_max_abs": 1.9244588561617704e-18,
+            "input_gradient_1_relative_l2": 2.3117545504975004e-15,
+            "input_gradient_1_max_abs": 4.9873299934333204e-18,
+            "input_gradient_2_relative_l2": 0.0,
+            "input_gradient_2_max_abs": 0.0,
+            "input_gradient_3_relative_l2": 0.0,
+            "input_gradient_3_max_abs": 0.0
+          },
+          "diagnostics": {
+            "iterations": [
+              87,
+              86
+            ],
+            "residual_norm": [
+              30.35720158403981,
+              31.13529450642873
+            ]
+          },
+          "samples_ms": [
+            2393.103244714439,
+            2928.416782990098,
+            2987.4139251187444
+          ],
+          "extra_peak_bytes_samples": [
+            971264,
+            971264,
+            971264
+          ],
+          "live_baseline_bytes_samples": [
+            17137664,
+            17137664,
+            17137664
+          ],
+          "median_ms": 2928.416782990098,
+          "extra_peak_bytes": 971264
+        }
+      },
+      "recorded_utc": "2026-11-02T13:57:06.159829+00:00",
+      "harness_sha256": "21c9495065fc98644019bbc7043f669feeb8c7cd8a8e86f77439ac7fec728a76",
+      "logical_fit_matrix_bytes": 1048576,
+      "input_bytes": 98304,
+      "common_auxiliary_bytes": 0,
+      "methodology": {
+        "scope": "source construction, fitting, and held-out prediction except SVD; optional backward included",
+        "baseline": "dense-iterative uses the same native solver/start/options as streamed; dense-direct is optional and uses direct solve/full decomposition",
+        "gpu_memory": "extra peak allocated CUDA bytes above live inputs after garbage collection before each sample; reserved cache and driver/external-library allocations excluded",
+        "cpu_memory": "not measured; null",
+        "timing": "synchronized wall time after warmup; shuffled method order",
+        "accuracy": "shared inputs and spectral start; convergence plus value/VJP or sign/rotation-invariant subspace checks before timing"
+      }
+    }
+  ],
+  "direct_ridge": {
+    "schema_version": 1,
+    "configuration": {
+      "case": "ridge",
+      "device": "cuda",
+      "dtype": "float64",
+      "n": 2048,
+      "m": 256,
+      "queries": 128,
+      "d": 8,
+      "channels": 2,
+      "rank": 2,
+      "subspace_size": 10,
+      "classes": 4,
+      "chunk_size": 128,
+      "max_iter": 300,
+      "warmup": 1,
+      "repeats": 3,
+      "threads": 1,
+      "rtol": 1e-07,
+      "atol": 1e-09,
+      "regularization": 0.5,
+      "backward": false,
+      "dense_direct": true,
+      "seed": 1729
+    },
+    "environment": {
+      "python": "3.10.12",
+      "torch": "2.12.1+cu126",
+      "torchpairwise": "0.3.0",
+      "platform": "Linux",
+      "cuda_runtime": "12.6",
+      "device": "cuda",
+      "threads": 1,
+      "matmul_precision": "highest",
+      "extension_sha256": "c02da442f1752ac83fb52b685c8dc8ebb7ce09234df1b579e68c8d2a224243e6",
+      "extension_bytes": 428446920,
+      "revision": {
+        "commit": null,
+        "dirty": null
+      },
+      "gpu": "Quadro RTX 6000",
+      "compute_capability": [
+        7,
+        5
+      ]
+    },
+    "results": {
+      "dense-iterative": {
+        "status": "ok",
+        "first_call_ms": 11806.657670997083,
+        "validation": {
+          "coefficients_relative_l2": 0.0,
+          "coefficients_max_abs": 0.0,
+          "prediction_relative_l2": 0.0,
+          "prediction_max_abs": 0.0
+        },
+        "diagnostics": {
+          "iterations": [
+            64,
+            63
+          ],
+          "residual_norm": [
+            3.547378349909057e-06,
+            3.6237468727257665e-06
+          ]
+        },
+        "samples_ms": [
+          8012.274698354304,
+          6476.438730023801,
+          6882.890824228525
+        ],
+        "extra_peak_bytes_samples": [
+          35860992,
+          35860992,
+          35860992
+        ],
+        "live_baseline_bytes_samples": [
+          8691712,
+          8691712,
+          8691712
+        ],
+        "median_ms": 6882.890824228525,
+        "extra_peak_bytes": 35860992
+      },
+      "streamed": {
+        "status": "ok",
+        "first_call_ms": 11237.72656172514,
+        "validation": {
+          "coefficients_relative_l2": 0.0,
+          "coefficients_max_abs": 0.0,
+          "prediction_relative_l2": 0.0,
+          "prediction_max_abs": 0.0
+        },
+        "diagnostics": {
+          "iterations": [
+            64,
+            63
+          ],
+          "residual_norm": [
+            3.547378349909057e-06,
+            3.6237468727257665e-06
+          ]
+        },
+        "samples_ms": [
+          7467.707738280296,
+          7468.218227848411,
+          8907.045366242528
+        ],
+        "extra_peak_bytes_samples": [
+          475648,
+          475648,
+          475648
+        ],
+        "live_baseline_bytes_samples": [
+          8691712,
+          8691712,
+          8691712
+        ],
+        "median_ms": 7468.218227848411,
+        "extra_peak_bytes": 475648
+      },
+      "dense-direct": {
+        "status": "ok",
+        "first_call_ms": 80.924809910357,
+        "validation": {
+          "coefficients_relative_l2": 3.454818401739662e-08,
+          "coefficients_max_abs": 2.1897599733478046e-07,
+          "prediction_relative_l2": 2.0538920845989646e-07,
+          "prediction_max_abs": 2.394901238156333e-07
+        },
+        "diagnostics": {},
+        "samples_ms": [
+          50.79024005681276,
+          51.41931027173996,
+          50.61657261103392
+        ],
+        "extra_peak_bytes_samples": [
+          100791296,
+          100791296,
+          100791296
+        ],
+        "live_baseline_bytes_samples": [
+          8691712,
+          8691712,
+          8691712
+        ],
+        "median_ms": 50.79024005681276,
+        "extra_peak_bytes": 100791296
+      }
+    },
+    "recorded_utc": "2026-11-02T13:58:22.571315+00:00",
+    "harness_sha256": "21c9495065fc98644019bbc7043f669feeb8c7cd8a8e86f77439ac7fec728a76",
+    "logical_fit_matrix_bytes": 33554432,
+    "input_bytes": 172032,
+    "common_auxiliary_bytes": 0,
+    "methodology": {
+      "scope": "source construction, fitting, and held-out prediction except SVD; optional backward included",
+      "baseline": "dense-iterative uses the same native solver/start/options as streamed; dense-direct is optional and uses direct solve/full decomposition",
+      "gpu_memory": "extra peak allocated CUDA bytes above live inputs after garbage collection before each sample; reserved cache and driver/external-library allocations excluded",
+      "cpu_memory": "not measured; null",
+      "timing": "synchronized wall time after warmup; shuffled method order",
+      "accuracy": "shared inputs and spectral start; convergence plus value/VJP or sign/rotation-invariant subspace checks before timing"
+    }
+  }
+}

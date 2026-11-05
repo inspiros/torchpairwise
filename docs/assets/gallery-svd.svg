@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="224" viewBox="0 0 560 224" role="img" aria-labelledby="title desc">
+<title id="title">Rectangular Truncated SVD</title><desc id="desc">Stream rectangular source actions to fit narrow left and right singular-vector factors and singular values.</desc>
+<rect width="560" height="224" fill="#10232b" />
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+<text x="26" y="30" fill="#9ac3ff" font-size="11">RECTANGULAR FACTORIZATION</text>
+<rect x="30" y="61" width="125" height="97" rx="6" fill="none" stroke="#a9bfc2" stroke-opacity=".35" stroke-dasharray="3 4" />
+<path d="M166 108 H207 m-7 -5 7 5 -7 5" fill="none" stroke="#9ac3ff" stroke-width="1.5" />
+
+<rect x="40" y="72" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="55" y="72" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="70" y="72" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="85" y="72" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="100" y="72" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="115" y="72" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="130" y="72" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="40" y="87" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="55" y="87" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="70" y="87" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="85" y="87" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="100" y="87" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="115" y="87" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="130" y="87" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="40" y="102" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="55" y="102" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="70" y="102" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="85" y="102" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="100" y="102" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="115" y="102" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="130" y="102" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="40" y="117" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="55" y="117" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="70" y="117" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="85" y="117" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="100" y="117" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="115" y="117" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="130" y="117" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="40" y="132" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="55" y="132" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="70" y="132" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="85" y="132" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="100" y="132" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="115" y="132" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="130" y="132" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".16" />
+<rect x="228" y="65" width="12" height="12" rx="2" fill="#91d8c4" opacity=".85" />
+<rect x="243" y="65" width="12" height="12" rx="2" fill="#91d8c4" opacity=".85" />
+<rect x="228" y="80" width="12" height="12" rx="2" fill="#91d8c4" opacity=".85" />
+<rect x="243" y="80" width="12" height="12" rx="2" fill="#91d8c4" opacity=".85" />
+<rect x="228" y="95" width="12" height="12" rx="2" fill="#91d8c4" opacity=".85" />
+<rect x="243" y="95" width="12" height="12" rx="2" fill="#91d8c4" opacity=".85" />
+<rect x="228" y="110" width="12" height="12" rx="2" fill="#91d8c4" opacity=".85" />
+<rect x="243" y="110" width="12" height="12" rx="2" fill="#91d8c4" opacity=".85" />
+<rect x="228" y="125" width="12" height="12" rx="2" fill="#91d8c4" opacity=".85" />
+<rect x="243" y="125" width="12" height="12" rx="2" fill="#91d8c4" opacity=".85" />
+<rect x="228" y="140" width="12" height="12" rx="2" fill="#91d8c4" opacity=".85" />
+<rect x="243" y="140" width="12" height="12" rx="2" fill="#91d8c4" opacity=".85" />
+<rect x="391" y="89" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="406" y="89" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="421" y="89" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="436" y="89" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="451" y="89" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="466" y="89" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="481" y="89" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="496" y="89" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="391" y="104" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="406" y="104" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="421" y="104" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="436" y="104" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="451" y="104" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="466" y="104" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="481" y="104" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<rect x="496" y="104" width="12" height="12" rx="2" fill="#9ac3ff" opacity=".85" />
+<text x="277" y="113" fill="#a9bfc2" font-size="16" text-anchor="middle">×</text>
+<text x="365" y="113" fill="#a9bfc2" font-size="16" text-anchor="middle">×</text>
+<text x="92" y="183" fill="#a9bfc2" font-size="13" text-anchor="middle">A [N,M]</text>
+<text x="241" y="183" fill="#a9bfc2" font-size="13" text-anchor="middle">U [N,k]</text>
+<text x="317" y="183" fill="#a9bfc2" font-size="13" text-anchor="middle">Σ [k]</text>
+<text x="449" y="183" fill="#a9bfc2" font-size="13" text-anchor="middle">Vᵀ [k,M]</text>
+<text x="280" y="211" fill="#a9bfc2" font-size="10" text-anchor="middle">Fit through A and Aᵀ actions · reuse narrow factors</text>
+<rect x="303" y="91" width="12" height="12" rx="2" fill="#f0c783" opacity=".85" /><rect x="318" y="91" width="12" height="12" rx="2" fill="#f0c783" opacity=".16" /><rect x="303" y="106" width="12" height="12" rx="2" fill="#f0c783" opacity=".16" /><rect x="318" y="106" width="12" height="12" rx="2" fill="#f0c783" opacity=".85" /></g></svg>

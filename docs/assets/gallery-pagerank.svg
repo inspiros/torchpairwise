@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="224" viewBox="0 0 560 224" role="img" aria-labelledby="title desc">
+<title id="title">Personalized PageRank Computation</title>
+<desc id="desc">Directed affinity tiles feed a nonsymmetric GMRES solve to produce personalized vertex ranks.</desc>
+<rect width="560" height="224" fill="#10232b"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace" text-anchor="middle">
+<text x="26" y="30" fill="#e8b4da" font-size="11" text-anchor="start">DIRECTED GRAPH RANKING</text>
+<g fill="#e8b4da" opacity=".25">
+<rect x="55" y="62" width="20" height="92" rx="3"/><rect x="80" y="62" width="20" height="92" rx="3"/><rect x="105" y="62" width="20" height="92" rx="3"/>
+</g>
+<rect x="55" y="90" width="70" height="25" rx="3" fill="#e8b4da" opacity=".8"/>
+<g fill="none" stroke="#e8b4da" stroke-width="1.5"><path d="M154 108 H208 m-7 -5 7 5 -7 5"/><path d="M348 108 H402 m-7 -5 7 5 -7 5"/></g>
+<rect x="220" y="78" width="118" height="60" rx="12" fill="#3b2e41" stroke="#e8b4da" stroke-opacity=".4"/>
+<text x="279" y="115" fill="#e8b4da" font-size="20">GMRES</text>
+<g fill="#69d9c5" opacity=".65"><rect x="426" y="86" width="12" height="45" rx="2"/><rect x="444" y="86" width="12" height="45" rx="2"/><rect x="462" y="86" width="12" height="45" rx="2"/></g>
+<g fill="#a9bfc2" font-size="14"><text x="90" y="183">P [N,N]</text><text x="279" y="183">I - β Pᵀ</text><text x="450" y="183">R [N,R]</text></g>
+</g></svg>

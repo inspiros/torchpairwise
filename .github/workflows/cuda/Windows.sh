@@ -3,14 +3,15 @@
 set -e
 set -x
 
-# Install CUDA 12.8: (requires thrust)
-echo "Installing CUDA 12.8"
-curl -L -o cuda.exe https://developer.download.nvidia.com/compute/cuda/12.8.1/network_installers/cuda_12.8.1_windows_network.exe
-./cuda.exe -s nvcc_12.8 cudart_12.8 thrust_12.8 cublas_dev_12.8 curand_dev_12.8 cusolver_dev_12.8 cusparse_dev_12.8
+# Install CUDA 13.2 (matches the torch cu132 wheels). CUDA 13 replaced the
+# thrust subpackage with cccl and ships crt/nvvm separately from nvcc.
+echo "Installing CUDA 13.2"
+curl -L -o cuda.exe https://developer.download.nvidia.com/compute/cuda/13.2.2/network_installers/cuda_13.2.2_windows_network.exe
+./cuda.exe -s nvcc_13.2 crt_13.2 nvvm_13.2 cudart_13.2 cccl_13.2 cublas_dev_13.2 curand_dev_13.2 cusolver_dev_13.2 cusparse_dev_13.2
 rm cuda.exe
 
-export PATH="/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/bin":$PATH
-export CUDA_HOME="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8"
+export PATH="/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v13.2/bin":$PATH
+export CUDA_HOME="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v13.2"
 
 # test
 nvcc -V

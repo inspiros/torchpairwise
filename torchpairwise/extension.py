@@ -9,7 +9,6 @@ from typing import List
 from warnings import warn
 
 import torch
-from torch._ops import _OpNamespace
 
 extension_namespace = os.path.basename(os.path.dirname(__file__))
 
@@ -50,6 +49,7 @@ def _get_extension_path(lib_name):
 
 
 _HAS_OPS = False
+_LOAD_ERROR = None
 
 
 def _has_ops():
@@ -81,18 +81,19 @@ try:
     def _has_ops():  # noqa: F811
         return True
 
-except (ImportError, OSError):
-    pass
+except (ImportError, OSError) as exc:
+    _LOAD_ERROR = exc
 finally:
-    _ops = _OpNamespace(extension_namespace)
+    _ops = getattr(torch.ops, extension_namespace)
 
 
 def _assert_has_ops():
     if not _has_ops():
         raise RuntimeError(
             "Couldn\'t load custom C++ ops. Recompile C++ extension with:\n"
-            "\tpython setup.py build_ext --inplace"
-        )
+            "\tpython setup.py build_ext --inplace\n"
+            f"Original loader error: {_LOAD_ERROR}"
+        ) from _LOAD_ERROR
 
 
 def _check_cuda_version(minor=True):
@@ -183,9 +184,38 @@ def with_cuda() -> bool:
     return cuda_version() != -1
 
 
+def get_include() -> str:
+    r"""
+    Return the directory holding the native headers shipped with this package.
+
+    Add it to a C++ extension's include path to use ``#include <torchpairwise.h>``.
+    Headers are bound to this exact build; see ``docs/native-api.md``.
+    """
+    path = os.path.join(os.path.dirname(__file__), "csrc")
+    if not os.path.isfile(os.path.join(path, "torchpairwise.h")):
+        raise RuntimeError(f"torchpairwise native headers are missing from {path}")
+    return path
+
+
+def library_path() -> str:
+    r"""
+    Return the path of the compiled extension library ``_C``.
+
+    A C++ extension that includes the native headers links against this file.
+    Extensions that only call operators through the PyTorch dispatcher do not.
+    """
+    _assert_has_ops()
+    return _get_extension_path("_C")
+
+
 def cuda_arch_list() -> List[str]:
     r"""
-    Returns list CUDA architectures this library was compiled for.
+    Return compiled CUDA targets, e.g. ``['compute_75', 'sm_75']``.
+
+    ``sm_*`` denotes native GPU code; ``compute_*`` denotes embedded PTX.
+    Returns an empty list for CPU-only builds or unknown build metadata.
+    This describes this extension, independently of PyTorch's own targets and
+    the GPU currently visible at runtime.
     """
     if not _HAS_OPS:
         return []

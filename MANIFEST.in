@@ -1,8 +1,27 @@
 recursive-include torchpairwise *.cpp
 recursive-include torchpairwise *.cu
 include README.md
+include CHANGELOG.md
+include CITATION.cff
 include LICENSE.txt
 include requirements*.txt
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
+
+recursive-include torchpairwise *.h *.hpp *.cuh *.pyi
+include torchpairwise/py.typed
+recursive-include tests *.py
+recursive-include docs *.md
+recursive-include docs/assets *.svg
+recursive-include docs/site *.toml *.py *.json *.css *.js *.svg
+prune docs/site/src/assets
+recursive-include examples *.py *.cpp
+
+include .clang-format
+
+include CMakeLists.txt
+recursive-include cmake *.cmake *.in
+include torchpairwise/csrc/sources.json
+recursive-include tests *.cpp CMakeLists.txt
+recursive-include examples CMakeLists.txt

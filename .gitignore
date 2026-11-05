@@ -343,7 +343,7 @@ healthchecksdb
 
 # Cmake
 cmake-build-*/
-CMakeLists.txt
+CMakeUserPresets.json
 
 # Python build
 build/
@@ -353,3 +353,8 @@ wheelhouse/
 
 # secret
 develop/
+.maintainer/
+.private/
+
+# mdBook shared assets are copied by the documentation preprocessor.
+/docs/site/src/assets/

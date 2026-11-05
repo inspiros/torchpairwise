@@ -1,0 +1,37 @@
+[book]
+title = "TorchPairwise"
+description = "Distances, kernels, comparison modes and streamed operators for PyTorch and LibTorch."
+authors = ["TorchPairwise contributors"]
+language = "en"
+src = "src"
+
+[build]
+build-dir = "../../develop/site-preview/book"
+create-missing = false
+
+[preprocessor.links]
+
+[preprocessor.torchpairwise]
+command = "python3 preprocess.py"
+after = ["links"]
+
+[output.html]
+default-theme = "navy"
+preferred-dark-theme = "navy"
+smart-punctuation = false
+mathjax-support = true
+additional-css = ["theme/site.css"]
+additional-js = ["theme/site.js"]
+git-repository-url = "https://github.com/inspiros/torchpairwise"
+site-url = "/torchpairwise/"
+no-section-label = true
+sidebar-header-nav = false
+
+[output.html.search]
+enable = true
+limit-results = 20
+use-boolean-and = true
+
+[output.html.fold]
+enable = true
+level = 0

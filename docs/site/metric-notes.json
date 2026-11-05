@@ -1,0 +1,856 @@
+{
+  "euclidean_distances": {
+    "title": "Euclidean",
+    "formula": "d(x,y)=\\sqrt{\\sum_i(x_i-y_i)^2}",
+    "note": "Optional w multiplies each squared coordinate difference.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy euclidean",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.euclidean.html"
+      ]
+    ]
+  },
+  "sqeuclidean_distances": {
+    "title": "Squared Euclidean",
+    "formula": "d^2(x,y)=\\sum_i(x_i-y_i)^2",
+    "note": "Returns squared units; useful for losses and Gaussian kernels. Optional feature weights w.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy sqeuclidean",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.sqeuclidean.html"
+      ]
+    ]
+  },
+  "manhattan_distances": {
+    "title": "Manhattan",
+    "formula": "d(x,y)=\\sum_i|x_i-y_i|",
+    "note": "Also called L1 or cityblock. Optional feature weights w.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy cityblock",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.cityblock.html"
+      ]
+    ]
+  },
+  "minkowski_distances": {
+    "title": "Minkowski",
+    "formula": "d_p(x,y)=\\left(\\sum_i|x_i-y_i|^p\\right)^{1/p}",
+    "note": "p defaults to 2. Positive finite p uses this formula; infinity selects the maximum and p=0 counts unequal coordinates. With weights, p must be positive; p<1 is not a metric.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy minkowski",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.minkowski.html"
+      ]
+    ]
+  },
+  "wminkowski_distances": {
+    "title": "Weighted Minkowski",
+    "formula": "d_{p,w}(x,y)=\\left(\\sum_i w_i|x_i-y_i|^p\\right)^{1/p}",
+    "note": "Provide nonnegative w ending in [D]; p must be positive. Weights multiply the powered differences, rather than being raised to p.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy minkowski",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.minkowski.html"
+      ]
+    ]
+  },
+  "chebyshev_distances": {
+    "title": "Chebyshev",
+    "formula": "d(x,y)=\\max_i |x_i-y_i|",
+    "note": "With w, only coordinates with positive weight participate; their weight magnitudes do not scale the maximum.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy chebyshev",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.chebyshev.html"
+      ]
+    ]
+  },
+  "seuclidean_distances": {
+    "title": "Standardized Euclidean",
+    "formula": "d(x,y)=\\sqrt{\\sum_i\\frac{(x_i-y_i)^2}{V_i}}",
+    "note": "V is a positive feature-variance tensor ending in [D]. Self collection comparisons may infer it; paired/single and explicit cross collections require V.",
+    "guide": "additional-vector-distances.md",
+    "related": [
+      [
+        "SciPy seuclidean",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.seuclidean.html"
+      ]
+    ]
+  },
+  "mahalanobis_distances": {
+    "title": "Mahalanobis",
+    "formula": "d(x,y)=\\sqrt{(x-y)^\\mathsf{T}\\,VI\\,(x-y)}",
+    "note": "VI ends in [D,D] and represents the inverse covariance. Paired/single and explicit cross collections require it; self collection comparisons may infer it.",
+    "guide": "additional-vector-distances.md",
+    "related": [
+      [
+        "SciPy mahalanobis",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.mahalanobis.html"
+      ]
+    ]
+  },
+  "cosine_distances": {
+    "title": "Cosine Distance",
+    "formula": "d(x,y)=1-\\frac{\\langle x,y\\rangle}{\\|x\\|_2\\|y\\|_2}",
+    "note": "Optional w gives weighted dot products and norms. Zero-norm cross comparisons return 1; identity self comparisons explicitly zero the diagonal.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy cosine",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.cosine.html"
+      ]
+    ]
+  },
+  "correlation_distances": {
+    "title": "Correlation Distance",
+    "formula": "d(x,y)=1-\\frac{\\langle x-\\bar x,y-\\bar y\\rangle}{\\|x-\\bar x\\|_2\\|y-\\bar y\\|_2}",
+    "note": "Optional w uses weighted means, products and norms. Constant supported rows have undefined correlation and return NaN.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy correlation",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.correlation.html"
+      ]
+    ]
+  },
+  "angular_distances": {
+    "title": "Angular",
+    "formula": "d(x,y)=\\arccos\\!\\left[\\operatorname{clip}\\!\\left(\\frac{\\langle x,y\\rangle}{\\|x\\|_2\\|y\\|_2},-1,1\\right)\\right]",
+    "note": "Returns radians in [0,π]. Inputs must have nonzero norms; coincident directions use a zero subgradient.",
+    "guide": "additional-vector-distances.md",
+    "related": []
+  },
+  "canberra_distances": {
+    "title": "Canberra",
+    "formula": "d(x,y)=\\sum_i\\frac{|x_i-y_i|}{|x_i|+|y_i|}",
+    "note": "A joint zero coordinate contributes zero. Optional w scales the coordinate terms.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy canberra",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.canberra.html"
+      ]
+    ]
+  },
+  "braycurtis_distances": {
+    "title": "Bray-Curtis",
+    "formula": "d(x,y)=\\frac{\\sum_i|x_i-y_i|}{\\sum_i|x_i+y_i|}",
+    "note": "Optional w scales numerator and denominator coordinates. An all-zero denominator is undefined.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy braycurtis",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.braycurtis.html"
+      ]
+    ]
+  },
+  "haversine_distances": {
+    "title": "Haversine",
+    "formula": "d=2\\arcsin\\sqrt{\\sin^2\\!\\frac{\\phi_x-\\phi_y}{2}+\\cos\\phi_x\\cos\\phi_y\\sin^2\\!\\frac{\\lambda_x-\\lambda_y}{2}}",
+    "note": "Each vector is latitude/longitude in radians, D=2. Returns an angle on the unit sphere; multiply by the sphere radius for lengths.",
+    "guide": "additional-vector-distances.md",
+    "related": [
+      [
+        "scikit-learn haversine_distances",
+        "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.haversine_distances.html"
+      ]
+    ]
+  },
+  "snr_distances": {
+    "title": "Variance-Ratio SNR Distance",
+    "formula": "d(x,y)=\\frac{\\operatorname{Var}(y-x)}{\\operatorname{Var}(x)}",
+    "note": "Directed vector discrepancy using feature-axis variances; this is not an audio SNR score in decibels.",
+    "guide": "additional-vector-distances.md",
+    "related": []
+  },
+  "nan_euclidean_distances": {
+    "title": "NaN-Aware Euclidean",
+    "formula": "d(x,y)=\\sqrt{\\frac{D}{|O|}\\sum_{i\\in O}(x_i-y_i)^2}",
+    "note": "O contains jointly observed coordinates. No shared observations returns NaN; infinities are rejected. squared=True omits the root.",
+    "guide": "missing-and-ordered-data.md",
+    "related": [
+      [
+        "scikit-learn nan_euclidean_distances",
+        "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.nan_euclidean_distances.html"
+      ]
+    ]
+  },
+  "lorentzian_distances": {
+    "title": "Lorentzian",
+    "formula": "d(x,y)=\\sum_i\\log(1+|x_i-y_i|)",
+    "note": "Natural logarithms soften the contribution of large coordinate differences.",
+    "guide": "additional-vector-distances.md",
+    "related": []
+  },
+  "clark_distances": {
+    "title": "Clark",
+    "formula": "d(x,y)=\\sqrt{\\sum_i\\left(\\frac{x_i-y_i}{x_i+y_i}\\right)^2}",
+    "note": "Finite nonnegative coordinates. A joint zero coordinate contributes zero.",
+    "guide": "additional-vector-distances.md",
+    "related": []
+  },
+  "soergel_distances": {
+    "title": "Soergel",
+    "formula": "d(x,y)=\\frac{\\sum_i|x_i-y_i|}{\\sum_i\\max(x_i,y_i)}",
+    "note": "Finite nonnegative coordinates. Two zero vectors return zero. Ruzicka has the same formula on this domain.",
+    "guide": "additional-vector-distances.md",
+    "related": []
+  },
+  "ruzicka_distances": {
+    "title": "Ruzicka / Continuous Jaccard",
+    "formula": "d(x,y)=1-\\frac{\\sum_i\\min(x_i,y_i)}{\\sum_i\\max(x_i,y_i)}",
+    "note": "Finite nonnegative coordinates, with zero for two zero vectors. Equivalent to Soergel on this domain; continuous_jaccard is an alias.",
+    "guide": "additional-vector-distances.md",
+    "related": []
+  },
+  "hamming_distances": {
+    "title": "Hamming",
+    "formula": "d(x,y)=D^{-1}\\sum_i\\mathbf1[x_i\\ne y_i]",
+    "note": "Numeric or Boolean inputs; tests equality without converting numeric values to Boolean. w gives a weighted fraction.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy hamming",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.hamming.html"
+      ]
+    ]
+  },
+  "jaccard_distances": {
+    "title": "Jaccard",
+    "formula": "d=\\frac{b+c}{a+b+c}",
+    "note": "Boolean contingency counts; empty union returns zero. For Boolean formulas a=c11, b=c10, c=c01, d=c00 and t=a+b+c+d. Optional w replaces counts by weight sums.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy jaccard",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.jaccard.html"
+      ]
+    ]
+  },
+  "dice_distances": {
+    "title": "Dice",
+    "formula": "d=\\frac{b+c}{2a+b+c}",
+    "note": "Boolean contingency counts; both vectors empty gives NaN. For Boolean formulas a=c11, b=c10, c=c01, d=c00 and t=a+b+c+d. Optional w replaces counts by weight sums.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy dice",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.dice.html"
+      ]
+    ]
+  },
+  "yule_distances": {
+    "title": "Yule",
+    "formula": "d=\\frac{2bc}{ad+bc}",
+    "note": "Boolean contingency counts; an undefined zero/zero ratio uses zero. For Boolean formulas a=c11, b=c10, c=c01, d=c00 and t=a+b+c+d. Optional w replaces counts by weight sums.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy yule",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.yule.html"
+      ]
+    ]
+  },
+  "rogerstanimoto_distances": {
+    "title": "Rogers-Tanimoto",
+    "formula": "d=\\frac{2(b+c)}{a+d+2(b+c)}",
+    "note": "Counts agreements of both true and false coordinates. For Boolean formulas a=c11, b=c10, c=c01, d=c00 and t=a+b+c+d. Optional w replaces counts by weight sums.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy rogerstanimoto",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.rogerstanimoto.html"
+      ]
+    ]
+  },
+  "sokalmichener_distances": {
+    "title": "Sokal-Michener",
+    "formula": "d=\\frac{2(b+c)}{a+d+2(b+c)}",
+    "note": "The implemented convention equals Rogers-Tanimoto; retained as a familiar named entry. For Boolean formulas a=c11, b=c10, c=c01, d=c00 and t=a+b+c+d. Optional w replaces counts by weight sums.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy rogerstanimoto",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.rogerstanimoto.html"
+      ]
+    ]
+  },
+  "russellrao_distances": {
+    "title": "Russell-Rao",
+    "formula": "d=\\frac{t-a}{t}",
+    "note": "Counts only jointly true coordinates as agreement; nonempty all-false vectors have distance 1. For Boolean formulas a=c11, b=c10, c=c01, d=c00 and t=a+b+c+d. Optional w replaces counts by weight sums.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy russellrao",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.russellrao.html"
+      ]
+    ]
+  },
+  "sokalsneath_distances": {
+    "title": "Sokal-Sneath",
+    "formula": "d=\\frac{2(b+c)}{a+2(b+c)}",
+    "note": "Both vectors empty gives NaN. For Boolean formulas a=c11, b=c10, c=c01, d=c00 and t=a+b+c+d. Optional w replaces counts by weight sums.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy sokalsneath",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.sokalsneath.html"
+      ]
+    ]
+  },
+  "kulczynski1_distances": {
+    "title": "Kulczynski 1",
+    "formula": "d=\\frac{a}{b+c}",
+    "note": "A legacy ratio rather than a conventional distance; equal nonempty supports may give infinity. For Boolean formulas a=c11, b=c10, c=c01, d=c00 and t=a+b+c+d. Optional w replaces counts by weight sums.",
+    "guide": "weighted-distances.md",
+    "related": [
+      [
+        "SciPy kulczynski1",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.kulczynski1.html"
+      ]
+    ]
+  },
+  "kulsinski_distances": {
+    "title": "Kulsinski",
+    "formula": "d=\\frac{b+c-a+t}{b+c+t}",
+    "note": "Retains the legacy Kulsinski definition, distinct from Kulczynski 1. For Boolean formulas a=c11, b=c10, c=c01, d=c00 and t=a+b+c+d. Optional w replaces counts by weight sums.",
+    "guide": "weighted-distances.md",
+    "related": []
+  },
+  "hellinger_distances": {
+    "title": "Hellinger",
+    "formula": "H(p,q)=\\frac{\\|\\sqrt p-\\sqrt q\\|_2}{\\sqrt2}",
+    "note": "Nonnegative positive-mass rows are normalized independently. Range [0,1]; no pseudocount.",
+    "guide": "histograms.md",
+    "related": []
+  },
+  "bhattacharyya_distances": {
+    "title": "Bhattacharyya Distance",
+    "formula": "d(p,q)=-\\log\\!\\left(\\sum_i\\sqrt{p_iq_i}\\right)",
+    "note": "Normalizes nonnegative positive-mass rows. Disjoint supports give infinity; not a triangle-inequality metric.",
+    "guide": "distribution-comparisons.md",
+    "related": []
+  },
+  "kl_divergences": {
+    "title": "Kullback-Leibler",
+    "formula": "D_{\\mathrm{KL}}(p\\Vert q)=\\sum_i p_i\\log\\frac{p_i}{q_i}",
+    "note": "Normalizes nonnegative positive-mass rows. Positive p with zero q gives infinity. base changes logarithm units.",
+    "guide": "histograms.md",
+    "related": []
+  },
+  "symmetric_kl_divergences": {
+    "title": "Symmetric KL / Jeffreys",
+    "formula": "J(p,q)=D_{\\mathrm{KL}}(p\\Vert q)+D_{\\mathrm{KL}}(q\\Vert p)",
+    "note": "The directional KL sum, without a factor of one half or a root. Normalizes each row.",
+    "guide": "histograms.md",
+    "related": []
+  },
+  "jensenshannon_distances": {
+    "title": "Jensen-Shannon",
+    "formula": "d(p,q)=\\sqrt{\\tfrac12D_{\\mathrm{KL}}(p\\Vert m)+\\tfrac12D_{\\mathrm{KL}}(q\\Vert m)},\\quad m=(p+q)/2",
+    "note": "Normalizes each nonnegative positive-mass row. Rooted distance; base controls logarithm units.",
+    "guide": "probability-divergences.md",
+    "related": [
+      [
+        "SciPy jensenshannon",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.jensenshannon.html"
+      ]
+    ]
+  },
+  "total_variation_distances": {
+    "title": "Total Variation",
+    "formula": "d(p,q)=\\tfrac12\\sum_i|p_i-q_i|",
+    "note": "Normalizes each nonnegative positive-mass row. Range [0,1].",
+    "guide": "probability-divergences.md",
+    "related": []
+  },
+  "fisher_rao_distances": {
+    "title": "Fisher-Rao",
+    "formula": "d(p,q)=2\\arccos\\!\\left(\\sum_i\\sqrt{p_iq_i}\\right)",
+    "note": "Normalizes each nonnegative positive-mass row. Uses the factor-two convention, range [0,π].",
+    "guide": "probability-divergences.md",
+    "related": []
+  },
+  "renyi_divergences": {
+    "title": "Rényi",
+    "formula": "D_\\alpha(p\\Vert q)=\\frac{\\log\\sum_i p_i^\\alpha q_i^{1-\\alpha}}{\\alpha-1}",
+    "note": "Normalizes each nonnegative positive-mass row. alpha>0; alpha=1 uses the KL limit. Natural logarithms.",
+    "guide": "probability-divergences.md",
+    "related": []
+  },
+  "pearson_chi2_divergences": {
+    "title": "Pearson Chi-Squared",
+    "formula": "D(p\\Vert q)=\\sum_i\\frac{(p_i-q_i)^2}{q_i}",
+    "note": "Normalizes each nonnegative positive-mass row. The second operand supplies the denominator; support mismatch may give infinity.",
+    "guide": "probability-divergences.md",
+    "related": []
+  },
+  "neyman_chi2_divergences": {
+    "title": "Neyman Chi-Squared",
+    "formula": "D(p\\Vert q)=\\sum_i\\frac{(p_i-q_i)^2}{p_i}",
+    "note": "Normalizes each nonnegative positive-mass row. Reverses the Pearson denominator.",
+    "guide": "probability-divergences.md",
+    "related": []
+  },
+  "triangular_discrimination_distances": {
+    "title": "Triangular Discrimination",
+    "formula": "d(p,q)=\\sum_i\\frac{(p_i-q_i)^2}{p_i+q_i}",
+    "note": "Normalizes each nonnegative positive-mass row. No factor of one half; range [0,2]. Joint zeros contribute zero.",
+    "guide": "probability-divergences.md",
+    "related": []
+  },
+  "itakura_saito_divergences": {
+    "title": "Itakura-Saito",
+    "formula": "D(x\\Vert y)=\\sum_i\\left[\\frac{x_i}{y_i}-\\log\\frac{x_i}{y_i}-1\\right]",
+    "note": "Raw strictly positive entries, without row normalization. Scaling both operands equally preserves the divergence.",
+    "guide": "probability-divergences.md",
+    "related": []
+  },
+  "aitchison_distances": {
+    "title": "Aitchison",
+    "formula": "d_A(x,y)=\\|\\operatorname{clr}(x)-\\operatorname{clr}(y)\\|_2,\\quad \\operatorname{clr}(x)_i=\\log x_i-D^{-1}\\sum_j\\log x_j",
+    "note": "Strictly positive finite compositions. No pseudocount; independent row scaling preserves the result.",
+    "guide": "distribution-comparisons.md",
+    "related": []
+  },
+  "wasserstein_1d_distances": {
+    "title": "Shared-Grid 1D Wasserstein",
+    "formula": "W_1(p,q)=\\sum_{i=1}^{D-1}|P_i-Q_i|(z_{i+1}-z_i),\\quad P_i=\\sum_{j\\le i}p_j",
+    "note": "Inputs are normalized histogram masses, not raw support samples. bin_positions supplies one strictly increasing shared grid; default unit-spaced bins.",
+    "guide": "missing-and-ordered-data.md",
+    "related": [
+      [
+        "SciPy wasserstein_distance",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wasserstein_distance.html"
+      ]
+    ]
+  },
+  "linear_kernel": {
+    "title": "Linear Kernel",
+    "formula": "k(x,y)=x^\\mathsf{T}y",
+    "note": "Raw dot product; no automatic centering or normalization.",
+    "guide": "kernels.md",
+    "related": [
+      [
+        "scikit-learn linear_kernel",
+        "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.linear_kernel.html"
+      ]
+    ]
+  },
+  "polynomial_kernel": {
+    "title": "Polynomial Kernel",
+    "formula": "k(x,y)=(\\gamma x^\\mathsf{T}y+c_0)^d",
+    "note": "degree defaults to 3, gamma to 1/D and coef0 to 1.",
+    "guide": "kernels.md",
+    "related": [
+      [
+        "scikit-learn polynomial_kernel",
+        "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.polynomial_kernel.html"
+      ]
+    ]
+  },
+  "sigmoid_kernel": {
+    "title": "Sigmoid Similarity",
+    "formula": "k(x,y)=\\tanh(\\gamma x^\\mathsf{T}y+c_0)",
+    "note": "gamma defaults to 1/D and coef0 to 1. Not positive-semidefinite for arbitrary parameters.",
+    "guide": "kernels.md",
+    "related": [
+      [
+        "scikit-learn sigmoid_kernel",
+        "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.sigmoid_kernel.html"
+      ]
+    ]
+  },
+  "rbf_kernel": {
+    "title": "RBF / Gaussian Kernel",
+    "formula": "k(x,y)=\\exp(-\\gamma\\|x-y\\|_2^2)",
+    "note": "gamma defaults to 1/D; use explicit gamma to match another kernel parameterization.",
+    "guide": "kernels.md",
+    "related": [
+      [
+        "scikit-learn rbf_kernel",
+        "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.rbf_kernel.html"
+      ]
+    ]
+  },
+  "laplacian_kernel": {
+    "title": "Laplacian Kernel",
+    "formula": "k(x,y)=\\exp(-\\gamma\\|x-y\\|_1)",
+    "note": "Uses Manhattan distance, with gamma=1/D by default. Distinct from Matérn nu=0.5 in multiple dimensions.",
+    "guide": "kernels.md",
+    "related": [
+      [
+        "scikit-learn laplacian_kernel",
+        "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.laplacian_kernel.html"
+      ]
+    ]
+  },
+  "cosine_similarity": {
+    "title": "Cosine Similarity",
+    "formula": "k(x,y)=\\frac{x^\\mathsf{T}y}{\\|x\\|_2\\|y\\|_2}",
+    "note": "Zero-norm cross comparisons return zero. The short cosine alias denotes similarity only inside kernel selectors.",
+    "guide": "kernels.md",
+    "related": [
+      [
+        "scikit-learn cosine_similarity",
+        "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.cosine_similarity.html"
+      ]
+    ]
+  },
+  "additive_chi2_kernel": {
+    "title": "Additive Chi-Squared",
+    "formula": "k(x,y)=-\\sum_i\\frac{(x_i-y_i)^2}{x_i+y_i}",
+    "note": "Nonnegative coordinates; joint zeros contribute zero. Uses the negative additive chi-squared convention.",
+    "guide": "kernels.md",
+    "related": [
+      [
+        "scikit-learn additive_chi2_kernel",
+        "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.additive_chi2_kernel.html"
+      ]
+    ]
+  },
+  "chi2_kernel": {
+    "title": "Chi-Squared Kernel",
+    "formula": "k(x,y)=\\exp\\!\\left[-\\gamma\\sum_i\\frac{(x_i-y_i)^2}{x_i+y_i}\\right]",
+    "note": "Nonnegative coordinates; joint zeros contribute zero. gamma defaults to 1.",
+    "guide": "kernels.md",
+    "related": [
+      [
+        "scikit-learn chi2_kernel",
+        "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.chi2_kernel.html"
+      ]
+    ]
+  },
+  "rational_quadratic_kernel": {
+    "title": "Rational Quadratic",
+    "formula": "k(x,y)=\\left(1+\\frac{\\|x-y\\|_2^2}{2\\alpha\\ell^2}\\right)^{-\\alpha}",
+    "note": "Positive scalar length_scale=1 and alpha=1 by default; isotropic and unit amplitude.",
+    "guide": "kernels.md",
+    "related": [
+      [
+        "scikit-learn RationalQuadratic",
+        "https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.RationalQuadratic.html"
+      ]
+    ]
+  },
+  "matern_kernel": {
+    "title": "Matérn",
+    "formula": "k_{1/2}=e^{-r},\\quad k_{3/2}=(1+\\sqrt3r)e^{-\\sqrt3r},\\quad k_{5/2}=(1+\\sqrt5r+5r^2/3)e^{-\\sqrt5r},\\quad r=\\|x-y\\|_2/\\ell",
+    "note": "nu is 0.5, 1.5 (default) or 2.5. Positive scalar length_scale defaults to 1.",
+    "guide": "kernels.md",
+    "related": [
+      [
+        "scikit-learn Matern",
+        "https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html"
+      ]
+    ]
+  },
+  "histogram_intersection_kernel": {
+    "title": "Histogram Intersection",
+    "formula": "k(x,y)=\\sum_i\\min(x_i,y_i)",
+    "note": "Raw nonnegative masses, without normalization. Self similarity equals total mass; ties split gradients equally.",
+    "guide": "histograms.md",
+    "related": []
+  },
+  "bhattacharyya_kernel": {
+    "title": "Bhattacharyya Coefficient",
+    "formula": "k(p,q)=\\sum_i\\sqrt{p_iq_i}",
+    "note": "Normalizes nonnegative positive-mass rows. This is the coefficient; its negative logarithm is the Bhattacharyya distance.",
+    "guide": "histograms.md",
+    "related": []
+  },
+  "directed_hausdorff_distances": {
+    "title": "Directed Hausdorff",
+    "formula": "h(X,Y)=\\max_{x\\in X}\\min_{y\\in Y}\\|x-y\\|_2",
+    "note": "Generic selectors return values. The named all-pairs function also returns source/target witness indices. Directional: no condensed mode.",
+    "guide": "pointsets.md",
+    "related": [
+      [
+        "SciPy directed_hausdorff",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.directed_hausdorff.html"
+      ]
+    ]
+  },
+  "hausdorff_distances": {
+    "title": "Hausdorff",
+    "formula": "H(X,Y)=\\max\\{h(X,Y),h(Y,X)\\}",
+    "note": "Unordered finite point sets. Different point counts and valid prefix lengths are supported.",
+    "guide": "pointsets.md",
+    "related": []
+  },
+  "chamfer_distances": {
+    "title": "Chamfer",
+    "formula": "C(X,Y)=\\frac1P\\sum_{x\\in X}\\min_{y\\in Y}\\rho(x,y)+\\frac1Q\\sum_{y\\in Y}\\min_{x\\in X}\\rho(x,y)",
+    "note": "rho is Euclidean distance by default, squared Euclidean with squared=True. Returns the sum of directional means.",
+    "guide": "pointsets.md",
+    "related": [
+      [
+        "PyTorch3D chamfer_distance",
+        "https://pytorch3d.readthedocs.io/en/latest/modules/loss.html#pytorch3d.loss.chamfer_distance"
+      ]
+    ]
+  },
+  "energy_distances": {
+    "title": "Energy Distance",
+    "formula": "E(X,Y)=\\sqrt{\\max\\{2\\mathbb E\\|X-Y\\|_2-\\mathbb E\\|X-X^{\\prime}\\|_2-\\mathbb E\\|Y-Y^{\\prime}\\|_2,0\\}}",
+    "note": "Uniform empirical masses. Includes within-cloud diagonals; squared=True returns the clamped expression without the root.",
+    "guide": "distribution-comparisons.md",
+    "related": [
+      [
+        "SciPy energy_distance",
+        "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.energy_distance.html"
+      ]
+    ]
+  },
+  "mmd_distances": {
+    "title": "Kernel MMD Distance",
+    "formula": "\\operatorname{MMD}(X,Y)=\\sqrt{\\max\\{\\mathbb E k(X,X^{\\prime})+\\mathbb E k(Y,Y^{\\prime})-2\\mathbb E k(X,Y),0\\}}",
+    "note": "Biased empirical expectations include within-cloud diagonals. squared=True omits the root. Kernel selection and scale matter; historical laplacian uses Euclidean ground while laplacian_kernel uses Manhattan ground.",
+    "guide": "distribution-comparisons.md",
+    "related": []
+  },
+  "mmd_statistics": {
+    "title": "Squared MMD Statistic",
+    "formula": "\\widehat{\\operatorname{MMD}}_u^2=\\frac{\\sum_{i\\ne j}k(x_i,x_j)}{P(P-1)}+\\frac{\\sum_{i\\ne j}k(y_i,y_j)}{Q(Q-1)}-\\frac{2\\sum_{i,j}k(x_i,y_j)}{PQ}",
+    "note": "estimator=\"unbiased\" is the default and requires at least two valid points on each side. estimator=\"biased\" includes diagonals. Signed result: no clamp or root.",
+    "guide": "distribution-comparisons.md",
+    "related": []
+  },
+  "wasserstein_distances": {
+    "title": "Discrete Wasserstein",
+    "formula": "W_p(X,Y)=\\left(\\min_{\\pi\\in\\Pi(a,b)}\\sum_{i,j}\\pi_{ij}\\|x_i-y_j\\|_2^p\\right)^{1/p}",
+    "note": "Uniform masses; p=1 or 2. Exact discrete solve for at most 4096 positive-mass point pairs, with CPU solver coordination even for CUDA inputs.",
+    "guide": "transport.md",
+    "related": [
+      [
+        "POT emd2",
+        "https://pythonot.github.io/all.html#ot.emd2"
+      ]
+    ]
+  },
+  "sliced_wasserstein_distances": {
+    "title": "Sliced Wasserstein",
+    "formula": "\\widehat{SW}_p(X,Y)=\\left[\\frac1L\\sum_{\\ell=1}^L\\int_0^1|F^{-1}_{X\\theta_\\ell}(t)-F^{-1}_{Y\\theta_\\ell}(t)|^p\\,dt\\right]^{1/p}",
+    "note": "Explicit shared unit projections [D,L] are required; p=1 or 2. Handles unequal point counts by exact projected quantile integration. This is sliced, not full-dimensional Wp.",
+    "guide": "transport.md",
+    "related": [
+      [
+        "POT sliced_wasserstein_distance",
+        "https://pythonot.github.io/gen_modules/ot.sliced.html#ot.sliced.sliced_wasserstein_distance"
+      ]
+    ]
+  },
+  "sinkhorn_divergences": {
+    "title": "Sinkhorn Divergence",
+    "formula": "S_\\varepsilon(X,Y)=F_\\varepsilon(X,Y)-\\tfrac12F_\\varepsilon(X,X)-\\tfrac12F_\\varepsilon(Y,Y),\\quad F_\\varepsilon=\\min_{\\pi\\in\\Pi(a,b)}\\langle\\pi,C\\rangle+\\varepsilon\\operatorname{KL}(\\pi\\Vert a\\otimes b)",
+    "note": "Cij=||xi−yj||₂^p, p=1 or 2. Fixed-budget log-domain updates, regularization=0.1 and max_iter=100. Full KL-regularized objective, not transport-only cost. Finite-budget results may be negative; no root.",
+    "guide": "transport.md",
+    "related": [
+      [
+        "GeomLoss SamplesLoss",
+        "https://www.kernel-operations.io/geomloss/api/pytorch-api.html"
+      ]
+    ]
+  },
+  "gaussian_wasserstein_distances": {
+    "title": "Gaussian Wasserstein / Bures",
+    "formula": "W_2^2=\\|\\mu-\\nu\\|_2^2+\\operatorname{tr}\\!\\left(\\Sigma+\\Lambda-2(\\Sigma^{1/2}\\Lambda\\Sigma^{1/2})^{1/2}\\right)",
+    "note": "Means and finite symmetric positive-semidefinite covariances. Default returns W2; squared=True returns the expression shown. Singular covariance boundaries use a finite derivative continuation.",
+    "guide": "distribution-comparisons.md",
+    "related": []
+  },
+  "log_euclidean_distances": {
+    "title": "Log-Euclidean",
+    "formula": "d(A,B)=\\|\\log A-\\log B\\|_F",
+    "note": "Symmetric positive-definite matrices; principal matrix logarithm. squared=True returns the squared Frobenius distance.",
+    "guide": "covariance-distances.md",
+    "related": []
+  },
+  "affine_invariant_distances": {
+    "title": "Affine-Invariant Riemannian",
+    "formula": "d(A,B)=\\|\\log(A^{-1/2}BA^{-1/2})\\|_F",
+    "note": "Symmetric positive-definite matrices. squared=True returns the squared distance. No jitter or eigenvalue clipping.",
+    "guide": "covariance-distances.md",
+    "related": []
+  },
+  "stein_distances": {
+    "title": "Stein / Jensen-Bregman LogDet",
+    "formula": "d(A,B)=\\sqrt{\\log\\det\\frac{A+B}{2}-\\tfrac12\\log\\det A-\\tfrac12\\log\\det B}",
+    "note": "Symmetric positive-definite matrices. squared=True returns the divergence inside the root, not its square.",
+    "guide": "covariance-distances.md",
+    "related": []
+  },
+  "gaussian_mixture_overlap_kernel": {
+    "title": "Gaussian-Mixture Overlap",
+    "formula": "K(p,q)=\\int p(z)q(z)\\,dz=\\sum_{i,j}a_i b_j\\,\\mathcal N(\\mu_i;\\nu_j,\\Sigma_i+\\Lambda_j)",
+    "note": "Normalized nonnegative weights and SPD covariances. Exact density overlap, without learned models.",
+    "guide": "gaussian-mixtures.md",
+    "related": []
+  },
+  "gaussian_mixture_l2_distances": {
+    "title": "Gaussian-Mixture L2",
+    "formula": "d(p,q)=\\sqrt{K(p,p)+K(q,q)-2K(p,q)}",
+    "note": "Uses Gaussian density overlap K and SPD covariances. squared=True omits the root; negative roundoff residuals are clamped to zero.",
+    "guide": "gaussian-mixtures.md",
+    "related": []
+  },
+  "gaussian_mixture_cauchy_schwarz_divergences": {
+    "title": "Gaussian-Mixture Cauchy-Schwarz",
+    "formula": "D_{\\mathrm{CS}}(p,q)=-\\log\\frac{K(p,q)}{\\sqrt{K(p,p)K(q,q)}}",
+    "note": "Uses Gaussian density overlap K and SPD covariances. Natural logarithm, no factor of two; stable log-overlap evaluation.",
+    "guide": "gaussian-mixtures.md",
+    "related": []
+  },
+  "gaussian_mixture_wasserstein_distances": {
+    "title": "Gaussian-Mixture Wasserstein",
+    "formula": "MW_2(p,q)=\\sqrt{\\min_{\\pi\\in\\Pi(a,b)}\\sum_{i,j}\\pi_{ij}W_2^2(\\mathcal N_i,\\mathcal N_j)}",
+    "note": "PSD covariances. Restricts transport to Gaussian component couplings: not exact W2 between full mixture densities. At most 4096 positive-mass component pairs; CPU-controlled solve. squared=True omits the root.",
+    "guide": "gaussian-mixtures.md",
+    "related": []
+  },
+  "gaussian_mixture_entropic_transport_costs": {
+    "title": "Gaussian-Mixture Entropic Transport",
+    "formula": "F_\\varepsilon(p,q)=\\min_{\\pi\\in\\Pi(a,b)}\\langle\\pi,C\\rangle+\\varepsilon\\operatorname{KL}(\\pi\\Vert a\\otimes b),\\quad C_{ij}=W_2^2(\\mathcal N_i,\\mathcal N_j)",
+    "note": "PSD covariances; finite-iteration estimate of the full regularized objective. regularization=0.1, max_iter=100. Includes entropy; self costs need not vanish.",
+    "guide": "gaussian-mixtures.md",
+    "related": []
+  },
+  "gaussian_mixture_sinkhorn_divergences": {
+    "title": "Gaussian-Mixture Sinkhorn",
+    "formula": "S_\\varepsilon(p,q)=F_\\varepsilon(p,q)-\\tfrac12F_\\varepsilon(p,p)-\\tfrac12F_\\varepsilon(q,q)",
+    "note": "Gaussian component W2² ground costs and PSD covariances. Fixed-budget regularized updates; no root or nonnegative clamp. Finite-budget estimates may be negative.",
+    "guide": "gaussian-mixtures.md",
+    "related": []
+  },
+  "psnr_scores": {
+    "title": "Peak Signal-to-Noise Ratio",
+    "formula": "\\operatorname{PSNR}(x,y)=10\\log_{10}\\frac{R^2}{(CHW)^{-1}\\sum_{c,h,w}(x_{chw}-y_{chw})^2}",
+    "note": "Aligned whole images; data_range R is required. Returns dB. Identical images give +infinity with a chosen zero derivative.",
+    "guide": "image-comparisons.md",
+    "related": [
+      [
+        "TorchMetrics PSNR",
+        "https://lightning.ai/docs/torchmetrics/stable/image/peak_signal_noise_ratio.html"
+      ]
+    ]
+  },
+  "ssim_scores": {
+    "title": "Structural Similarity / SSIM",
+    "formula": "\\operatorname{SSIM}=\\operatorname{mean}_{c,h,w}\\!\\left[\\frac{2\\mu_x\\mu_y+C_1}{\\mu_x^2+\\mu_y^2+C_1}\\frac{2\\sigma_{xy}+C_2}{\\sigma_x^2+\\sigma_y^2+C_2}\\right]",
+    "note": "Aligned images; data_range required, C1=(k1 R)² and C2=(k2 R)². Gaussian-weighted population moments with valid windows; negative scores retained.",
+    "guide": "image-comparisons.md",
+    "related": [
+      [
+        "TorchMetrics SSIM",
+        "https://lightning.ai/docs/torchmetrics/stable/image/structural_similarity.html"
+      ]
+    ]
+  },
+  "multiscale_ssim_scores": {
+    "title": "Multiscale SSIM",
+    "formula": "\\operatorname{MS\\!SSIM}=\\operatorname{mean}_c\\!\\left[\\prod_{j<L}\\max(\\overline{cs}_{j,c},0)^{w_j}\\max(\\overline{l\\,cs}_{L,c},0)^{w_L}\\right]",
+    "note": "SSIM luminance l and contrast/structure cs terms across average-pooled scales. data_range required. Weights are not renormalized; nonpositive factors contribute zero. Match padding/pooling conventions when comparing libraries.",
+    "guide": "image-comparisons.md",
+    "related": [
+      [
+        "TorchMetrics MS-SSIM",
+        "https://lightning.ai/docs/torchmetrics/stable/image/multi_scale_structural_similarity.html"
+      ]
+    ]
+  },
+  "si_sdr_scores": {
+    "title": "Scale-Invariant SDR",
+    "formula": "s=\\frac{\\langle e,r\\rangle}{\\|r\\|_2^2}r,\\qquad \\operatorname{SI\\!SDR}=\\operatorname{mean}_c10\\log_{10}\\frac{\\max(\\|s\\|_2^2,\\delta)}{\\max(\\|e-s\\|_2^2,\\delta)}",
+    "note": "First operand is estimate e, second reference r. Per-channel dB scores are averaged. zero_mean=True and energy_floor=1e-8 by default. Zero-reference projection is zero.",
+    "guide": "audio-comparisons.md",
+    "related": [
+      [
+        "TorchMetrics SI-SDR",
+        "https://lightning.ai/docs/torchmetrics/stable/audio/scale_invariant_signal_distortion_ratio.html"
+      ]
+    ]
+  },
+  "signal_snr_scores": {
+    "title": "Signal SNR",
+    "formula": "\\operatorname{SNR}=\\operatorname{mean}_c10\\log_{10}\\frac{\\max(\\|r\\|_2^2,\\delta)}{\\max(\\|e-r\\|_2^2,\\delta)}",
+    "note": "First operand is estimate e, second reference r. zero_mean=False; energy_floor=1e-8. This audio dB score differs from vector snr_distances.",
+    "guide": "audio-comparisons.md",
+    "related": [
+      [
+        "TorchMetrics SNR",
+        "https://lightning.ai/docs/torchmetrics/stable/audio/signal_noise_ratio.html"
+      ]
+    ]
+  },
+  "log_spectral_distances": {
+    "title": "Log-Spectral Distance",
+    "formula": "d(e,r)=\\operatorname{mean}_{c,f,t}|\\log\\max(A,\\delta)-\\log\\max(B,\\delta)|",
+    "note": "A/B are aligned STFT magnitudes. Natural logs; log_floor=1e-7. No phase or mel weighting. Different waveforms can share magnitudes.",
+    "guide": "audio-comparisons.md",
+    "related": []
+  },
+  "spectral_convergence_distances": {
+    "title": "Spectral Convergence",
+    "formula": "d(e,r)=\\frac{\\|A-B\\|_F}{\\max(\\|B\\|_F,\\delta)}",
+    "note": "STFT magnitude Frobenius norms span channels/frequencies/frames. norm_floor=1e-7; reference normalization makes this directional.",
+    "guide": "audio-comparisons.md",
+    "related": []
+  },
+  "multiresolution_stft_distances": {
+    "title": "Multi-Resolution STFT",
+    "formula": "d(e,r)=\\frac1L\\sum_{\\ell=1}^L\\left[\\frac{\\|A_\\ell-B_\\ell\\|_F}{\\max(\\|B_\\ell\\|_F,\\delta_n)}+\\operatorname{mean}|\\log\\max(A_\\ell,\\delta_l)-\\log\\max(B_\\ell,\\delta_l)|\\right]",
+    "note": "Arithmetic mean across explicit FFT/hop/window resolution triples. Equal weight for convergence and log-magnitude terms. No sample-rate conversion or phase alignment.",
+    "guide": "audio-comparisons.md",
+    "related": []
+  },
+  "dtw_distances": {
+    "title": "Dynamic Time Warping",
+    "formula": "D_{ij}=\\|x_i-y_j\\|_2^2+\\min(D_{i-1,j},D_{i,j-1},D_{i-1,j-1}),\\quad d(x,y)=\\sqrt{D_{T,S}}",
+    "note": "Squared-Euclidean local costs; squared=True returns the minimum path sum. Optional integer window imposes |i−j|≤window. Infeasible pairs give infinity.",
+    "guide": "sequence-comparisons.md",
+    "related": []
+  },
+  "soft_dtw_divergences": {
+    "title": "Debiased Soft-DTW",
+    "formula": "D_\\gamma(x,y)=S_\\gamma(x,y)-\\tfrac12S_\\gamma(x,x)-\\tfrac12S_\\gamma(y,y),\\quad \\operatorname{softmin}_\\gamma(z)=-\\gamma\\log\\sum_k e^{-z_k/\\gamma}",
+    "note": "Sγ uses the DTW recurrence with softmin. Positive gamma is required. Signed, unrooted and unclamped; no general triangle-inequality guarantee.",
+    "guide": "sequence-comparisons.md",
+    "related": [
+      [
+        "Cuturi & Blondel, Soft-DTW",
+        "https://proceedings.mlr.press/v70/cuturi17a.html"
+      ]
+    ]
+  },
+  "levenshtein_distances": {
+    "title": "Levenshtein",
+    "formula": "L_{ij}=\\min\\{L_{i-1,j}+1,L_{i,j-1}+1,L_{i-1,j-1}+\\mathbf1[x_i\\ne y_j]\\}",
+    "note": "Integer token IDs, unit insertion/deletion/substitution costs. Returns int64; valid prefix lengths may be zero. Tokens are labels, not numeric features.",
+    "guide": "token-comparisons.md",
+    "related": [
+      [
+        "RapidFuzz Levenshtein",
+        "https://rapidfuzz.github.io/RapidFuzz/Usage/distance/Levenshtein.html"
+      ]
+    ]
+  },
+  "indel_distances": {
+    "title": "Insertion/Deletion",
+    "formula": "d(x,y)=|x|+|y|-2\\operatorname{LCS}(x,y)",
+    "note": "Integer tokens. Insertion/deletion cost one, substitution cost two. No normalization by length; int64 output.",
+    "guide": "token-comparisons.md",
+    "related": [
+      [
+        "RapidFuzz Indel",
+        "https://rapidfuzz.github.io/RapidFuzz/Usage/distance/Indel.html"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,228 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="790" viewBox="0 0 1440 790" role="img" aria-labelledby="title desc">
+<title id="title">TorchPairwise: four ways to compare, with streamed results</title>
+<desc id="desc">87 comparison entries across 9 input families, including 13 kernels. All-pairs produces an N by M matrix, paired compares corresponding samples, condensed stores the strict upper triangle, and single compares two samples. Streamed operators compute tiles and accumulate reductions, selections or products without retaining the full generated comparison matrix. Schematics omit leading batch dimensions.</desc>
+<defs>
+  <linearGradient id="background" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101f2b"/><stop offset=".6" stop-color="#102a30"/><stop offset="1" stop-color="#142524"/></linearGradient>
+  <radialGradient id="wash"><stop stop-color="#357e79" stop-opacity=".28"/><stop offset="1" stop-color="#357e79" stop-opacity="0"/></radialGradient>
+  <linearGradient id="card" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#1a3039"/><stop offset="1" stop-color="#152930"/></linearGradient>
+  <marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7" fill="none" stroke="#a9babe" stroke-width="1.2"/></marker>
+  <clipPath id="frame"><rect width="1440" height="790" rx="28"/></clipPath>
+</defs>
+<g clip-path="url(#frame)">
+<rect width="1440" height="790" fill="url(#background)"/>
+<ellipse cx="1120" cy="190" rx="480" ry="330" fill="url(#wash)"/>
+
+<g transform="translate(1110 140) rotate(-18)" fill="none" stroke="#79cbbb">
+<ellipse rx="45" ry="26.10" stroke-width="1" opacity=".13"/>
+<ellipse rx="77" ry="44.66" stroke-width="1" opacity=".13"/>
+<ellipse rx="110" ry="63.80" stroke-width="1" opacity=".13"/>
+<ellipse rx="145" ry="84.10" stroke-width="1" opacity=".13"/>
+<ellipse rx="180" ry="104.40" stroke-width="1" opacity=".13"/>
+<ellipse rx="218" ry="126.44" stroke-width="1" opacity=".13"/>
+<ellipse rx="259" ry="150.22" stroke-width="1" opacity=".13"/>
+</g>
+<path d="M925 106 L1000 65" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M925 106 L1091 128" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M925 106 L1202 210" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M925 106 L1312 84" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M925 106 L1338 191" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<circle cx="925" cy="106" r="4" fill="#69d9c5" opacity="0.38"/>
+<path d="M1032 181 L1000 65" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M1032 181 L1091 128" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M1032 181 L1202 210" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M1032 181 L1312 84" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M1032 181 L1338 191" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<circle cx="1032" cy="181" r="4" fill="#69d9c5" opacity="0.38"/>
+<path d="M1138 72 L1000 65" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M1138 72 L1091 128" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M1138 72 L1202 210" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M1138 72 L1312 84" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M1138 72 L1338 191" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<circle cx="1138" cy="72" r="4" fill="#69d9c5" opacity="0.38"/>
+<path d="M1258 144 L1000 65" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M1258 144 L1091 128" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M1258 144 L1202 210" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M1258 144 L1312 84" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<path d="M1258 144 L1338 191" fill="none" stroke="#69d9c5" stroke-width="1" opacity="0.08"/>
+<circle cx="1258" cy="144" r="4" fill="#69d9c5" opacity="0.38"/>
+<circle cx="1000" cy="65" r="4" fill="#f0c783" opacity="0.38"/>
+<circle cx="1091" cy="128" r="4" fill="#f0c783" opacity="0.38"/>
+<circle cx="1202" cy="210" r="4" fill="#f0c783" opacity="0.38"/>
+<circle cx="1312" cy="84" r="4" fill="#f0c783" opacity="0.38"/>
+<circle cx="1338" cy="191" r="4" fill="#f0c783" opacity="0.38"/>
+<path d="M1032 181 L1091 128" fill="none" stroke="#f4f3e9" stroke-width="1.5" opacity="0.5"/>
+<text x="1074" y="177" font-family="Georgia, Noto Serif, DejaVu Serif, serif" font-size="16" font-weight="400" fill="#a9babe" opacity=".55">d(x, y)</text>
+<text x="58" y="62" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="600" fill="#69d9c5" letter-spacing="2.5">NATIVE TENSOR COMPARISONS</text>
+<text x="54" y="143" font-family="Georgia, Noto Serif, DejaVu Serif, serif" font-size="76" font-weight="500" fill="#f4f3e9" letter-spacing="-2">TorchPairwise</text>
+<text x="59" y="192" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="29" font-weight="400" fill="#f4f3e9">Distances, Kernels, and Streamed Operators</text>
+<text x="60" y="235" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="20" font-weight="600" fill="#69d9c5">87 comparisons</text>
+<text x="242" y="235" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="20" font-weight="400" fill="#a9babe">·   13 kernels   ·   9 input families</text>
+<rect x="60" y="259" width="230" height="31" rx="15" fill="#213a42" opacity="1"/>
+<text x="175" y="280" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="14" font-weight="500" fill="#f4f3e9" text-anchor="middle">Python + C++ / LibTorch</text>
+<text x="311" y="280" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="400" fill="#a9babe">CPU / CUDA</text>
+<rect x="60" y="319" width="312" height="225" rx="15" fill="url(#card)" opacity="1" stroke="#30464c"/>
+<path d="M82 320 L350 320" fill="none" stroke="#69d9c5" stroke-width="2" opacity="0.85"/>
+<text x="82" y="354" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="24" font-weight="600" fill="#f4f3e9">All-Pairs</text>
+<text x="82" y="381" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="16" font-weight="400" fill="#a9babe">Every x against every y</text>
+<text x="82" y="520" font-family="DejaVu Sans Mono, monospace" font-size="20" font-weight="500" fill="#69d9c5">[N, M]</text>
+<circle cx="83" cy="412" r="3" fill="#69d9c5" opacity="1"/>
+<rect x="97" y="405" width="22" height="15" rx="3" fill="#48938b" opacity="1"/>
+<rect x="122" y="405" width="22" height="15" rx="3" fill="#397270" opacity="1"/>
+<rect x="147" y="405" width="22" height="15" rx="3" fill="#479189" opacity="1"/>
+<rect x="172" y="405" width="22" height="15" rx="3" fill="#54aca0" opacity="1"/>
+<rect x="197" y="405" width="22" height="15" rx="3" fill="#63ccbb" opacity="1"/>
+<circle cx="83" cy="432" r="3" fill="#69d9c5" opacity="1"/>
+<rect x="97" y="425" width="22" height="15" rx="3" fill="#366c6b" opacity="1"/>
+<rect x="122" y="425" width="22" height="15" rx="3" fill="#52a99d" opacity="1"/>
+<rect x="147" y="425" width="22" height="15" rx="3" fill="#41837e" opacity="1"/>
+<rect x="172" y="425" width="22" height="15" rx="3" fill="#5cbcad" opacity="1"/>
+<rect x="197" y="425" width="22" height="15" rx="3" fill="#54ab9f" opacity="1"/>
+<circle cx="83" cy="452" r="3" fill="#69d9c5" opacity="1"/>
+<rect x="97" y="445" width="22" height="15" rx="3" fill="#56b0a3" opacity="1"/>
+<rect x="122" y="445" width="22" height="15" rx="3" fill="#40827d" opacity="1"/>
+<rect x="147" y="445" width="22" height="15" rx="3" fill="#397270" opacity="1"/>
+<rect x="172" y="445" width="22" height="15" rx="3" fill="#346868" opacity="1"/>
+<rect x="197" y="445" width="22" height="15" rx="3" fill="#438781" opacity="1"/>
+<circle cx="83" cy="472" r="3" fill="#69d9c5" opacity="1"/>
+<rect x="97" y="465" width="22" height="15" rx="3" fill="#5dbeaf" opacity="1"/>
+<rect x="122" y="465" width="22" height="15" rx="3" fill="#5fc5b4" opacity="1"/>
+<rect x="147" y="465" width="22" height="15" rx="3" fill="#49948c" opacity="1"/>
+<rect x="172" y="465" width="22" height="15" rx="3" fill="#51a69b" opacity="1"/>
+<rect x="197" y="465" width="22" height="15" rx="3" fill="#356968" opacity="1"/>
+<circle cx="108" cy="396" r="3" fill="#f0c783" opacity="1"/>
+<circle cx="133" cy="396" r="3" fill="#f0c783" opacity="1"/>
+<circle cx="158" cy="396" r="3" fill="#f0c783" opacity="1"/>
+<circle cx="183" cy="396" r="3" fill="#f0c783" opacity="1"/>
+<circle cx="208" cy="396" r="3" fill="#f0c783" opacity="1"/>
+<text x="245" y="448" font-family="DejaVu Sans Mono, monospace" font-size="20" font-weight="400" fill="#69d9c5">N × M</text>
+<rect x="396" y="319" width="312" height="225" rx="15" fill="url(#card)" opacity="1" stroke="#30464c"/>
+<path d="M418 320 L686 320" fill="none" stroke="#8fbbfa" stroke-width="2" opacity="0.85"/>
+<text x="418" y="354" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="24" font-weight="600" fill="#f4f3e9">Paired</text>
+<text x="418" y="381" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="16" font-weight="400" fill="#a9babe">Corresponding samples</text>
+<text x="418" y="520" font-family="DejaVu Sans Mono, monospace" font-size="20" font-weight="500" fill="#8fbbfa">[N]</text>
+<rect x="419" y="400" width="16" height="16" rx="3" fill="#5e81a9" opacity="1" stroke="#8fbbfa"/>
+<rect x="439" y="400" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="459" y="400" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="479" y="400" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="419" y="420" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="439" y="420" width="16" height="16" rx="3" fill="#6d93c3" opacity="1" stroke="#8fbbfa"/>
+<rect x="459" y="420" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="479" y="420" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="419" y="440" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="439" y="440" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="459" y="440" width="16" height="16" rx="3" fill="#476684" opacity="1" stroke="#8fbbfa"/>
+<rect x="479" y="440" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="419" y="460" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="439" y="460" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="459" y="460" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="479" y="460" width="16" height="16" rx="3" fill="#6c91c0" opacity="1" stroke="#8fbbfa"/>
+<path d="M513 439 L541 439" fill="none" stroke="#a9babe" stroke-width="1" opacity="1" marker-end="url(#arrow)"/>
+<rect x="556" y="400" width="33" height="16" rx="3" fill="#5e81a9" opacity="1"/>
+<rect x="556" y="420" width="33" height="16" rx="3" fill="#6d93c3" opacity="1"/>
+<rect x="556" y="440" width="33" height="16" rx="3" fill="#476684" opacity="1"/>
+<rect x="556" y="460" width="33" height="16" rx="3" fill="#6c91c0" opacity="1"/>
+<text x="607" y="446" font-family="DejaVu Sans Mono, monospace" font-size="20" font-weight="400" fill="#8fbbfa">N</text>
+<rect x="732" y="319" width="312" height="225" rx="15" fill="url(#card)" opacity="1" stroke="#30464c"/>
+<path d="M754 320 L1022 320" fill="none" stroke="#f0c783" stroke-width="2" opacity="0.85"/>
+<text x="754" y="354" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="24" font-weight="600" fill="#f4f3e9">Condensed</text>
+<text x="754" y="381" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="16" font-weight="400" fill="#a9babe">Each unordered pair once</text>
+<text x="754" y="520" font-family="DejaVu Sans Mono, monospace" font-size="20" font-weight="500" fill="#f0c783">[N(N−1)/2]</text>
+<rect x="755" y="400" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="775" y="400" width="16" height="16" rx="3" fill="#a8956b" opacity="1" stroke="#f0c783"/>
+<rect x="795" y="400" width="16" height="16" rx="3" fill="#a4926a" opacity="1" stroke="#f0c783"/>
+<rect x="815" y="400" width="16" height="16" rx="3" fill="#eac381" opacity="1" stroke="#f0c783"/>
+<rect x="755" y="420" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="775" y="420" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="795" y="420" width="16" height="16" rx="3" fill="#ac986d" opacity="1" stroke="#f0c783"/>
+<rect x="815" y="420" width="16" height="16" rx="3" fill="#ab976c" opacity="1" stroke="#f0c783"/>
+<rect x="755" y="440" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="775" y="440" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="795" y="440" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="815" y="440" width="16" height="16" rx="3" fill="#9e8e68" opacity="1" stroke="#f0c783"/>
+<rect x="755" y="460" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="775" y="460" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="795" y="460" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<rect x="815" y="460" width="16" height="16" rx="3" fill="#21343e" opacity="0.5" stroke="#2b4049"/>
+<path d="M849 439 L877 439" fill="none" stroke="#a9babe" stroke-width="1" opacity="1" marker-end="url(#arrow)"/>
+<rect x="890" y="430" width="16" height="18" rx="3" fill="#a8956b" opacity="1"/>
+<rect x="909" y="430" width="16" height="18" rx="3" fill="#a4926a" opacity="1"/>
+<rect x="928" y="430" width="16" height="18" rx="3" fill="#eac381" opacity="1"/>
+<rect x="947" y="430" width="16" height="18" rx="3" fill="#ac986d" opacity="1"/>
+<rect x="966" y="430" width="16" height="18" rx="3" fill="#ab976c" opacity="1"/>
+<rect x="985" y="430" width="16" height="18" rx="3" fill="#9e8e68" opacity="1"/>
+<rect x="1068" y="319" width="312" height="225" rx="15" fill="url(#card)" opacity="1" stroke="#30464c"/>
+<path d="M1090 320 L1358 320" fill="none" stroke="#dfa9d1" stroke-width="2" opacity="0.85"/>
+<text x="1090" y="354" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="24" font-weight="600" fill="#f4f3e9">Single</text>
+<text x="1090" y="381" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="16" font-weight="400" fill="#a9babe">One sample against one</text>
+<text x="1090" y="520" font-family="DejaVu Sans Mono, monospace" font-size="20" font-weight="500" fill="#dfa9d1">scalar</text>
+<circle cx="1101" cy="449" r="7" fill="#dfa9d1" opacity="1"/>
+<circle cx="1202" cy="410" r="7" fill="#f0c783" opacity="1"/>
+<path d="M1110 446 L1193 414" fill="none" stroke="#dfa9d1" stroke-width="2" opacity="0.8"/>
+<text x="1091" y="476" font-family="DejaVu Sans Mono, monospace" font-size="15" font-weight="400" fill="#a9babe">x</text>
+<text x="1195" y="393" font-family="DejaVu Sans Mono, monospace" font-size="15" font-weight="400" fill="#a9babe">y</text>
+<path d="M1228 435 L1255 435" fill="none" stroke="#a9babe" stroke-width="1" opacity="1" marker-end="url(#arrow)"/>
+<rect x="1270" y="410" width="86" height="49" rx="10" fill="#302e43" opacity="1" stroke="#6d536d"/>
+<text x="1313" y="442" font-family="DejaVu Sans Mono, monospace" font-size="24" font-weight="400" fill="#dfa9d1" text-anchor="middle">0.76</text>
+<text x="62" y="570" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="400" fill="#a9babe">Leading batches broadcast. Condensed mode requires a supported symmetric comparison.</text>
+<rect x="60" y="596" width="1320" height="153" rx="16" fill="#112129" opacity="1" stroke="#34474a"/>
+<text x="83" y="629" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="14" font-weight="600" fill="#69d9c5" letter-spacing="1.6">STREAMING OPERATORS</text>
+<text x="82" y="668" font-family="Georgia, Noto Serif, DejaVu Serif, serif" font-size="29" font-weight="500" fill="#f4f3e9">Tiled Execution</text>
+<text x="84" y="703" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="18" font-weight="400" fill="#a9babe">Reduce · select · multiply</text>
+<rect x="428" y="621" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="444" y="621" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="460" y="621" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="476" y="621" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="492" y="621" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="508" y="621" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="524" y="621" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="540" y="621" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="556" y="621" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="428" y="641" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="444" y="641" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="460" y="641" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="476" y="641" width="13" height="16" rx="2" fill="#69d9c5" opacity="0.85"/>
+<rect x="492" y="641" width="13" height="16" rx="2" fill="#69d9c5" opacity="0.85"/>
+<rect x="508" y="641" width="13" height="16" rx="2" fill="#69d9c5" opacity="0.85"/>
+<rect x="524" y="641" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="540" y="641" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="556" y="641" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="428" y="661" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="444" y="661" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="460" y="661" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="476" y="661" width="13" height="16" rx="2" fill="#69d9c5" opacity="0.85"/>
+<rect x="492" y="661" width="13" height="16" rx="2" fill="#69d9c5" opacity="0.85"/>
+<rect x="508" y="661" width="13" height="16" rx="2" fill="#69d9c5" opacity="0.85"/>
+<rect x="524" y="661" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="540" y="661" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="556" y="661" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="428" y="681" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="444" y="681" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="460" y="681" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="476" y="681" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="492" y="681" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="508" y="681" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="524" y="681" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="540" y="681" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="556" y="681" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="428" y="701" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="444" y="701" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="460" y="701" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="476" y="701" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="492" y="701" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="508" y="701" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="524" y="701" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="540" y="701" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<rect x="556" y="701" width="13" height="16" rx="2" fill="#23373f" opacity="0.65"/>
+<text x="499" y="737" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#a9babe" text-anchor="middle">computed tiles</text>
+<path d="M591 665 L633 665" fill="none" stroke="#a9babe" stroke-width="1" opacity="1" marker-end="url(#arrow)"/>
+<rect x="654" y="625" width="361" height="78" rx="11" fill="#1c3239" opacity="1"/>
+<text x="835" y="656" font-family="DejaVu Sans Mono, monospace" font-size="17" font-weight="400" fill="#f4f3e9" text-anchor="middle">sum · topk · quantile · K @ V</text>
+<text x="835" y="684" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="16" font-weight="400" fill="#69d9c5" text-anchor="middle">25 shared scalar consumers</text>
+<path d="M1036 665 L1079 665" fill="none" stroke="#a9babe" stroke-width="1" opacity="1" marker-end="url(#arrow)"/>
+<rect x="1101" y="624" width="102" height="15" rx="3" fill="#3c7875" opacity="1"/>
+<rect x="1101" y="647" width="76" height="15" rx="3" fill="#468e87" opacity="1"/>
+<rect x="1101" y="670" width="119" height="15" rx="3" fill="#51a59a" opacity="1"/>
+<rect x="1101" y="693" width="88" height="15" rx="3" fill="#5bbbac" opacity="1"/>
+<text x="1272" y="669" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="19" font-weight="400" fill="#f4f3e9">result</text>
+<text x="720" y="777" font-family="Inter, Noto Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="400" fill="#a9babe" text-anchor="middle">Distances · divergences · kernels · scores   /   Native autograd · torch.compile · torch.export</text>
+</g></svg>

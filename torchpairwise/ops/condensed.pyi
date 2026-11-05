@@ -1,0 +1,6 @@
+from typing import Any
+from torch import Tensor
+from ._comparison_dispatch import Collection
+
+def condensed_distances(x: Collection, metric: str = 'minkowski', **kwargs: Any) -> Tensor: ...
+def condensed_kernels(x: Collection, kernel: str = 'rbf', **kwargs: Any) -> Tensor: ...

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+<title id="title">TorchPairwise comparison tile</title>
+<desc id="desc">Two collections of sample dots frame a three-by-three comparison matrix. Diagonal cells are teal, cells above the diagonal are gold, and cells below are faint gold.</desc>
+<circle cx="45" cy="16" r="5" fill="#a9701e"/>
+<circle cx="16" cy="45" r="5" fill="#1b8678"/>
+<circle cx="74" cy="16" r="5" fill="#a9701e"/>
+<circle cx="16" cy="74" r="5" fill="#1b8678"/>
+<circle cx="103" cy="16" r="5" fill="#a9701e"/>
+<circle cx="16" cy="103" r="5" fill="#1b8678"/>
+<rect x="34" y="34" width="22" height="22" rx="5" fill="#1b8678" opacity="1"/>
+<rect x="63" y="34" width="22" height="22" rx="5" fill="#a9701e" opacity="1"/>
+<rect x="92" y="34" width="22" height="22" rx="5" fill="#a9701e" opacity="1"/>
+<rect x="34" y="63" width="22" height="22" rx="5" fill="#a9701e" opacity="0.24"/>
+<rect x="63" y="63" width="22" height="22" rx="5" fill="#1b8678" opacity="1"/>
+<rect x="92" y="63" width="22" height="22" rx="5" fill="#a9701e" opacity="1"/>
+<rect x="34" y="92" width="22" height="22" rx="5" fill="#a9701e" opacity="0.24"/>
+<rect x="63" y="92" width="22" height="22" rx="5" fill="#a9701e" opacity="0.24"/>
+<rect x="92" y="92" width="22" height="22" rx="5" fill="#1b8678" opacity="1"/>
+</svg>

@@ -1,18 +1,14 @@
-from torch._ops import _OpNamespace
-
+"""Guarded access to the native operator namespace."""
+import torch
 from .extension import _assert_has_ops
 
 __all__ = ['_ops']
 
 
-class _TorchPairwiseOpNameSpace(_OpNamespace):
-
-    def __init__(self):
-        super(_TorchPairwiseOpNameSpace, self).__init__('torchpairwise')
-
+class _TorchPairwiseOpNameSpace:
     def __getattr__(self, op_name):
         _assert_has_ops()
-        return super(_TorchPairwiseOpNameSpace, self).__getattr__(op_name)
+        return getattr(torch.ops.torchpairwise, op_name)
 
 
 _ops = _TorchPairwiseOpNameSpace()

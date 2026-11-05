@@ -1,9 +1,15 @@
 name: Build
 
+# Builds and tests release artifacts only. Publishing is the separate,
+# manually dispatched publish.yml workflow.
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build_sdist:
@@ -22,18 +28,31 @@ jobs:
           path: dist/*.tar.gz
 
   build_wheels:
-    name: Wheel on ${{ matrix.os }} for cp-${{ matrix.python-version }}
-    runs-on: ${{ matrix.os }}
+    name: Wheel on ${{ matrix.target.os }} (${{ matrix.target.variant }})
+    runs-on: ${{ matrix.target.os }}
+    timeout-minutes: 360
     strategy:
+      fail-fast: false
       matrix:
-        os: [ ubuntu-22.04, macos-14, windows-2019 ]
-        python-version: [ '3.9', '3.10', '3.11', '3.12', '3.13' ]
-        torch-version: [ 2.7.0 ]
+        # Wheels pin the torch minor they are built against (see setup.py).
+        # PyPI wheels follow the latest torch's PyPI defaults: CUDA on Linux,
+        # CPU on macOS and Windows. The Windows CUDA wheel matches torch's
+        # cu132 index; it carries a +cu132 local version, which PyPI rejects,
+        # so its artifact is named extra-* and publish.yml skips it.
+        # Each wheel targets the CPython stable ABI, so one build per platform
+        # serves every Python version that torch supports.
+        python-version: [ '3.11' ]
+        torch-version: [ 2.15.0 ]
+        target:
+          - { os: ubuntu-22.04, variant: cu132, artifact: artifacts, local: '' }
+          - { os: macos-14, variant: cpu, artifact: artifacts, local: '' }
+          - { os: windows-2022, variant: cpu, artifact: artifacts, local: '' }
+          - { os: windows-2022, variant: cu132, artifact: extra, local: cu132 }
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -45,6 +64,7 @@ jobs:
         uses: seanmiddleditch/gha-setup-ninja@master
 
       - name: Install CUDA
+        if: ${{ matrix.target.variant != 'cpu' }}
         run: |
           bash .github/workflows/cuda/${{ runner.os }}.sh
 
@@ -54,15 +74,23 @@ jobs:
 
       - name: Install PyTorch ${{ matrix.torch-version }}
         run: |
-          pip install torch==${{ matrix.torch-version }} --extra-index-url https://download.pytorch.org/whl/${{ runner.os == 'macOS' && 'cpu' || 'cu128' }}
+          pip install torch==${{ matrix.torch-version }} --index-url https://download.pytorch.org/whl/${{ matrix.target.variant }}
           python -c "import torch; print('PyTorch:', torch.__version__); print('CUDA:', torch.version.cuda)"
 
       - name: Build wheel
         run: |
-          source .github/workflows/cuda/${{ runner.os }}-env.sh
+          if [ "${{ matrix.target.variant }}" = cpu ]; then
+            export TORCHPAIRWISE_BUILD_CUDA=0
+          else
+            source .github/workflows/cuda/${{ runner.os }}-env.sh
+          fi
           python setup.py bdist_wheel --dist-dir=wheelhouse
         shell:
           bash
+        env:
+          MAX_JOBS: '2'
+          TORCHPAIRWISE_PY_LIMITED_API: '1'
+          TORCHPAIRWISE_LOCAL_VERSION: ${{ matrix.target.local }}
 
       - name: Repair wheel (Ubuntu)
         if: ${{ runner.os == 'Linux' }}
@@ -76,26 +104,47 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: artifacts-bdist-${{ matrix.os }}-cp${{ matrix.python-version }}
+          name: ${{ matrix.target.artifact }}-bdist-${{ matrix.target.os }}-${{ matrix.target.variant }}
           path: ./wheelhouse/*.whl
 
-  publish_on_pypi:
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    needs: [ build_sdist, build_wheels ]
-    runs-on: ubuntu-latest
-    environment: pypi
-    permissions:
-      id-token: write
+  test_wheels:
+    name: Test ${{ matrix.target.os }} (${{ matrix.target.variant }}) wheel on cp-${{ matrix.python-version }}
+    needs: build_wheels
+    runs-on: ${{ matrix.target.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Runners have no GPU: CUDA wheels are tested for loading and CPU
+        # results against their matching CUDA torch.
+        python-version: [ '3.11', '3.12', '3.13', '3.14', '3.15' ]
+        torch-version: [ 2.15.0 ]
+        target:
+          - { os: ubuntu-22.04, variant: cu132, artifact: artifacts }
+          - { os: macos-14, variant: cpu, artifact: artifacts }
+          - { os: windows-2022, variant: cpu, artifact: artifacts }
+          - { os: windows-2022, variant: cu132, artifact: extra }
     steps:
-      - name: Download wheels
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Download wheel
         uses: actions/download-artifact@v4
         with:
-          pattern: artifacts-*
-          path: dist
-          merge-multiple: true
+          name: ${{ matrix.target.artifact }}-bdist-${{ matrix.target.os }}-${{ matrix.target.variant }}
+          path: wheelhouse
 
-      - name: Publish wheels to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.5.0
-        with:
-          user: __token__
-          password: ${{ secrets.pypi_password }}
+      - name: Test installed wheel
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        run: |
+          pip install torch==${{ matrix.torch-version }} --index-url https://download.pytorch.org/whl/${{ matrix.target.variant }}
+          pip install pytest pytest-xdist scipy scikit-learn
+          pip install --no-deps "$(ls ${{ github.workspace }}/wheelhouse/*.whl | head -n 1)"
+          python -c "import torchpairwise as tp; print('CUDA targets:', tp.extension.cuda_arch_list()); assert tp.with_cuda() == ('${{ matrix.target.variant }}' != 'cpu')"
+          python -m pytest "${{ github.workspace }}/tests" --device cpu -n 2 -q
+        env:
+          TORCHINDUCTOR_COMPILE_THREADS: '1'

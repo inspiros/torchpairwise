@@ -1,62 +1,55 @@
-#include "../ppminkowski.h"
-
 #include <torch/autograd.h>
 #include <torch/types.h>
 
-namespace torchpairwise {
-    namespace ops {
-        namespace {
-            class PPowerMinkowskiFunction
-                    : public torch::autograd::Function<PPowerMinkowskiFunction> {
-            public:
-                static torch::autograd::Variable forward(
-                        torch::autograd::AutogradContext *ctx,
-                        const torch::autograd::Variable &x1,
-                        const torch::autograd::Variable &x2,
-                        double p) {
-                    at::AutoDispatchBelowADInplaceOrView g;
+#include "../ppminkowski.h"
 
-                    auto output = _ppminkowski(x1, x2, p);
+namespace torchpairwise::ops {
+namespace {
+class PPowerMinkowskiFunction
+    : public torch::autograd::Function<PPowerMinkowskiFunction> {
+ public:
+  static torch::autograd::Variable forward(
+      torch::autograd::AutogradContext* ctx,
+      const torch::autograd::Variable& x1, const torch::autograd::Variable& x2,
+      double p) {
+    at::AutoDispatchBelowADInplaceOrView g;
 
-                    ctx->save_for_backward({x1, x2});
-                    ctx->saved_data["p"] = p;
+    auto output = _ppminkowski(x1, x2, p);
 
-                    return output;
-                }
+    ctx->save_for_backward({x1, x2});
+    ctx->saved_data["p"] = p;
 
-                static torch::autograd::variable_list backward(
-                        torch::autograd::AutogradContext *ctx,
-                        const torch::autograd::variable_list &grad_output) {
-                    auto saved = ctx->get_saved_variables();
-                    auto x1 = saved[0];
-                    auto x2 = saved[1];
-                    double p = ctx->saved_data["p"].toDouble();
+    return output;
+  }
 
-                    auto grads = detail::__ppminkowski_backward(
-                            grad_output[0], x1, x2, p);
-                    auto grad_x1 = std::get<0>(grads);
-                    auto grad_x2 = std::get<1>(grads);
+  static torch::autograd::variable_list backward(
+      torch::autograd::AutogradContext* ctx,
+      const torch::autograd::variable_list& grad_output) {
+    auto saved = ctx->get_saved_variables();
+    auto x1 = saved[0];
+    auto x2 = saved[1];
+    double p = ctx->saved_data["p"].toDouble();
 
-                    return {
-                            grad_x1,
-                            grad_x2,
-                            torch::autograd::Variable(),
-                    };
-                }
-            };
+    auto grads = detail::_ppminkowski_backward(grad_output[0], x1, x2, p);
+    auto grad_x1 = std::get<0>(grads);
+    auto grad_x2 = std::get<1>(grads);
 
-            at::Tensor _ppminkowski_autograd(
-                    const at::Tensor &x1,
-                    const at::Tensor &x2,
-                    double p) {
-                return PPowerMinkowskiFunction::apply(x1, x2, p);
-            }
-        } // namespace
+    return {
+        grad_x1,
+        grad_x2,
+        torch::autograd::Variable(),
+    };
+  }
+};
 
-        TORCH_LIBRARY_IMPL(torchpairwise, Autograd, m) {
-            m.impl(
-                    TORCH_SELECTIVE_NAME("torchpairwise::_ppminkowski"),
-                    TORCH_FN(_ppminkowski_autograd));
-        }
-    }
+at::Tensor _ppminkowski_autograd(const at::Tensor& x1, const at::Tensor& x2,
+                                 double p) {
+  return PPowerMinkowskiFunction::apply(x1, x2, p);
 }
+}  // namespace
+
+TORCH_LIBRARY_IMPL(torchpairwise, Autograd, m) {
+  m.impl(TORCH_SELECTIVE_NAME("torchpairwise::_ppminkowski"),
+         TORCH_FN(_ppminkowski_autograd));
+}
+}  // namespace torchpairwise::ops

@@ -1,0 +1,35 @@
+name: Tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+jobs:
+  cpu:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python: '3.10'
+            torch: '2.12.1'
+          - python: '3.12'
+            torch: '2.15.0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install --upgrade pip setuptools wheel ninja
+      - run: python -m pip install torch==${{ matrix.torch }} --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m pip install --no-build-isolation '.[tests]'
+        env:
+          TORCHPAIRWISE_BUILD_CUDA: '0'
+          MAX_JOBS: '2'
+      - name: Test installed package outside the checkout
+        working-directory: ${{ runner.temp }}
+        run: python -m pytest "${{ github.workspace }}/tests" --device cpu -n 2
+        env:
+          TORCHINDUCTOR_COMPILE_THREADS: '1'

@@ -1,0 +1,21 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(Torch REQUIRED)
+
+# LibTorch does not promise ABI compatibility across minor releases.
+set(_torchpairwise_built_torch "@Torch_VERSION@")
+string(REGEX MATCH "^[0-9]+\\.[0-9]+" _torchpairwise_built_minor
+       "${_torchpairwise_built_torch}")
+string(REGEX MATCH "^[0-9]+\\.[0-9]+" _torchpairwise_found_minor
+       "${Torch_VERSION}")
+if(NOT _torchpairwise_built_minor STREQUAL _torchpairwise_found_minor)
+  set(torchpairwise_FOUND FALSE)
+  set(torchpairwise_NOT_FOUND_MESSAGE
+      "Built with LibTorch ${_torchpairwise_built_torch}; found ${Torch_VERSION}. Rebuild torchpairwise for this LibTorch minor.")
+  return()
+endif()
+
+set(torchpairwise_WITH_CUDA @TORCHPAIRWISE_WITH_CUDA@)
+include("${CMAKE_CURRENT_LIST_DIR}/torchpairwiseTargets.cmake")
+check_required_components(torchpairwise)

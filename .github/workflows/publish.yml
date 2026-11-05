@@ -1,0 +1,49 @@
+name: Publish
+
+# Manual only: uploads the artifacts of one successful Build run to PyPI.
+on:
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: 'Run ID of a successful "Build" workflow run'
+        required: true
+        type: string
+
+jobs:
+  publish_on_pypi:
+    name: Publish to PyPI
+    # Only the repository owner may publish, even if others can dispatch.
+    if: github.actor == github.repository_owner && github.triggering_actor == github.repository_owner
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - name: Check the selected Build run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.build_run_id }}
+        run: |
+          read -r name conclusion < <(gh api "repos/${{ github.repository }}/actions/runs/$RUN_ID" \
+            --jq '[.name, .conclusion] | @tsv')
+          if [ "$name" != "Build" ] || [ "$conclusion" != "success" ]; then
+            echo "Run $RUN_ID is '$name' with conclusion '$conclusion'; expected a successful Build run." >&2
+            exit 1
+          fi
+
+      - name: Download wheels and sdist
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ inputs.build_run_id }}
+          github-token: ${{ github.token }}
+          pattern: artifacts-*
+          path: dist
+          merge-multiple: true
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@v1.5.0
+        with:
+          user: __token__
+          password: ${{ secrets.pypi_password }}

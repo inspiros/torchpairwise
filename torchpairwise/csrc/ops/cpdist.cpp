@@ -1,257 +1,510 @@
 #include "cpdist.h"
 
+#include <ATen/core/dispatch/Dispatcher.h>
 #include <torch/library.h>
 
-#include "pairwise_metrics.h"
-
-// TODO: the design of this file is total garbage,
-//  but I don't know how to do it properly atm.
-#define DEFINE_CPDIST_METRIC_SPEC(NAME, HAS_w, HAS_V, HAS_VI, HAS_p, HAS_base, HAS_shuffle, HAS_generator) \
-struct cpdist_##NAME##_spec {                                                                              \
-    STATIC_CONSTEXPR_STR_INL_EXCEPT_WIN_CUDA(name, #NAME)                                                  \
-    using cdist_functor = NAME##_distances_functor;                                                        \
-    using pdist_functor = nullptr_t;                                                                       \
-    static constexpr cdist_functor::ptr_schema cdist_func = NAME##_distances;                              \
-    static constexpr nullptr_t pdist_func = nullptr;                                                       \
-    struct has_arg {                                                                                       \
-        static constexpr bool w = HAS_w;                                                                   \
-        static constexpr bool V = HAS_V;                                                                   \
-        static constexpr bool VI = HAS_VI;                                                                 \
-        static constexpr bool p = HAS_p;                                                                   \
-        static constexpr bool base = HAS_base;                                                             \
-        static constexpr bool shuffle = HAS_shuffle;                                                       \
-        static constexpr bool generator = HAS_generator;                                                   \
-    };                                                                                                     \
-};
-
-namespace torchpairwise {
-    namespace ops {
-        namespace detail {
-            template<typename T>
-            inline bool called_with(const c10::optional<T> &arg) {
-                return arg.has_value();
-            }
-
-            template<bool cdist, typename metric>
-            inline void check_extra_args(
-                    const c10::optional<at::Tensor> &w,
-                    const c10::optional<at::Tensor> &V,
-                    const c10::optional<at::Tensor> &VI,
-                    c10::optional<double> p,
-                    c10::optional<double> base,
-                    c10::optional<bool> shuffle,
-                    c10::optional<at::Generator> generator) {
-                std::vector<std::string> incompatible_args;
-#define CHECK_CALLED_WITH(ARG) \
-    if (called_with(ARG) && !metric::has_arg::ARG) incompatible_args.emplace_back(#ARG);
-                CHECK_CALLED_WITH(w)
-                CHECK_CALLED_WITH(V)
-                CHECK_CALLED_WITH(VI)
-                CHECK_CALLED_WITH(p)
-                CHECK_CALLED_WITH(base)
-                CHECK_CALLED_WITH(shuffle)
-                CHECK_CALLED_WITH(generator)
-                if constexpr (cdist) {
-                    TORCH_CHECK_TYPE(
-                            incompatible_args.empty(),
-                            metric::cdist_functor::name,
-                            " was called with incompatible arguments ",
-                            std::accumulate(
-                                    std::begin(incompatible_args), std::end(incompatible_args), std::string(),
-                                    [](const std::string &ss, std::string _arg) {
-                                        return ss.empty() ? _arg : ss + ", " + _arg;
-                                    }),
-                            ".\nThe following signature is supported:\n",
-                            c10::str("    ", metric::cdist_functor::schema_str, "\n"))
-                } else {
-                    TORCH_CHECK_TYPE(
-                            incompatible_args.empty(),
-                            metric::pdist_functor::name,
-                            " was called with incompatible arguments ",
-                            std::accumulate(
-                                    std::begin(incompatible_args), std::end(incompatible_args), std::string(),
-                                    [](const std::string &ss, std::string _arg) {
-                                        return ss.empty() ? _arg : ss + ", " + _arg;
-                                    }),
-                            ".\nThe following signature is supported:\n",
-                            c10::str("    ", metric::pdist_functor::schema_str, "\n"))
-                }
-            }
-
-            // sklearn
-            DEFINE_CPDIST_METRIC_SPEC(euclidean,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(haversine,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(manhattan,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(cosine,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            // scipy
-            DEFINE_CPDIST_METRIC_SPEC(directed_hausdorff,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ true, /* generator */ true)
-            DEFINE_CPDIST_METRIC_SPEC(minkowski,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ true, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(wminkowski,
-            /* w */ true, /* V */ 0, /* VI */ 0, /* p */ true, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(sqeuclidean,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(correlation,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(hamming,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(jaccard,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(kulsinski,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(kulczynski1,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(seuclidean,
-            /* w */ 0, /* V */ true, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(cityblock,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(mahalanobis,
-            /* w */ 0, /* V */ 0, /* VI */ true, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(chebyshev,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(braycurtis,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(canberra,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(jensenshannon,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ true, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(yule,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(dice,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(rogerstanimoto,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(russellrao,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(sokalmichener,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(sokalsneath,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            // others
-            DEFINE_CPDIST_METRIC_SPEC(snr,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            // aliases
-            DEFINE_CPDIST_METRIC_SPEC(l1,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(l2,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(lp,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ true, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-            DEFINE_CPDIST_METRIC_SPEC(linf,
-            /* w */ 0, /* V */ 0, /* VI */ 0, /* p */ 0, /* base */ 0, /* shuffle */ 0, /* generator */ 0)
-        }
-
-        at::Tensor cdist(
-                const at::Tensor &x1,
-                const at::Tensor &x2,
-                c10::string_view metric,
-                const c10::optional<at::Tensor> &w,
-                const c10::optional<at::Tensor> &V,
-                const c10::optional<at::Tensor> &VI,
-                c10::optional<double> p,
-                c10::optional<double> base,
-                c10::optional<bool> shuffle,
-                c10::optional<at::Generator> generator) {
-            C10_LOG_API_USAGE_ONCE("torchpairwise.csrc.ops.cpdist.cdist")
-#define CDIST_TRY_CALL(METRIC)                                                                             \
-if (metric == #METRIC) {                                                                                   \
-    detail::check_extra_args<true, detail::cpdist_##METRIC##_spec>(w, V, VI, p, base, shuffle, generator); \
-    return detail::cpdist_##METRIC##_spec::cdist_func(x1, x2);                                             \
+#include "comparison_selectors_detail.h"
+namespace torchpairwise::ops {
+namespace {
+using at::Tensor;
+Tensor cdist_impl(
+    const Tensor& x1, const c10::optional<Tensor>& x2, c10::string_view metric,
+    c10::optional<at::Tensor> w, c10::optional<at::Tensor> V,
+    c10::optional<at::Tensor> VI, c10::optional<double> p,
+    c10::optional<double> base, c10::optional<bool> shuffle,
+    c10::optional<at::Generator> generator, c10::optional<bool> batched,
+    c10::optional<int64_t> feature_dim, c10::optional<bool> squared,
+    c10::optional<at::Tensor> x1_lengths, c10::optional<at::Tensor> x2_lengths,
+    c10::optional<int64_t> chunk_size, c10::optional<at::Tensor> bin_positions,
+    c10::optional<at::Tensor> projections, c10::optional<double> regularization,
+    c10::optional<int64_t> max_iter, c10::optional<std::string> kernel,
+    c10::optional<double> length_scale, c10::optional<double> alpha,
+    c10::optional<double> gamma, c10::optional<int64_t> degree,
+    c10::optional<double> coef0, c10::optional<double> nu,
+    c10::optional<double> data_range, c10::optional<int64_t> window_size,
+    c10::optional<double> sigma, c10::optional<double> k1,
+    c10::optional<double> k2, c10::optional<std::vector<double>> weights,
+    c10::optional<bool> zero_mean, c10::optional<double> energy_floor,
+    c10::optional<double> log_floor, c10::optional<double> norm_floor,
+    c10::optional<int64_t> n_fft, c10::optional<int64_t> hop_length,
+    c10::optional<int64_t> win_length, c10::optional<c10::IValue> window,
+    c10::optional<bool> center, c10::optional<bool> normalized,
+    c10::optional<std::string> pad_mode,
+    c10::optional<std::vector<int64_t>> resolutions,
+    c10::optional<int64_t> component_chunk_size,
+    c10::optional<std::string> estimator, c10::optional<at::Tensor> x_lengths) {
+  ComparisonOptions o;
+  o.w = w;
+  o.V = V;
+  o.VI = VI;
+  o.p = p;
+  o.base = base;
+  o.shuffle = shuffle;
+  o.generator = generator;
+  o.batched = batched;
+  o.feature_dim = feature_dim;
+  o.squared = squared;
+  o.x1_lengths = x1_lengths;
+  o.x2_lengths = x2_lengths;
+  o.chunk_size = chunk_size;
+  o.bin_positions = bin_positions;
+  o.projections = projections;
+  o.regularization = regularization;
+  o.max_iter = max_iter;
+  o.kernel = kernel;
+  o.length_scale = length_scale;
+  o.alpha = alpha;
+  o.gamma = gamma;
+  o.degree = degree;
+  o.coef0 = coef0;
+  o.nu = nu;
+  o.data_range = data_range;
+  o.window_size = window_size;
+  o.sigma = sigma;
+  o.k1 = k1;
+  o.k2 = k2;
+  o.weights = weights;
+  o.zero_mean = zero_mean;
+  o.energy_floor = energy_floor;
+  o.log_floor = log_floor;
+  o.norm_floor = norm_floor;
+  o.n_fft = n_fft;
+  o.hop_length = hop_length;
+  o.win_length = win_length;
+  o.window = window.value_or(c10::IValue());
+  o.center = center;
+  o.normalized = normalized;
+  o.pad_mode = pad_mode;
+  o.resolutions = resolutions;
+  o.component_chunk_size = component_chunk_size;
+  o.estimator = estimator;
+  o.x_lengths = x_lengths;
+  return detail::select_comparison(
+      ComparisonCollection{x1},
+      x2 ? c10::optional<ComparisonCollection>({*x2}) : c10::nullopt, metric,
+      "all_pairs", "distance", o);
 }
-
-#define CDIST_TRY_CALL_WITH(METRIC, ARG1)                                                                  \
-if (metric == #METRIC) {                                                                                   \
-    detail::check_extra_args<true, detail::cpdist_##METRIC##_spec>(w, V, VI, p, base, shuffle, generator); \
-    return detail::cpdist_##METRIC##_spec::cdist_func(x1, x2, ARG1);                                       \
+Tensor cdist_collections_impl(
+    at::TensorList x1, const c10::optional<ComparisonCollection>& x2,
+    c10::string_view metric, c10::optional<at::Tensor> w,
+    c10::optional<at::Tensor> V, c10::optional<at::Tensor> VI,
+    c10::optional<double> p, c10::optional<double> base,
+    c10::optional<bool> shuffle, c10::optional<at::Generator> generator,
+    c10::optional<bool> batched, c10::optional<int64_t> feature_dim,
+    c10::optional<bool> squared, c10::optional<at::Tensor> x1_lengths,
+    c10::optional<at::Tensor> x2_lengths, c10::optional<int64_t> chunk_size,
+    c10::optional<at::Tensor> bin_positions,
+    c10::optional<at::Tensor> projections, c10::optional<double> regularization,
+    c10::optional<int64_t> max_iter, c10::optional<std::string> kernel,
+    c10::optional<double> length_scale, c10::optional<double> alpha,
+    c10::optional<double> gamma, c10::optional<int64_t> degree,
+    c10::optional<double> coef0, c10::optional<double> nu,
+    c10::optional<double> data_range, c10::optional<int64_t> window_size,
+    c10::optional<double> sigma, c10::optional<double> k1,
+    c10::optional<double> k2, c10::optional<std::vector<double>> weights,
+    c10::optional<bool> zero_mean, c10::optional<double> energy_floor,
+    c10::optional<double> log_floor, c10::optional<double> norm_floor,
+    c10::optional<int64_t> n_fft, c10::optional<int64_t> hop_length,
+    c10::optional<int64_t> win_length, c10::optional<c10::IValue> window,
+    c10::optional<bool> center, c10::optional<bool> normalized,
+    c10::optional<std::string> pad_mode,
+    c10::optional<std::vector<int64_t>> resolutions,
+    c10::optional<int64_t> component_chunk_size,
+    c10::optional<std::string> estimator, c10::optional<at::Tensor> x_lengths) {
+  ComparisonOptions o;
+  o.w = w;
+  o.V = V;
+  o.VI = VI;
+  o.p = p;
+  o.base = base;
+  o.shuffle = shuffle;
+  o.generator = generator;
+  o.batched = batched;
+  o.feature_dim = feature_dim;
+  o.squared = squared;
+  o.x1_lengths = x1_lengths;
+  o.x2_lengths = x2_lengths;
+  o.chunk_size = chunk_size;
+  o.bin_positions = bin_positions;
+  o.projections = projections;
+  o.regularization = regularization;
+  o.max_iter = max_iter;
+  o.kernel = kernel;
+  o.length_scale = length_scale;
+  o.alpha = alpha;
+  o.gamma = gamma;
+  o.degree = degree;
+  o.coef0 = coef0;
+  o.nu = nu;
+  o.data_range = data_range;
+  o.window_size = window_size;
+  o.sigma = sigma;
+  o.k1 = k1;
+  o.k2 = k2;
+  o.weights = weights;
+  o.zero_mean = zero_mean;
+  o.energy_floor = energy_floor;
+  o.log_floor = log_floor;
+  o.norm_floor = norm_floor;
+  o.n_fft = n_fft;
+  o.hop_length = hop_length;
+  o.win_length = win_length;
+  o.window = window.value_or(c10::IValue());
+  o.center = center;
+  o.normalized = normalized;
+  o.pad_mode = pad_mode;
+  o.resolutions = resolutions;
+  o.component_chunk_size = component_chunk_size;
+  o.estimator = estimator;
+  o.x_lengths = x_lengths;
+  return detail::select_comparison(x1, x2, metric, "all_pairs", "distance", o);
 }
-
-#define CDIST_TRY_CALL_WITH2(METRIC, ARG1, ARG2)                                                           \
-if (metric == #METRIC) {                                                                                   \
-    detail::check_extra_args<true, detail::cpdist_##METRIC##_spec>(w, V, VI, p, base, shuffle, generator); \
-    return detail::cpdist_##METRIC##_spec::cdist_func(x1, x2, ARG1, ARG2);                                 \
+Tensor pdist_impl(
+    const Tensor& x1, c10::string_view metric, c10::optional<at::Tensor> w,
+    c10::optional<at::Tensor> V, c10::optional<at::Tensor> VI,
+    c10::optional<double> p, c10::optional<double> base,
+    c10::optional<bool> shuffle, c10::optional<at::Generator> generator,
+    c10::optional<bool> batched, c10::optional<int64_t> feature_dim,
+    c10::optional<bool> squared, c10::optional<at::Tensor> x1_lengths,
+    c10::optional<at::Tensor> x2_lengths, c10::optional<int64_t> chunk_size,
+    c10::optional<at::Tensor> bin_positions,
+    c10::optional<at::Tensor> projections, c10::optional<double> regularization,
+    c10::optional<int64_t> max_iter, c10::optional<std::string> kernel,
+    c10::optional<double> length_scale, c10::optional<double> alpha,
+    c10::optional<double> gamma, c10::optional<int64_t> degree,
+    c10::optional<double> coef0, c10::optional<double> nu,
+    c10::optional<double> data_range, c10::optional<int64_t> window_size,
+    c10::optional<double> sigma, c10::optional<double> k1,
+    c10::optional<double> k2, c10::optional<std::vector<double>> weights,
+    c10::optional<bool> zero_mean, c10::optional<double> energy_floor,
+    c10::optional<double> log_floor, c10::optional<double> norm_floor,
+    c10::optional<int64_t> n_fft, c10::optional<int64_t> hop_length,
+    c10::optional<int64_t> win_length, c10::optional<c10::IValue> window,
+    c10::optional<bool> center, c10::optional<bool> normalized,
+    c10::optional<std::string> pad_mode,
+    c10::optional<std::vector<int64_t>> resolutions,
+    c10::optional<int64_t> component_chunk_size,
+    c10::optional<std::string> estimator, c10::optional<at::Tensor> x_lengths) {
+  ComparisonOptions o;
+  o.w = w;
+  o.V = V;
+  o.VI = VI;
+  o.p = p;
+  o.base = base;
+  o.shuffle = shuffle;
+  o.generator = generator;
+  o.batched = batched;
+  o.feature_dim = feature_dim;
+  o.squared = squared;
+  o.x1_lengths = x1_lengths;
+  o.x2_lengths = x2_lengths;
+  o.chunk_size = chunk_size;
+  o.bin_positions = bin_positions;
+  o.projections = projections;
+  o.regularization = regularization;
+  o.max_iter = max_iter;
+  o.kernel = kernel;
+  o.length_scale = length_scale;
+  o.alpha = alpha;
+  o.gamma = gamma;
+  o.degree = degree;
+  o.coef0 = coef0;
+  o.nu = nu;
+  o.data_range = data_range;
+  o.window_size = window_size;
+  o.sigma = sigma;
+  o.k1 = k1;
+  o.k2 = k2;
+  o.weights = weights;
+  o.zero_mean = zero_mean;
+  o.energy_floor = energy_floor;
+  o.log_floor = log_floor;
+  o.norm_floor = norm_floor;
+  o.n_fft = n_fft;
+  o.hop_length = hop_length;
+  o.win_length = win_length;
+  o.window = window.value_or(c10::IValue());
+  o.center = center;
+  o.normalized = normalized;
+  o.pad_mode = pad_mode;
+  o.resolutions = resolutions;
+  o.component_chunk_size = component_chunk_size;
+  o.estimator = estimator;
+  o.x_lengths = x_lengths;
+  return detail::select_comparison(ComparisonCollection{x1}, c10::nullopt,
+                                   metric, "condensed", "distance", o);
 }
-            constexpr std::array supported_metrics = {
-                    "braycurtis", "canberra", "chebyshev", "cityblock", "correlation", "cosine",
-                    "dice", "directed_hausdorff", "euclidean", "hamming", "haversine", "jaccard",
-                    "jensenshannon", "kulczynski1", "kulsinski", "l1", "l2", "lp", "linf", "mahalanobis",
-                    "manhattan", "minkowski", "rogerstanimoto", "russellrao", "seuclidean", "snr",
-                    "sokalmichener", "sokalsneath", "sqeuclidean", "wminkowski", "yule"
-            };
-            CDIST_TRY_CALL(euclidean)
-            CDIST_TRY_CALL(haversine)
-            CDIST_TRY_CALL(manhattan)
-            CDIST_TRY_CALL(cosine)
-            if (metric == "directed_hausdorff") {
-                detail::check_extra_args<true, detail::cpdist_directed_hausdorff_spec>(
-                        w, V, VI, p, base, shuffle, generator);
-                auto result = directed_hausdorff_distances(x1, x2, shuffle.value_or(false), generator);
-                return std::get<0>(result);
-            }
-            CDIST_TRY_CALL_WITH(minkowski, p.value_or(2))
-            CDIST_TRY_CALL_WITH2(wminkowski, p.value_or(2), w)
-            CDIST_TRY_CALL(sqeuclidean)
-            CDIST_TRY_CALL(correlation)
-            CDIST_TRY_CALL(hamming)
-            CDIST_TRY_CALL(jaccard)
-            CDIST_TRY_CALL(kulsinski)
-            CDIST_TRY_CALL(kulczynski1)
-            CDIST_TRY_CALL_WITH(seuclidean, V)
-            CDIST_TRY_CALL(cityblock)
-            CDIST_TRY_CALL_WITH(mahalanobis, VI)
-            CDIST_TRY_CALL(chebyshev)
-            CDIST_TRY_CALL(braycurtis)
-            CDIST_TRY_CALL(canberra)
-            CDIST_TRY_CALL_WITH(jensenshannon, base)
-            CDIST_TRY_CALL(yule)
-            CDIST_TRY_CALL(dice)
-            CDIST_TRY_CALL(rogerstanimoto)
-            CDIST_TRY_CALL(russellrao)
-            CDIST_TRY_CALL(sokalmichener)
-            CDIST_TRY_CALL(sokalsneath)
-            CDIST_TRY_CALL(snr)
-            CDIST_TRY_CALL(l1)
-            CDIST_TRY_CALL(l2)
-            CDIST_TRY_CALL_WITH(lp, p.value_or(2))
-            CDIST_TRY_CALL(linf)
-            TORCH_CHECK(false,
-                        "Got unkown distance metric: ",
-                        metric,
-                        ". Supported metrics are [",
-                        std::accumulate(
-                                std::begin(supported_metrics), std::end(supported_metrics), std::string(),
-                                [](const std::string &ss, std::string m) {
-                                    return ss.empty() ? m : ss + ", " + m;
-                                }),
-                        "]")
-        }
-
-        at::Tensor pdist(
-                const at::Tensor &input,
-                c10::string_view metric,
-                const c10::optional<at::Tensor> &w,
-                const c10::optional<at::Tensor> &V,
-                const c10::optional<at::Tensor> &VI,
-                c10::optional<double> p,
-                c10::optional<double> base,
-                c10::optional<bool> shuffle,
-                c10::optional<at::Generator> generator) {
-            C10_LOG_API_USAGE_ONCE("torchpairwise.csrc.ops.cpdist.pdist")
-            TORCH_CHECK_NOT_IMPLEMENTED(false,
-                                        "pdist is yet to be implemented.")
-        }
-
-        TORCH_LIBRARY_FRAGMENT(torchpairwise, m) {
-            m.def("torchpairwise::cdist(Tensor x1, Tensor x2, str metric=\"minkowski\", *, "
-                  TORCHPAIRWISE_CPDIST_EXTRA_ARGS_SCHEMA_STR ") -> Tensor",
-                  TORCH_FN(cdist));
-            m.def("torchpairwise::pdist(Tensor input, str metric=\"minkowski\", *, "
-                  TORCHPAIRWISE_CPDIST_EXTRA_ARGS_SCHEMA_STR ") -> Tensor",
-                  TORCH_FN(pdist));
-        }
-    }
+Tensor pdist_collections_impl(
+    at::TensorList x1, c10::string_view metric, c10::optional<at::Tensor> w,
+    c10::optional<at::Tensor> V, c10::optional<at::Tensor> VI,
+    c10::optional<double> p, c10::optional<double> base,
+    c10::optional<bool> shuffle, c10::optional<at::Generator> generator,
+    c10::optional<bool> batched, c10::optional<int64_t> feature_dim,
+    c10::optional<bool> squared, c10::optional<at::Tensor> x1_lengths,
+    c10::optional<at::Tensor> x2_lengths, c10::optional<int64_t> chunk_size,
+    c10::optional<at::Tensor> bin_positions,
+    c10::optional<at::Tensor> projections, c10::optional<double> regularization,
+    c10::optional<int64_t> max_iter, c10::optional<std::string> kernel,
+    c10::optional<double> length_scale, c10::optional<double> alpha,
+    c10::optional<double> gamma, c10::optional<int64_t> degree,
+    c10::optional<double> coef0, c10::optional<double> nu,
+    c10::optional<double> data_range, c10::optional<int64_t> window_size,
+    c10::optional<double> sigma, c10::optional<double> k1,
+    c10::optional<double> k2, c10::optional<std::vector<double>> weights,
+    c10::optional<bool> zero_mean, c10::optional<double> energy_floor,
+    c10::optional<double> log_floor, c10::optional<double> norm_floor,
+    c10::optional<int64_t> n_fft, c10::optional<int64_t> hop_length,
+    c10::optional<int64_t> win_length, c10::optional<c10::IValue> window,
+    c10::optional<bool> center, c10::optional<bool> normalized,
+    c10::optional<std::string> pad_mode,
+    c10::optional<std::vector<int64_t>> resolutions,
+    c10::optional<int64_t> component_chunk_size,
+    c10::optional<std::string> estimator, c10::optional<at::Tensor> x_lengths) {
+  ComparisonOptions o;
+  o.w = w;
+  o.V = V;
+  o.VI = VI;
+  o.p = p;
+  o.base = base;
+  o.shuffle = shuffle;
+  o.generator = generator;
+  o.batched = batched;
+  o.feature_dim = feature_dim;
+  o.squared = squared;
+  o.x1_lengths = x1_lengths;
+  o.x2_lengths = x2_lengths;
+  o.chunk_size = chunk_size;
+  o.bin_positions = bin_positions;
+  o.projections = projections;
+  o.regularization = regularization;
+  o.max_iter = max_iter;
+  o.kernel = kernel;
+  o.length_scale = length_scale;
+  o.alpha = alpha;
+  o.gamma = gamma;
+  o.degree = degree;
+  o.coef0 = coef0;
+  o.nu = nu;
+  o.data_range = data_range;
+  o.window_size = window_size;
+  o.sigma = sigma;
+  o.k1 = k1;
+  o.k2 = k2;
+  o.weights = weights;
+  o.zero_mean = zero_mean;
+  o.energy_floor = energy_floor;
+  o.log_floor = log_floor;
+  o.norm_floor = norm_floor;
+  o.n_fft = n_fft;
+  o.hop_length = hop_length;
+  o.win_length = win_length;
+  o.window = window.value_or(c10::IValue());
+  o.center = center;
+  o.normalized = normalized;
+  o.pad_mode = pad_mode;
+  o.resolutions = resolutions;
+  o.component_chunk_size = component_chunk_size;
+  o.estimator = estimator;
+  o.x_lengths = x_lengths;
+  return detail::select_comparison(x1, c10::nullopt, metric, "condensed",
+                                   "distance", o);
 }
+Tensor pdist_kernel_impl(const Tensor& x, c10::string_view kernel,
+                         int64_t degree, c10::optional<double> gamma,
+                         double coef0) {
+  ComparisonOptions o;
+  if (kernel == "polynomial" || kernel == "polynomial_kernel") {
+    o.degree = degree;
+    o.coef0 = coef0;
+  }
+  if (kernel == "sigmoid" || kernel == "sigmoid_kernel")
+    o.coef0 = coef0;
+  o.gamma = gamma;
+  return detail::select_comparison(ComparisonCollection{x}, c10::nullopt,
+                                   kernel, "condensed", "kernel", o);
+}
+}  // namespace
+Tensor cdist(const Tensor& x1, const c10::optional<Tensor>& x2,
+             c10::string_view metric, const ComparisonOptions& o) {
+  static auto op = c10::Dispatcher::singleton()
+                       .findSchemaOrThrow("torchpairwise::cdist", "")
+                       .typed<decltype(cdist_impl)>();
+  return op.call(
+      x1, x2, metric, o.w, o.V, o.VI, o.p, o.base, o.shuffle, o.generator,
+      o.batched, o.feature_dim, o.squared, o.x1_lengths, o.x2_lengths,
+      o.chunk_size, o.bin_positions, o.projections, o.regularization,
+      o.max_iter, o.kernel, o.length_scale, o.alpha, o.gamma, o.degree, o.coef0,
+      o.nu, o.data_range, o.window_size, o.sigma, o.k1, o.k2, o.weights,
+      o.zero_mean, o.energy_floor, o.log_floor, o.norm_floor, o.n_fft,
+      o.hop_length, o.win_length,
+      o.window.isNone() ? c10::nullopt : c10::optional<c10::IValue>(o.window),
+      o.center, o.normalized, o.pad_mode, o.resolutions, o.component_chunk_size,
+      o.estimator, o.x_lengths);
+}
+Tensor cdist(at::TensorList x1, const c10::optional<ComparisonCollection>& x2,
+             c10::string_view metric, const ComparisonOptions& o) {
+  static auto op = c10::Dispatcher::singleton()
+                       .findSchemaOrThrow("torchpairwise::cdist", "collections")
+                       .typed<decltype(cdist_collections_impl)>();
+  return op.call(
+      x1, x2, metric, o.w, o.V, o.VI, o.p, o.base, o.shuffle, o.generator,
+      o.batched, o.feature_dim, o.squared, o.x1_lengths, o.x2_lengths,
+      o.chunk_size, o.bin_positions, o.projections, o.regularization,
+      o.max_iter, o.kernel, o.length_scale, o.alpha, o.gamma, o.degree, o.coef0,
+      o.nu, o.data_range, o.window_size, o.sigma, o.k1, o.k2, o.weights,
+      o.zero_mean, o.energy_floor, o.log_floor, o.norm_floor, o.n_fft,
+      o.hop_length, o.win_length,
+      o.window.isNone() ? c10::nullopt : c10::optional<c10::IValue>(o.window),
+      o.center, o.normalized, o.pad_mode, o.resolutions, o.component_chunk_size,
+      o.estimator, o.x_lengths);
+}
+Tensor pdist(const Tensor& x1, c10::string_view metric,
+             const ComparisonOptions& o) {
+  static auto op = c10::Dispatcher::singleton()
+                       .findSchemaOrThrow("torchpairwise::pdist", "")
+                       .typed<decltype(pdist_impl)>();
+  return op.call(
+      x1, metric, o.w, o.V, o.VI, o.p, o.base, o.shuffle, o.generator,
+      o.batched, o.feature_dim, o.squared, o.x1_lengths, o.x2_lengths,
+      o.chunk_size, o.bin_positions, o.projections, o.regularization,
+      o.max_iter, o.kernel, o.length_scale, o.alpha, o.gamma, o.degree, o.coef0,
+      o.nu, o.data_range, o.window_size, o.sigma, o.k1, o.k2, o.weights,
+      o.zero_mean, o.energy_floor, o.log_floor, o.norm_floor, o.n_fft,
+      o.hop_length, o.win_length,
+      o.window.isNone() ? c10::nullopt : c10::optional<c10::IValue>(o.window),
+      o.center, o.normalized, o.pad_mode, o.resolutions, o.component_chunk_size,
+      o.estimator, o.x_lengths);
+}
+Tensor pdist(at::TensorList x1, c10::string_view metric,
+             const ComparisonOptions& o) {
+  static auto op = c10::Dispatcher::singleton()
+                       .findSchemaOrThrow("torchpairwise::pdist", "collections")
+                       .typed<decltype(pdist_collections_impl)>();
+  return op.call(
+      x1, metric, o.w, o.V, o.VI, o.p, o.base, o.shuffle, o.generator,
+      o.batched, o.feature_dim, o.squared, o.x1_lengths, o.x2_lengths,
+      o.chunk_size, o.bin_positions, o.projections, o.regularization,
+      o.max_iter, o.kernel, o.length_scale, o.alpha, o.gamma, o.degree, o.coef0,
+      o.nu, o.data_range, o.window_size, o.sigma, o.k1, o.k2, o.weights,
+      o.zero_mean, o.energy_floor, o.log_floor, o.norm_floor, o.n_fft,
+      o.hop_length, o.win_length,
+      o.window.isNone() ? c10::nullopt : c10::optional<c10::IValue>(o.window),
+      o.center, o.normalized, o.pad_mode, o.resolutions, o.component_chunk_size,
+      o.estimator, o.x_lengths);
+}
+Tensor cdist(const Tensor& x1, const Tensor& x2, c10::string_view metric,
+             const c10::optional<Tensor>& w, const c10::optional<Tensor>& V,
+             const c10::optional<Tensor>& VI, c10::optional<double> p,
+             c10::optional<double> base, c10::optional<bool> shuffle,
+             c10::optional<at::Generator> generator) {
+  ComparisonOptions o;
+  o.w = w;
+  o.V = V;
+  o.VI = VI;
+  o.p = p;
+  o.base = base;
+  o.shuffle = shuffle;
+  o.generator = generator;
+  return cdist(x1, c10::optional<Tensor>(x2), metric, o);
+}
+Tensor pdist(const Tensor& x1, c10::string_view metric,
+             const c10::optional<Tensor>& w, const c10::optional<Tensor>& V,
+             const c10::optional<Tensor>& VI, c10::optional<double> p,
+             c10::optional<double> base, c10::optional<bool> shuffle,
+             c10::optional<at::Generator> generator) {
+  ComparisonOptions o;
+  o.w = w;
+  o.V = V;
+  o.VI = VI;
+  o.p = p;
+  o.base = base;
+  o.shuffle = shuffle;
+  o.generator = generator;
+  return pdist(x1, metric, o);
+}
+Tensor pdist_kernel(const Tensor& input, c10::string_view kernel,
+                    int64_t degree, c10::optional<double> gamma, double coef0) {
+  static auto op = c10::Dispatcher::singleton()
+                       .findSchemaOrThrow("torchpairwise::pdist_kernel", "")
+                       .typed<decltype(pdist_kernel_impl)>();
+  return op.call(input, kernel, degree, gamma, coef0);
+}
+TORCH_LIBRARY_FRAGMENT(torchpairwise, m) {
+  m.def(
+      "cdist(Tensor x1, Tensor? x2=None, str metric='minkowski', *, Tensor? "
+      "w=None, Tensor? V=None, Tensor? VI=None, float? p=None, float? "
+      "base=None, bool? shuffle=None, Generator? generator=None, bool? "
+      "batched=None, int? feature_dim=None, bool? squared=None, Tensor? "
+      "x1_lengths=None, Tensor? x2_lengths=None, int? chunk_size=None, Tensor? "
+      "bin_positions=None, Tensor? projections=None, float? "
+      "regularization=None, int? max_iter=None, str? kernel=None, float? "
+      "length_scale=None, float? alpha=None, float? gamma=None, int? "
+      "degree=None, float? coef0=None, float? nu=None, float? data_range=None, "
+      "int? window_size=None, float? sigma=None, float? k1=None, float? "
+      "k2=None, float[]? weights=None, bool? zero_mean=None, float? "
+      "energy_floor=None, float? log_floor=None, float? norm_floor=None, int? "
+      "n_fft=None, int? hop_length=None, int? win_length=None, Any? "
+      "window=None, bool? center=None, bool? normalized=None, str? "
+      "pad_mode=None, int[]? resolutions=None, int? component_chunk_size=None, "
+      "str? estimator=None, Tensor? x_lengths=None) -> Tensor",
+      TORCH_FN(cdist_impl));
+  m.def(
+      "cdist.collections(Tensor[] x1, Tensor[]? x2=None, str "
+      "metric='minkowski', *, Tensor? w=None, Tensor? V=None, Tensor? VI=None, "
+      "float? p=None, float? base=None, bool? shuffle=None, Generator? "
+      "generator=None, bool? batched=None, int? feature_dim=None, bool? "
+      "squared=None, Tensor? x1_lengths=None, Tensor? x2_lengths=None, int? "
+      "chunk_size=None, Tensor? bin_positions=None, Tensor? projections=None, "
+      "float? regularization=None, int? max_iter=None, str? kernel=None, "
+      "float? length_scale=None, float? alpha=None, float? gamma=None, int? "
+      "degree=None, float? coef0=None, float? nu=None, float? data_range=None, "
+      "int? window_size=None, float? sigma=None, float? k1=None, float? "
+      "k2=None, float[]? weights=None, bool? zero_mean=None, float? "
+      "energy_floor=None, float? log_floor=None, float? norm_floor=None, int? "
+      "n_fft=None, int? hop_length=None, int? win_length=None, Any? "
+      "window=None, bool? center=None, bool? normalized=None, str? "
+      "pad_mode=None, int[]? resolutions=None, int? component_chunk_size=None, "
+      "str? estimator=None, Tensor? x_lengths=None) -> Tensor",
+      TORCH_FN(cdist_collections_impl));
+  m.def(
+      "pdist(Tensor input, str metric='minkowski', *, Tensor? w=None, Tensor? "
+      "V=None, Tensor? VI=None, float? p=None, float? base=None, bool? "
+      "shuffle=None, Generator? generator=None, bool? batched=None, int? "
+      "feature_dim=None, bool? squared=None, Tensor? x1_lengths=None, Tensor? "
+      "x2_lengths=None, int? chunk_size=None, Tensor? bin_positions=None, "
+      "Tensor? projections=None, float? regularization=None, int? "
+      "max_iter=None, str? kernel=None, float? length_scale=None, float? "
+      "alpha=None, float? gamma=None, int? degree=None, float? coef0=None, "
+      "float? nu=None, float? data_range=None, int? window_size=None, float? "
+      "sigma=None, float? k1=None, float? k2=None, float[]? weights=None, "
+      "bool? zero_mean=None, float? energy_floor=None, float? log_floor=None, "
+      "float? norm_floor=None, int? n_fft=None, int? hop_length=None, int? "
+      "win_length=None, Any? window=None, bool? center=None, bool? "
+      "normalized=None, str? pad_mode=None, int[]? resolutions=None, int? "
+      "component_chunk_size=None, str? estimator=None, Tensor? x_lengths=None) "
+      "-> Tensor",
+      TORCH_FN(pdist_impl));
+  m.def(
+      "pdist.collections(Tensor[] input, str metric='minkowski', *, Tensor? "
+      "w=None, Tensor? V=None, Tensor? VI=None, float? p=None, float? "
+      "base=None, bool? shuffle=None, Generator? generator=None, bool? "
+      "batched=None, int? feature_dim=None, bool? squared=None, Tensor? "
+      "x1_lengths=None, Tensor? x2_lengths=None, int? chunk_size=None, Tensor? "
+      "bin_positions=None, Tensor? projections=None, float? "
+      "regularization=None, int? max_iter=None, str? kernel=None, float? "
+      "length_scale=None, float? alpha=None, float? gamma=None, int? "
+      "degree=None, float? coef0=None, float? nu=None, float? data_range=None, "
+      "int? window_size=None, float? sigma=None, float? k1=None, float? "
+      "k2=None, float[]? weights=None, bool? zero_mean=None, float? "
+      "energy_floor=None, float? log_floor=None, float? norm_floor=None, int? "
+      "n_fft=None, int? hop_length=None, int? win_length=None, Any? "
+      "window=None, bool? center=None, bool? normalized=None, str? "
+      "pad_mode=None, int[]? resolutions=None, int? component_chunk_size=None, "
+      "str? estimator=None, Tensor? x_lengths=None) -> Tensor",
+      TORCH_FN(pdist_collections_impl));
+  m.def(
+      "pdist_kernel(Tensor input, str kernel='rbf', *, int degree=3, float? "
+      "gamma=None, float coef0=1.) -> Tensor",
+      TORCH_FN(pdist_kernel_impl));
+}
+}  // namespace torchpairwise::ops

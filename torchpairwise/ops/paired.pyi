@@ -1,0 +1,6 @@
+from typing import Any
+from torch import Tensor
+from ._comparison_dispatch import Collection
+
+def paired_distances(x1: Collection, x2: Collection, metric: str = 'euclidean', **kwargs: Any) -> Tensor: ...
+def paired_kernels(x1: Collection, x2: Collection, kernel: str = 'rbf', **kwargs: Any) -> Tensor: ...

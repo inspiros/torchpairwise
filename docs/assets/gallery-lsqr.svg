@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="224" viewBox="0 0 560 224" role="img" aria-labelledby="title desc">
+<title id="title">Landmark Regression Computation</title>
+<desc id="desc">Rectangular kernel tiles feed LSQR; a held-out kernel applies the fitted landmark coefficients.</desc>
+<rect width="560" height="224" fill="#10232b"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace" text-anchor="middle">
+<text x="26" y="30" fill="#9ac3ff" font-size="11" text-anchor="start">RECTANGULAR LEAST SQUARES</text>
+<g fill="#9ac3ff" opacity=".25">
+<rect x="55" y="62" width="20" height="92" rx="3"/><rect x="80" y="62" width="20" height="92" rx="3"/><rect x="105" y="62" width="20" height="92" rx="3"/>
+</g>
+<rect x="55" y="90" width="70" height="25" rx="3" fill="#9ac3ff" opacity=".8"/>
+<g fill="none" stroke="#9ac3ff" stroke-width="1.5"><path d="M154 108 H208 m-7 -5 7 5 -7 5"/><path d="M348 108 H402 m-7 -5 7 5 -7 5"/></g>
+<rect x="220" y="78" width="118" height="60" rx="12" fill="#1b3550" stroke="#9ac3ff" stroke-opacity=".4"/>
+<text x="279" y="115" fill="#9ac3ff" font-size="23">LSQR</text>
+<g fill="#69d9c5" opacity=".65"><rect x="426" y="86" width="12" height="45" rx="2"/><rect x="444" y="86" width="12" height="45" rx="2"/><rect x="462" y="86" width="12" height="45" rx="2"/></g>
+<g fill="#a9bfc2" font-size="14"><text x="90" y="183">K(X,Z) [N,L]</text><text x="279" y="183">A and Aᵀ</text><text x="450" y="183">W [L,R]</text></g>
+</g></svg>

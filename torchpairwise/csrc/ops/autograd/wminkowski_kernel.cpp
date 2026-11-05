@@ -1,67 +1,58 @@
-#include "../wminkowski.h"
-
 #include <torch/autograd.h>
 #include <torch/types.h>
 
-namespace torchpairwise {
-    namespace ops {
-        namespace {
-            class WeightedMinkowskiFunction
-                    : public torch::autograd::Function<WeightedMinkowskiFunction> {
-            public:
-                static torch::autograd::Variable forward(
-                        torch::autograd::AutogradContext *ctx,
-                        const torch::autograd::Variable &x1,
-                        const torch::autograd::Variable &x2,
-                        const torch::autograd::Variable &w,
-                        double p) {
-                    at::AutoDispatchBelowADInplaceOrView g;
+#include "../wminkowski.h"
 
-                    auto output = _wminkowski(x1, x2, w, p);
+namespace torchpairwise::ops {
+namespace {
+class WeightedMinkowskiFunction
+    : public torch::autograd::Function<WeightedMinkowskiFunction> {
+ public:
+  static torch::autograd::Variable forward(
+      torch::autograd::AutogradContext* ctx,
+      const torch::autograd::Variable& x1, const torch::autograd::Variable& x2,
+      const torch::autograd::Variable& w, double p) {
+    at::AutoDispatchBelowADInplaceOrView g;
 
-                    ctx->save_for_backward({x1, x2, w});
-                    ctx->saved_data["p"] = p;
+    auto output = _wminkowski(x1, x2, w, p);
 
-                    return output;
-                }
+    ctx->save_for_backward({x1, x2, w});
+    ctx->saved_data["p"] = p;
 
-                static torch::autograd::variable_list backward(
-                        torch::autograd::AutogradContext *ctx,
-                        const torch::autograd::variable_list &grad_output) {
-                    auto saved = ctx->get_saved_variables();
-                    auto x1 = saved[0];
-                    auto x2 = saved[1];
-                    auto w = saved[2];
-                    double p = ctx->saved_data["p"].toDouble();
+    return output;
+  }
 
-                    auto grads = detail::__wminkowski_backward(
-                            grad_output[0], x1, x2, w, p);
-                    auto grad_x1 = std::get<0>(grads);
-                    auto grad_x2 = std::get<1>(grads);
-                    auto grad_w = std::get<2>(grads);
+  static torch::autograd::variable_list backward(
+      torch::autograd::AutogradContext* ctx,
+      const torch::autograd::variable_list& grad_output) {
+    auto saved = ctx->get_saved_variables();
+    auto x1 = saved[0];
+    auto x2 = saved[1];
+    auto w = saved[2];
+    double p = ctx->saved_data["p"].toDouble();
 
-                    return {
-                            grad_x1,
-                            grad_x2,
-                            grad_w,
-                            torch::autograd::Variable(),
-                    };
-                }
-            };
+    auto grads = detail::_wminkowski_backward(grad_output[0], x1, x2, w, p);
+    auto grad_x1 = std::get<0>(grads);
+    auto grad_x2 = std::get<1>(grads);
+    auto grad_w = std::get<2>(grads);
 
-            at::Tensor _wminkowski_autograd(
-                    const at::Tensor &x1,
-                    const at::Tensor &x2,
-                    const at::Tensor &w,
-                    double p) {
-                return WeightedMinkowskiFunction::apply(x1, x2, w, p);
-            }
-        } // namespace
+    return {
+        grad_x1,
+        grad_x2,
+        grad_w,
+        torch::autograd::Variable(),
+    };
+  }
+};
 
-        TORCH_LIBRARY_IMPL(torchpairwise, Autograd, m) {
-            m.impl(
-                    TORCH_SELECTIVE_NAME("torchpairwise::_wminkowski"),
-                    TORCH_FN(_wminkowski_autograd));
-        }
-    }
+at::Tensor _wminkowski_autograd(const at::Tensor& x1, const at::Tensor& x2,
+                                const at::Tensor& w, double p) {
+  return WeightedMinkowskiFunction::apply(x1, x2, w, p);
 }
+}  // namespace
+
+TORCH_LIBRARY_IMPL(torchpairwise, Autograd, m) {
+  m.impl(TORCH_SELECTIVE_NAME("torchpairwise::_wminkowski"),
+         TORCH_FN(_wminkowski_autograd));
+}
+}  // namespace torchpairwise::ops

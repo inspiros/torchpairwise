@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="224" viewBox="0 0 560 224" role="img" aria-labelledby="title desc"><title id="title">Kernel LDA Computation</title><desc id="desc">Group means → scatter solve → class eigensolve</desc>
+<rect width="560" height="224" fill="#10232b"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+<text x="26" y="30" fill="#f0c783" font-size="11" text-anchor="start">STREAMED COMPUTATION</text>
+<path d="M154 108 H208 m-7 -5 7 5 -7 5" fill="none" stroke="#f0c783" stroke-width="1.5"/>
+<path d="M348 108 H402 m-7 -5 7 5 -7 5" fill="none" stroke="#f0c783" stroke-width="1.5"/>
+<rect x="60" y="65" width="12" height="12" rx="2" fill="#69d9c5" opacity="0.2"/><rect x="75" y="65" width="12" height="12" rx="2" fill="#69d9c5" opacity="0.2"/><rect x="90" y="65" width="12" height="12" rx="2" fill="#69d9c5" opacity="0.2"/><rect x="105" y="65" width="12" height="12" rx="2" fill="#69d9c5" opacity="0.2"/>
+<rect x="60" y="80" width="12" height="12" rx="2" fill="#69d9c5" opacity="0.2"/><rect x="75" y="80" width="12" height="12" rx="2" fill="#69d9c5" opacity="0.2"/><rect x="90" y="80" width="12" height="12" rx="2" fill="#69d9c5" opacity="0.2"/><rect x="105" y="80" width="12" height="12" rx="2" fill="#69d9c5" opacity="0.2"/>
+<rect x="60" y="95" width="12" height="12" rx="2" fill="#9ac3ff" opacity="0.2"/><rect x="75" y="95" width="12" height="12" rx="2" fill="#9ac3ff" opacity="0.2"/><rect x="90" y="95" width="12" height="12" rx="2" fill="#9ac3ff" opacity="0.2"/><rect x="105" y="95" width="12" height="12" rx="2" fill="#9ac3ff" opacity="0.2"/>
+<rect x="60" y="110" width="12" height="12" rx="2" fill="#9ac3ff" opacity="0.2"/><rect x="75" y="110" width="12" height="12" rx="2" fill="#9ac3ff" opacity="0.2"/><rect x="90" y="110" width="12" height="12" rx="2" fill="#9ac3ff" opacity="0.2"/><rect x="105" y="110" width="12" height="12" rx="2" fill="#9ac3ff" opacity="0.2"/>
+<rect x="60" y="125" width="12" height="12" rx="2" fill="#e8b4da" opacity="0.2"/><rect x="75" y="125" width="12" height="12" rx="2" fill="#e8b4da" opacity="0.2"/><rect x="90" y="125" width="12" height="12" rx="2" fill="#e8b4da" opacity="0.2"/><rect x="105" y="125" width="12" height="12" rx="2" fill="#e8b4da" opacity="0.2"/>
+<rect x="60" y="140" width="12" height="12" rx="2" fill="#e8b4da" opacity="0.2"/><rect x="75" y="140" width="12" height="12" rx="2" fill="#e8b4da" opacity="0.2"/><rect x="90" y="140" width="12" height="12" rx="2" fill="#e8b4da" opacity="0.2"/><rect x="105" y="140" width="12" height="12" rx="2" fill="#e8b4da" opacity="0.2"/>
+<text x="88" y="183" fill="#a9bfc2" font-size="14" text-anchor="middle">groups</text>
+<rect x="217" y="78" width="124" height="60" rx="12" fill="#33332d" stroke="#f0c783" stroke-opacity=".4"/>
+<text x="279" y="115" fill="#f0c783" font-size="16" text-anchor="middle">S_w Z = F</text>
+<text x="279" y="183" fill="#a9bfc2" font-size="14" text-anchor="middle">Z [N,C]</text>
+<rect x="424" y="78" width="18" height="18" rx="2" fill="#f0c783" opacity="0.2"/><rect x="445" y="78" width="18" height="18" rx="2" fill="#f0c783" opacity="0.2"/><rect x="466" y="78" width="18" height="18" rx="2" fill="#f0c783" opacity="0.2"/><rect x="424" y="99" width="18" height="18" rx="2" fill="#f0c783" opacity="0.2"/><rect x="445" y="99" width="18" height="18" rx="2" fill="#f0c783" opacity="0.2"/><rect x="466" y="99" width="18" height="18" rx="2" fill="#f0c783" opacity="0.2"/><rect x="424" y="120" width="18" height="18" rx="2" fill="#f0c783" opacity="0.2"/><rect x="445" y="120" width="18" height="18" rx="2" fill="#f0c783" opacity="0.2"/><rect x="466" y="120" width="18" height="18" rx="2" fill="#f0c783" opacity="0.2"/>
+<text x="453" y="183" fill="#a9bfc2" font-size="14" text-anchor="middle">[C,C]</text>
+</g></svg>

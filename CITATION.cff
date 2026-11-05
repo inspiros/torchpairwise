@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use TorchPairwise in your research, please cite this software."
+type: software
+title: TorchPairwise
+abstract: >-
+  Distances, kernels and comparisons for PyTorch and LibTorch, with all-pairs,
+  paired, condensed and single modes, lazy reductions, and matrix-free solvers.
+authors:
+  - family-names: Tran
+    given-names: Hoang-Nhat
+version: 1.0.0
+license: MIT
+repository-code: https://github.com/inspiros/torchpairwise
+url: https://inspiros.github.io/torchpairwise/
+keywords:
+  - PyTorch
+  - pairwise distances
+  - kernels
+  - CUDA
+  - matrix-free computation
