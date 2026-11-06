@@ -85,13 +85,13 @@ jobs:
         python-version: [ '3.11' ]
         torch-version: [ 2.15.0 ]
         target:
-          - { os: macos-14, variant: cpu, artifact: artifacts, local: '' }
+          - { os: macos-15, variant: cpu, artifact: artifacts, local: '' }
           - { os: windows-2022, variant: cpu, artifact: artifacts, local: '' }
           - { os: windows-2022, variant: cu132, artifact: extra, local: cu132 }
         only:
           - ${{ inputs.only || 'all' }}
         exclude:
-          - { only: windows-cu132, target: { os: macos-14, variant: cpu, artifact: artifacts, local: '' } }
+          - { only: windows-cu132, target: { os: macos-15, variant: cpu, artifact: artifacts, local: '' } }
           - { only: windows-cu132, target: { os: windows-2022, variant: cpu, artifact: artifacts, local: '' } }
     steps:
       - uses: actions/checkout@v4
@@ -154,14 +154,14 @@ jobs:
         torch-version: [ 2.15.0 ]
         target:
           - { os: ubuntu-22.04, variant: cu132, artifact: artifacts }
-          - { os: macos-14, variant: cpu, artifact: artifacts }
+          - { os: macos-15, variant: cpu, artifact: artifacts }
           - { os: windows-2022, variant: cpu, artifact: artifacts }
           - { os: windows-2022, variant: cu132, artifact: extra }
         only:
           - ${{ inputs.only || 'all' }}
         exclude:
           - { only: windows-cu132, target: { os: ubuntu-22.04, variant: cu132, artifact: artifacts } }
-          - { only: windows-cu132, target: { os: macos-14, variant: cpu, artifact: artifacts } }
+          - { only: windows-cu132, target: { os: macos-15, variant: cpu, artifact: artifacts } }
           - { only: windows-cu132, target: { os: windows-2022, variant: cpu, artifact: artifacts } }
           - { only: windows-cu132, python-version: '3.12' }
           - { only: windows-cu132, python-version: '3.13' }
